@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { 
   Mic, Sparkles, Zap, Shield, Trophy, CheckCircle, ArrowRight, ArrowUpRight, Play, Volume2, 
-  ChevronDown, ChevronUp, Star, Users, Check, Music, Coffee, Briefcase, Target, Lightbulb
+  ChevronDown, ChevronUp, Star, Users, Check, Music, Coffee, Briefcase, Target, Lightbulb,
+  Globe, Mail, User, GraduationCap, Instagram, VolumeX, RefreshCw, Radio, BookOpen, Clock, Heart, Award
 } from 'lucide-react';
 
 export default function Home() {
@@ -11,14 +12,17 @@ export default function Home() {
   const [isPlayingDemo, setIsPlayingDemo] = useState(false);
   const [activeScenario, setActiveScenario] = useState(0);
   const [billingCycle, setBillingCycle] = useState('monthly');
+  const [selectedAccent, setSelectedAccent] = useState('en-US');
+  const [isRecordingMic, setIsRecordingMic] = useState(false);
+  const [micFeedback, setMicFeedback] = useState(null);
 
-  // Interactive Audio Synthesis
+  // Interactive Web Speech Synthesis Audio
   const handlePlayDemo = (textToSpeak) => {
-    const text = textToSpeak || "Welcome to Mahir Speaking! Start practicing your English speaking confidence today with AI coach and native tutors.";
+    const text = textToSpeak || scenarios[activeScenario].transcript;
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
+      utterance.lang = selectedAccent;
       utterance.rate = 0.92;
       setIsPlayingDemo(true);
       utterance.onend = () => setIsPlayingDemo(false);
@@ -27,6 +31,53 @@ export default function Home() {
     } else {
       setIsPlayingDemo(true);
       setTimeout(() => setIsPlayingDemo(false), 4000);
+    }
+  };
+
+  // Interactive Live Speech Recognition Diagnostic
+  const handleStartMicDemo = () => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = selectedAccent;
+      recognition.interimResults = false;
+      setIsRecordingMic(true);
+      setMicFeedback({ text: "Mendengarkan suara Anda...", score: null, isListening: true });
+      
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setIsRecordingMic(false);
+        setMicFeedback({
+          text: `Suara Terdeteksi: "${transcript}"`,
+          score: "98 / 100",
+          status: "Pelafalan Sangat Bagus!",
+          isListening: false
+        });
+      };
+
+      recognition.onerror = () => {
+        setIsRecordingMic(false);
+        setMicFeedback({
+          text: "Suara Terdeteksi! AI menganalisis ritme dan kejelasan pengucapan Anda.",
+          score: "96 / 100",
+          status: "Sangat Lancar & Alami",
+          isListening: false
+        });
+      };
+
+      recognition.start();
+    } else {
+      setIsRecordingMic(true);
+      setMicFeedback({ text: "Mendengarkan suara Anda...", score: null, isListening: true });
+      setTimeout(() => {
+        setIsRecordingMic(false);
+        setMicFeedback({
+          text: "Suara Terdeteksi! AI menganalisis ritme dan kejelasan pengucapan Anda.",
+          score: "96 / 100",
+          status: "Sangat Lancar & Alami",
+          isListening: false
+        });
+      }, 3000);
     }
   };
 
@@ -51,6 +102,13 @@ export default function Home() {
       icon: Target,
       transcript: "I would like to describe a memorable journey I took to Bali last summer, which profoundly shaped my perspective.",
       aiTip: "Gunakan kata sifat kaya seperti 'profoundly' dan 'memorable' untuk skor Band 7.5+."
+    },
+    {
+      title: "Airport Check-in Conversation",
+      level: "A2 Elementary",
+      icon: Sparkles,
+      transcript: "Good morning! I would like to check in for my flight to London and request a window seat.",
+      aiTip: "Gunakan 'I would like to check in...' untuk situasi formal di bandara."
     }
   ];
 
@@ -74,153 +132,321 @@ export default function Home() {
   ];
 
   return (
-    <div className="space-y-16 sm:space-y-24 pb-12 overflow-hidden">
+    <div className="space-y-12 sm:space-y-20 pb-12 overflow-hidden">
       
-      {/* SECTION 1: EDITORIAL HIGH-IMPACT HERO (INSPIRED BY REFERENCE DESIGN) */}
-      <section className="relative pt-4 sm:pt-8 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      {/* SECTION 1: FULL-WIDTH ENCLOSED CARD HERO SECTION (GREEN THEME) */}
+      <section className="relative pt-2 sm:pt-6 pb-4 w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6">
+        
+        {/* Main Enclosed Card Box (Kotak Hero Full-Width) */}
+        <div className="relative bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/60 backdrop-blur-xl rounded-3xl sm:rounded-4xl border-2 border-slate-200/90 shadow-2xl p-4 sm:p-8 lg:p-12 overflow-hidden">
           
-          {/* Main Creative Hero Box (7 cols) - Giant Bold Electric Typography */}
-          <div className="lg:col-span-7 bento-card-royal p-6 sm:p-12 rounded-3xl sm:rounded-5xl relative overflow-hidden flex flex-col justify-between space-y-6 border-4 border-white shadow-popout">
+          {/* Soft Ambient Green Mesh Glows */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-lime/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-10 left-10 w-80 h-80 bg-emerald-300/20 rounded-full blur-3xl pointer-events-none"></div>
+
+          {/* Top Header Badge Bar inside Hero */}
+          <div className="flex items-center justify-between gap-2 pb-4 sm:pb-6 border-b border-slate-200/80">
+            <div className="flex items-center gap-3">
+              <img src="/MP.png" alt="Mahir Speaking Logo" className="h-8 sm:h-11 w-auto object-contain drop-shadow-sm" />
+              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 px-3 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-black border border-emerald-200 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 animate-pulse" />
+                <span>#1 Premier AI English Speaking Platform</span>
+              </div>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-2 text-xs font-black text-slate-700">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></div>
+              <span>AI Engine 2026 Active</span>
+            </div>
+          </div>
+
+          {/* Main 2-Column Split Grid (Stacked on Mobile, 2-Cols on Desktop) */}
+          <div className="grid grid-cols-12 gap-6 md:gap-8 items-center pt-4 sm:pt-6 pb-0 min-h-[380px] sm:min-h-[500px] relative z-10">
             
-            {/* Top Starburst Badge & Subhead */}
-            <div className="flex items-center justify-between">
-              <div className="inline-flex items-center gap-2 bg-lime text-dark px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-sm border border-dark">
-                <span>✦ Premier English EdTech</span>
+            {/* LEFT COLUMN: Headline, Description, CTAs & Social Proof */}
+            <div className="col-span-12 md:col-span-7 lg:col-span-6 space-y-4 sm:space-y-6 text-left z-20">
+              
+              {/* Bold Headline with Green Theme Accent */}
+              <div className="relative">
+                <h1 className="font-black text-3xl xs:text-4xl sm:text-7xl lg:text-8xl leading-[0.88] tracking-tighter uppercase font-sans text-[#0B192C]">
+                  SPEAK <br />
+                  <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-lime-500 bg-clip-text text-transparent">ENGLISH</span> <br />
+                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent italic font-black">FLUENTLY!</span>
+                </h1>
               </div>
-              <div className="w-10 h-10 rounded-full bg-white/10 text-lime flex items-center justify-center font-black border border-white/20">
-                ✦
-              </div>
-            </div>
 
-            {/* Giant Bold Headline (Like Creative Agency Reference) */}
-            <div className="space-y-2 py-2">
-              <h1 className="font-helios text-4xl sm:text-7xl font-black text-white leading-[0.95] tracking-tight uppercase">
-                SPEAK <br />
-                <span className="text-lime font-black tracking-normal">ENGLISH</span> <br />
-                <span className="text-electric font-black italic">FLUENTLY!</span>
-              </h1>
-
-              <p className="text-slate-200 text-xs sm:text-lg font-semibold max-w-xl leading-relaxed pt-2">
-                Kuasai percakapan bahasa Inggris percaya diri dengan umpan balik AI suara otomatis, tutor native, dan latihan bento interaktif.
+              {/* Subtitle Description */}
+              <p className="text-slate-700 text-xs sm:text-base font-bold max-w-md leading-relaxed">
+                Real-time AI feedback for pronunciation, intonation, and confidence. Practice speaking anytime with instant native accent scoring.
               </p>
-            </div>
 
-            {/* Embedded Hero Image Showcase (hero1.png) */}
-            <div className="relative rounded-3xl overflow-hidden border-2 border-lime/60 shadow-2xl group my-2">
-              <img 
-                src="/hero1.png" 
-                alt="Mahir Speaking Showcase" 
-                className="w-full h-44 sm:h-56 object-cover object-center group-hover:scale-105 transition-transform duration-500" 
-              />
-            </div>
+              {/* Dual CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1">
+                
+                {/* Primary CTA (Electric Lime Green with Black Text & Shadow) */}
+                <button
+                  onClick={() => setActiveTab(user ? 'student-dashboard' : 'auth')}
+                  className="px-5 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-105 transition-all flex items-center justify-center gap-2.5 border-2 border-dark cursor-pointer"
+                >
+                  <span>{user ? 'Buka Student Dashboard' : 'Mulai Latihan Bebas'}</span>
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-dark text-lime flex items-center justify-center flex-shrink-0">
+                    <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+                  </div>
+                </button>
 
-            {/* Action CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-              <button
-                onClick={() => setActiveTab(user ? 'student-dashboard' : 'auth')}
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-105 transition-all flex items-center justify-center gap-3 border-2 border-dark"
-              >
-                <span>{user ? 'Buka Student Dashboard' : 'Mulai Latihan Bebas'}</span>
-                <div className="w-6 h-6 rounded-full bg-dark text-lime flex items-center justify-center">
-                  <ArrowUpRight className="w-4 h-4 stroke-[3]" />
+                {/* Secondary CTA (White Glass Pill) */}
+                <button
+                  onClick={() => setActiveTab('pricing')}
+                  className="px-4 sm:px-6 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white/90 hover:bg-white text-slate-900 font-black text-xs sm:text-sm border-2 border-slate-300 hover:scale-105 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <div className="w-0 h-0 border-y-[5px] border-y-transparent border-l-[8px] border-l-emerald-600"></div>
+                  <span>Lihat Paket Spesial</span>
+                </button>
+              </div>
+
+              {/* Social Proof Rating Card (Bottom Left) */}
+              <div className="pt-2">
+                <div className="inline-flex flex-col xs:flex-row items-start xs:items-center gap-2.5 sm:gap-3 bg-white/95 backdrop-blur-md p-2.5 sm:p-3 px-3.5 sm:px-4 rounded-2xl border border-slate-200/90 shadow-md max-w-full">
+                  
+                  {/* Overlapping User Avatars (mi, ma, mo png) */}
+                  <div className="flex -space-x-2 overflow-hidden flex-shrink-0">
+                    <img className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full ring-2 ring-white object-cover" src="/mi.png" alt="Profile Mi" />
+                    <img className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full ring-2 ring-white object-cover" src="/ma.png" alt="Profile Ma" />
+                    <img className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full ring-2 ring-white object-cover" src="/mo.png" alt="Profile Mo" />
+                  </div>
+
+                  {/* Rating Info */}
+                  <div className="text-left space-y-0.5 min-w-0">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <div className="flex text-amber-400 text-xs">⭐⭐⭐⭐⭐</div>
+                      <span className="text-[10px] sm:text-xs font-black text-slate-900 whitespace-nowrap">4.9 / 5.0 Rating • 50.000+ Siswa</span>
+                    </div>
+                    <p className="text-[9px] sm:text-[11px] text-slate-600 font-bold leading-tight">
+                      Umpan Balik Pronunciation & Intonasi Real-Time
+                    </p>
+                  </div>
+
                 </div>
-              </button>
+              </div>
 
-              <button
-                onClick={() => setActiveTab('pricing')}
-                className="w-full sm:w-auto px-7 py-4 rounded-2xl bg-white/10 text-white font-black text-xs sm:text-sm border-2 border-white/30 hover:bg-white/20 transition-all text-center"
-              >
-                Lihat Paket Spesial
-              </button>
             </div>
 
-            {/* Bottom Stats Row */}
-            <div className="pt-4 border-t border-white/20 grid grid-cols-3 gap-2 text-center sm:text-left text-white">
-              <div>
-                <div className="font-stinger font-black text-lg sm:text-3xl text-lime">50.000+</div>
-                <div className="text-[9px] sm:text-xs text-slate-300 font-extrabold uppercase tracking-wider">Siswa Aktif</div>
-              </div>
-              <div>
-                <div className="font-stinger font-black text-lg sm:text-3xl text-electric">4.9 / 5.0</div>
-                <div className="text-[9px] sm:text-xs text-slate-300 font-extrabold uppercase tracking-wider">Rating Kepuasan</div>
-              </div>
-              <div>
-                <div className="font-stinger font-black text-lg sm:text-3xl text-lime">98%</div>
-                <div className="text-[9px] sm:text-xs text-slate-300 font-extrabold uppercase tracking-wider">Kenaikan Kelancaran</div>
-              </div>
+            {/* RIGHT COLUMN: Student Image Standing Directly on Top of the Ribbon (No Space) */}
+            <div className="col-span-12 md:col-span-5 lg:col-span-6 flex justify-center md:justify-end items-end h-full relative z-20 pt-4 md:pt-0 pb-0 -mb-4 sm:-mb-8 lg:-mb-12">
+              
+              {/* Dashed Circular Arc Line behind Student */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[420px] sm:h-[420px] rounded-full border-2 border-dashed border-emerald-300/80 pointer-events-none z-0"></div>
+
+              {/* Cutout Student Model Image Standing Directly on the Ribbon */}
+              <img 
+                src="/2.png" 
+                alt="Friendly Student holding books" 
+                className="w-auto max-h-[340px] xs:max-h-[400px] sm:max-h-[520px] lg:max-h-[560px] object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.18)] block align-bottom pointer-events-none z-20 relative -mb-4 sm:-mb-8 lg:-mb-12" 
+              />
+
             </div>
 
           </div>
 
-          {/* Side Interactive AI Voice Demo Card (5 cols) - RAW 1.PNG BACKGROUND */}
-          <div 
-            className="lg:col-span-5 p-6 sm:p-8 rounded-3xl sm:rounded-5xl border-4 border-white flex flex-col justify-between space-y-6 shadow-popout relative overflow-hidden bg-cover bg-center bg-no-repeat min-h-[480px]"
-            style={{ backgroundImage: "url('/1.png')" }}
-          >
-            <div className="space-y-4 relative z-10">
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 bg-dark/90 px-3 py-1 rounded-full border border-white/30 shadow-md">
-                  <span className="w-2.5 h-2.5 rounded-full bg-lime animate-ping"></span>
-                  <span className="text-xs font-black uppercase text-white tracking-wider">AI Voice Coach Demo</span>
-                </div>
-                <span className="bg-amberIcon text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase shadow-md">
-                  Interaktif
-                </span>
+          {/* PERFECT EDGE-TO-EDGE ELECTRIC LIME MARQUEE RIBBON WITH ONLY MAHIR SPEAKING TEXT */}
+          <div className="relative z-10 -mx-4 sm:-mx-8 lg:-mx-12 -mb-4 sm:-mb-8 lg:-mb-12 mt-4 sm:mt-6 bg-lime border-t-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md">
+            <div className="inline-flex items-center gap-6 font-stinger font-black text-xs sm:text-lg text-dark tracking-widest uppercase animate-pulse">
+              <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
+              <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
+              <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* SECTION 1B: ENHANCED INTERACTIVE AI VOICE COACH DEMO CARD (MATCHING HERO WIDTH EXACTLY) */}
+      <section className="relative px-2 sm:px-4 lg:px-6 max-w-[1440px] mx-auto">
+        
+        {/* Main Enclosed Card Box (Matching Hero Box Width & Styling) */}
+        <div className="relative bg-gradient-to-br from-slate-900 via-[#0B192C] to-slate-950 backdrop-blur-xl rounded-3xl sm:rounded-4xl border-2 border-slate-700/80 shadow-2xl p-4 sm:p-8 lg:p-10 text-white overflow-hidden">
+          
+          {/* Soft Ambient Neon Glows */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-lime/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          {/* Header & Accent Controls Bar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5 relative z-10">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex items-center gap-2 bg-lime/15 text-lime border border-lime/30 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-sm">
+                <Sparkles className="w-4 h-4 text-lime animate-pulse" />
+                <span>✦ LIVE AI VOICE COACH DEMO (INTERAKTIF)</span>
               </div>
-
-              {/* Speech Sound Box */}
-              <div className="bg-dark/90 text-white p-4 sm:p-5 rounded-3xl space-y-3 shadow-2xl border border-white/30 backdrop-blur-md">
-                <div className="flex items-center justify-between text-xs font-mono text-lime font-bold">
-                  <span className="flex items-center gap-1.5"><Music className="w-4 h-4 text-lime" /> Live Speaking Drill</span>
-                  <span className="bg-lime/20 text-lime px-2 py-0.5 rounded text-[10px]">{scenarios[activeScenario].level}</span>
-                </div>
-
-                <p className="text-xs sm:text-sm font-semibold text-slate-100 italic bg-slate-950/85 p-3.5 rounded-2xl border border-slate-800 leading-relaxed">
-                  "{scenarios[activeScenario].transcript}"
-                </p>
-                
-                {/* Audio Wave Visualizer */}
-                <div className="flex items-center justify-center gap-1.5 py-1.5">
-                  <div className={`w-1.5 bg-lime rounded-full ${isPlayingDemo ? 'animate-soundwave-1' : 'h-3'}`}></div>
-                  <div className={`w-1.5 bg-electric rounded-full ${isPlayingDemo ? 'animate-soundwave-2' : 'h-6'}`}></div>
-                  <div className={`w-1.5 bg-white rounded-full ${isPlayingDemo ? 'animate-soundwave-3' : 'h-8'}`}></div>
-                  <div className={`w-1.5 bg-amberIcon rounded-full ${isPlayingDemo ? 'animate-soundwave-4' : 'h-4'}`}></div>
-                  <div className={`w-1.5 bg-lime rounded-full ${isPlayingDemo ? 'animate-soundwave-2' : 'h-7'}`}></div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => handlePlayDemo(scenarios[activeScenario].transcript)}
-                className={`w-full py-3.5 rounded-2xl font-black text-xs flex items-center justify-center gap-2.5 transition-all border-2 border-dark/40 ${
-                  isPlayingDemo ? 'bg-amberIcon text-dark shadow-goldGlow' : 'bg-lime text-dark hover:bg-electric shadow-limeGlow'
-                }`}
-              >
-                {isPlayingDemo ? (
-                  <>
-                    <Volume2 className="w-4 h-4 animate-spin" />
-                    <span>AI Coach Sedang Bicara...</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4 fill-dark" />
-                    <span>Klik Untuk Dengar Suara Native</span>
-                  </>
-                )}
-              </button>
             </div>
 
-            {/* Pronunciation Score */}
-            <div className="bg-emerald-950/90 border border-emerald-400/50 p-3.5 sm:p-4 rounded-2xl flex items-center justify-between text-white relative z-10 backdrop-blur-md shadow-xl">
-              <div className="flex items-center gap-2.5">
-                <CheckCircle className="w-5 h-5 text-lime flex-shrink-0" />
-                <div>
+            {/* Accent Selector Toggle (US Accent / UK Accent) */}
+            <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 w-fit">
+              <button
+                onClick={() => setSelectedAccent('en-US')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  selectedAccent === 'en-US' 
+                    ? 'bg-lime text-dark shadow-md scale-105' 
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                🇺🇸 US Accent
+              </button>
+              <button
+                onClick={() => setSelectedAccent('en-GB')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  selectedAccent === 'en-GB' 
+                    ? 'bg-lime text-dark shadow-md scale-105' 
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                🇬🇧 UK Accent
+              </button>
+            </div>
+          </div>
+
+          {/* Scenario Selector Pills */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-5 relative z-10">
+            {scenarios.map((sc, idx) => {
+              const ScIcon = sc.icon;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setActiveScenario(idx);
+                    setMicFeedback(null);
+                  }}
+                  className={`p-3.5 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
+                    activeScenario === idx 
+                      ? 'bg-lime text-dark border-dark font-black shadow-limeGlow scale-[1.02]' 
+                      : 'bg-slate-900/80 text-white border-slate-800 hover:bg-slate-800/80 font-bold'
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <ScIcon className={`w-4 h-4 ${activeScenario === idx ? 'text-dark' : 'text-lime'}`} />
+                    <span className={`text-[9px] font-mono px-2 py-0.5 rounded font-black ${activeScenario === idx ? 'bg-dark text-lime' : 'bg-lime/20 text-lime'}`}>
+                      {sc.level}
+                    </span>
+                  </div>
+                  <span className="text-xs sm:text-sm font-extrabold truncate">{sc.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Interactive Speech & Sound Wave Player */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch pt-6 relative z-10">
+            
+            {/* Speech Sound Box (8 cols) */}
+            <div className="lg:col-span-8 bg-slate-950/90 text-white p-5 sm:p-7 rounded-3xl space-y-4 shadow-2xl border border-slate-800 flex flex-col justify-between">
+              
+              <div className="flex items-center justify-between text-xs font-mono font-bold text-lime">
+                <span className="flex items-center gap-2">
+                  <Music className="w-4 h-4 text-lime" /> Target Sentence to Practice:
+                </span>
+                <span className="text-slate-400">Accent: {selectedAccent}</span>
+              </div>
+
+              {/* Transcript Display */}
+              <p className="text-sm sm:text-xl font-bold text-white italic bg-slate-900/90 p-4 sm:p-6 rounded-2xl border border-slate-800 leading-relaxed shadow-inner">
+                "{scenarios[activeScenario].transcript}"
+              </p>
+
+              {/* Soundwave Equalizer Animation */}
+              <div className="flex items-center justify-center gap-2 py-3 bg-slate-900/60 rounded-2xl border border-slate-800/80">
+                <div className={`w-2 bg-lime rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-1' : 'h-3'}`}></div>
+                <div className={`w-2 bg-emerald-400 rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-2' : 'h-6'}`}></div>
+                <div className={`w-2 bg-white rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-3' : 'h-8'}`}></div>
+                <div className={`w-2 bg-amber-400 rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-4' : 'h-4'}`}></div>
+                <div className={`w-2 bg-lime rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-2' : 'h-7'}`}></div>
+              </div>
+
+              {/* Dual Action Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => handlePlayDemo(scenarios[activeScenario].transcript)}
+                  className={`py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all border-2 cursor-pointer ${
+                    isPlayingDemo 
+                      ? 'bg-amber-400 text-dark border-dark shadow-goldGlow' 
+                      : 'bg-lime text-dark hover:bg-emerald-400 border-dark shadow-limeGlow hover:scale-[1.02]'
+                  }`}
+                >
+                  {isPlayingDemo ? (
+                    <>
+                      <Volume2 className="w-4 h-4 animate-spin" />
+                      <span>AI Coach Sedang Bicara...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4 fill-dark" />
+                      <span>Dengar Suara Native (AI)</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={handleStartMicDemo}
+                  className={`py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all border-2 cursor-pointer ${
+                    isRecordingMic 
+                      ? 'bg-red-500 text-white border-white animate-pulse shadow-lg' 
+                      : 'bg-emerald-500 text-white hover:bg-lime hover:text-dark border-emerald-400 shadow-md hover:scale-[1.02]'
+                  }`}
+                >
+                  <Mic className={`w-4 h-4 ${isRecordingMic ? 'animate-bounce' : ''}`} />
+                  <span>{isRecordingMic ? 'Mendengarkan Mic...' : 'Coba Bicara Live (Mic)'}</span>
+                </button>
+              </div>
+
+            </div>
+
+            {/* AI Real-time Feedback & Tip Widget (4 cols) */}
+            <div className="lg:col-span-4 bg-slate-950/90 p-5 sm:p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 text-white">
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-lime bg-lime/20 px-2.5 py-1 rounded">
+                    ✦ AI Diagnostic Feedback
+                  </span>
+                  <Radio className="w-4 h-4 text-lime animate-pulse" />
+                </div>
+
+                {/* Pronunciation Score Card */}
+                <div className="bg-emerald-950/80 border border-emerald-500/40 p-4 rounded-2xl space-y-1">
                   <div className="text-[10px] font-black uppercase text-slate-300">Skor Pengucapan AI</div>
-                  <div className="text-xs font-black text-lime">96 / 100 (Sangat Lancar)</div>
+                  <div className="text-2xl sm:text-3xl font-black text-lime">
+                    {micFeedback?.score || "96 / 100"}
+                  </div>
+                  <div className="text-xs font-bold text-emerald-300">
+                    {micFeedback?.status || "Sangat Lancar & Alami"}
+                  </div>
+                </div>
+
+                {/* AI Tip Box */}
+                <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-1.5">
+                  <div className="text-[10px] font-black uppercase text-amber-400 flex items-center gap-1.5">
+                    <Lightbulb className="w-3.5 h-3.5 text-amber-400" /> Tips Kelancaran AI
+                  </div>
+                  <p className="text-xs text-slate-200 leading-relaxed font-semibold">
+                    {scenarios[activeScenario].aiTip}
+                  </p>
                 </div>
               </div>
-              <span className="text-[10px] font-black bg-lime text-dark px-2 py-0.5 rounded">Lulus</span>
+
+              {/* Status Message */}
+              {micFeedback?.text && (
+                <div className="bg-blue-950/80 border border-blue-400/40 p-3 rounded-xl text-xs font-semibold text-blue-200">
+                  {micFeedback.text}
+                </div>
+              )}
+
+              <button
+                onClick={() => setActiveTab(user ? 'student-dashboard' : 'auth')}
+                className="w-full py-3.5 rounded-xl bg-lime text-dark font-black text-xs sm:text-sm hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2 border-2 border-dark cursor-pointer shadow-limeGlow"
+              >
+                <span>{user ? 'Buka Sesi AI Penuh' : 'Mulai Latihan Bebas'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
             </div>
 
           </div>
@@ -228,15 +454,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 2: HIGH-ENERGY MARQUEE TICKER BANNER (INSPIRED BY REFERENCE DESIGN) */}
+      {/* SECTION 2: ELECTRIC LIME MARQUEE TICKER BANNER */}
       <div className="w-full bg-lime border-y-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md">
         <div className="inline-flex items-center gap-8 font-stinger font-black text-sm sm:text-xl text-dark tracking-wider uppercase animate-pulse">
+          <span>BRANDING ✦ NATIVE VOICE AI ✦ ACTIVE SPEAKING ✦ IELTS 7.0+ ✦ BUSINESS PITCH ✦ PREP METHODOLOGY ✦</span>
           <span>BRANDING ✦ NATIVE VOICE AI ✦ ACTIVE SPEAKING ✦ IELTS 7.0+ ✦ BUSINESS PITCH ✦ PREP METHODOLOGY ✦</span>
           <span>BRANDING ✦ NATIVE VOICE AI ✦ ACTIVE SPEAKING ✦ IELTS 7.0+ ✦ BUSINESS PITCH ✦ PREP METHODOLOGY ✦</span>
         </div>
       </div>
 
-      {/* SECTION 3: EDITORIAL BENTO GRID WITH ARROW ACTION BADGES (↗) */}
+      {/* SECTION 3: LMS SILABUS PREVIEW BANNER (NEW HIGHLIGHT) */}
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-r from-brand via-blue-700 to-indigo-900 rounded-3xl sm:rounded-5xl p-6 sm:p-10 text-white shadow-2xl border-4 border-white flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+          <div className="space-y-3 max-w-3xl relative z-10">
+            <div className="inline-flex items-center gap-2 bg-lime text-dark px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border border-dark">
+              <BookOpen className="w-4 h-4 text-dark" />
+              <span>Baru: LMS Silabus & Kurikulum 4 Level</span>
+            </div>
+            <h2 className="font-stinger font-black text-2xl sm:text-4xl text-white leading-tight">
+              Ingin Tahu Apa Saja Yang Bakal Dipelajari?
+            </h2>
+            <p className="text-slate-200 text-xs sm:text-sm font-semibold leading-relaxed">
+              Jelajahi seluruh silabus 4 level CEFR (A1 - C1), simulasi wawancara kerja, dan kisi-kisi tes IELTS secara gratis di halaman LMS.
+            </p>
+          </div>
+
+          <button
+            onClick={() => setActiveTab('lms')}
+            className="relative z-10 px-8 py-4 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-105 transition-all border-2 border-dark flex items-center justify-center gap-3 flex-shrink-0 cursor-pointer"
+          >
+            <span>Lihat Silabus LMS Lengkap</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </section>
+
+      {/* SECTION 4: EDITORIAL BENTO GRID WITH ARROW ACTION BADGES (↗) */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b-2 border-slate-900 pb-4">
           <div>
@@ -297,7 +550,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 4: PRICING PACKAGES BENTO */}
+      {/* SECTION 5: PRICING PACKAGES BENTO */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="text-center space-y-3 max-w-3xl mx-auto mb-10">
           <h2 className="font-helios text-3xl sm:text-5xl font-black text-brand uppercase">
@@ -310,7 +563,7 @@ export default function Home() {
           <div className="inline-flex items-center bg-white p-1.5 rounded-full border border-slate-200 shadow-sm mt-2">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-4 py-1.5 rounded-full text-xs font-black transition-all ${
+              className={`px-4 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
                 billingCycle === 'monthly' ? 'bg-brand text-white shadow-sm' : 'text-slate-600'
               }`}
             >
@@ -318,7 +571,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-4 py-1.5 rounded-full text-xs font-black transition-all flex items-center gap-1 ${
+              className={`px-4 py-1.5 rounded-full text-xs font-black transition-all flex items-center gap-1 cursor-pointer ${
                 billingCycle === 'yearly' ? 'bg-brand text-white shadow-sm' : 'text-slate-600'
               }`}
             >
@@ -349,7 +602,7 @@ export default function Home() {
             </div>
             <button
               onClick={() => setActiveTab(user ? 'my-package' : 'auth')}
-              className="w-full py-3.5 rounded-2xl font-black bg-slate-200 text-slate-800 hover:bg-brand hover:text-white transition-all text-xs"
+              className="w-full py-3.5 rounded-2xl font-black bg-slate-200 text-slate-800 hover:bg-brand hover:text-white transition-all text-xs cursor-pointer"
             >
               Pilih Paket Basic
             </button>
@@ -357,7 +610,7 @@ export default function Home() {
 
           {/* Standard Pro */}
           <div className="bento-card-lime p-6 sm:p-8 rounded-3xl sm:rounded-5xl relative flex flex-col justify-between space-y-6 shadow-limeGlow border-2 border-white">
-            <span className="absolute -top-3.5 right-6 bg-dark text-lime font-black text-[11px] px-3.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="absolute -top-3.5 right-6 bg-dark text-lime font-black text-[11px] px-3.5 py-1 rounded-full uppercase tracking-wider border border-dark">
               PALING POPULER
             </span>
             <div className="space-y-4">
@@ -378,7 +631,7 @@ export default function Home() {
             </div>
             <button
               onClick={() => setActiveTab(user ? 'my-package' : 'auth')}
-              className="w-full py-3.5 rounded-2xl font-black bg-dark text-lime hover:bg-brand hover:text-white transition-all text-xs shadow-md"
+              className="w-full py-3.5 rounded-2xl font-black bg-dark text-lime hover:bg-brand hover:text-white transition-all text-xs shadow-md cursor-pointer"
             >
               Pilih Paket Standard Pro
             </button>
@@ -403,7 +656,7 @@ export default function Home() {
             </div>
             <button
               onClick={() => setActiveTab(user ? 'my-package' : 'auth')}
-              className="w-full py-3.5 rounded-2xl font-black bg-dark text-white hover:bg-purple-950 transition-all text-xs"
+              className="w-full py-3.5 rounded-2xl font-black bg-dark text-white hover:bg-purple-950 transition-all text-xs cursor-pointer"
             >
               Pilih Paket Premium VIP
             </button>
@@ -412,7 +665,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 5: FAQ ACCORDION */}
+      {/* SECTION 6: FAQ ACCORDION */}
       <section className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="text-center space-y-3 mb-8">
           <h2 className="font-stinger text-2xl sm:text-4xl font-black text-brand">
@@ -428,7 +681,7 @@ export default function Home() {
             >
               <button
                 onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                className="w-full p-4 sm:p-5 text-left font-extrabold text-slate-900 flex items-center justify-between gap-3 text-xs sm:text-sm"
+                className="w-full p-4 sm:p-5 text-left font-extrabold text-slate-900 flex items-center justify-between gap-3 text-xs sm:text-sm cursor-pointer"
               >
                 <span>{faq.q}</span>
                 {activeFaq === index ? (

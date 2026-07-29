@@ -8,6 +8,7 @@ import Footer from './components/common/Footer';
 
 // Public Pages
 import Home from './pages/public/Home';
+import LMSView from './pages/public/LMSView';
 import Portfolio from './pages/public/Portfolio';
 import PricingPage from './pages/public/PricingPage';
 import Branding from './pages/public/Branding';
@@ -40,6 +41,7 @@ function MainContent() {
     switch (activeTab) {
       // Public
       case 'home': return <Home />;
+      case 'lms': return <LMSView />;
       case 'branding': return <Branding />;
       case 'portfolio': return <Portfolio />;
       case 'pricing': return <PricingPage />;

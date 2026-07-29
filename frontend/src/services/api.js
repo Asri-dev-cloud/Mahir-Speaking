@@ -12,24 +12,29 @@ export const apiFetch = async (endpoint, options = {}) => {
     ...(options.headers || {})
   };
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers
-  });
+  try {
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers
+    });
 
-  const contentType = response.headers.get('content-type');
-  let data = {};
-  if (contentType && contentType.includes('application/json')) {
-    data = await response.json();
-  } else {
-    const text = await response.text();
-    data = { message: text || 'Server response was not JSON' };
-  }
+    const contentType = response.headers.get('content-type');
+    let data = {};
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      data = { message: text || 'Respon server tidak valid' };
+    }
 
-  if (!response.ok) {
-    throw new Error(data.message || 'API request failed');
+    if (!response.ok) {
+      throw new Error(data.message || 'Permintaan API gagal');
+    }
+    return data;
+  } catch (err) {
+    console.warn(`API Error on ${endpoint}:`, err.message);
+    throw err;
   }
-  return data;
 };
 
 // Services API calls
