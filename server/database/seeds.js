@@ -1,0 +1,194 @@
+import bcrypt from 'bcryptjs';
+import { query } from './db.js';
+
+export async function initSeedData() {
+  try {
+    // Create Tables
+    await query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        username TEXT UNIQUE NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        whatsapp TEXT,
+        password TEXT NOT NULL,
+        role TEXT DEFAULT 'student',
+        package_id INTEGER DEFAULT 1,
+        xp INTEGER DEFAULT 0,
+        points INTEGER DEFAULT 0,
+        streak INTEGER DEFAULT 1,
+        avatar TEXT DEFAULT '/ma.png',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS packages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        price INTEGER NOT NULL,
+        period TEXT DEFAULT 'monthly',
+        ai_daily_limit INTEGER NOT NULL,
+        tutor_sessions INTEGER NOT NULL,
+        badge TEXT,
+        features TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS courses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        level TEXT NOT NULL,
+        description TEXT,
+        tutor_id INTEGER,
+        thumbnail TEXT,
+        total_lessons INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS lessons (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        course_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        order_index INTEGER NOT NULL,
+        video_url TEXT,
+        reading_content TEXT,
+        target_vocabulary TEXT,
+        speaking_prompt TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS quizzes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        lesson_id INTEGER NOT NULL,
+        question TEXT NOT NULL,
+        options TEXT NOT NULL,
+        correct_answer INTEGER NOT NULL,
+        xp_reward INTEGER DEFAULT 20
+      )
+    `);
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS user_progress (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        lesson_id INTEGER NOT NULL,
+        completed INTEGER DEFAULT 0,
+        score INTEGER DEFAULT 0,
+        completed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS purchases (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        package_id INTEGER NOT NULL,
+        amount INTEGER NOT NULL,
+        payment_method TEXT DEFAULT 'QRIS',
+        status TEXT DEFAULT 'success',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await query(`
+      CREATE TABLE IF NOT EXISTS ai_chats (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        role TEXT NOT NULL,
+        mode TEXT DEFAULT 'general',
+        content TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Check if packages exist
+    const packagesCount = await query(`SELECT COUNT(*) as count FROM packages`);
+    if (packagesCount[0].count === 0) {
+      console.log('Seeding initial packages...');
+      await query(`
+        INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
+        VALUES 
+        (1, 'Basic', 99000, 'monthly', 10, 0, 'Starter', '["Access to Foundation Courses", "10 Daily AI Chat Messages", "Community Leaderboard", "Vocabulary Flashcards"]'),
+        (2, 'Standard', 199000, 'monthly', 50, 2, 'Pro Speaker', '["All Foundation & Intermediate Courses", "50 Daily AI Chat Messages", "AI Speaking Coach Feedback", "2 Live Tutor Practice Sessions/mo", "Certificate of Completion"]'),
+        (3, 'Premium', 349000, 'monthly', -1, 8, 'VIP Master', '["Unlimited Access to All Courses", "UNLIMITED AI Chat & Voice Assistant", "8 Live 1-on-1 Tutor Sessions/mo", "Priority Pronunciation Doctor", "IELTS/TOEFL Speaking Mock Exams", "Verified Speaking Badge"]')
+      `);
+    }
+
+    // Check if users exist or refresh leaderboard users with Aci, Fariha, Ira, Pipit
+    const usersCount = await query(`SELECT COUNT(*) as count FROM users`);
+    if (usersCount[0].count === 0) {
+      console.log('Seeding initial users with Aci, Fariha, Ira, Pipit...');
+      const hashedPassword = await bcrypt.hash('password123', 10);
+
+      // Student 1: Aci (#1 Champion)
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Aci', 'aci_master', 'aci@mahirspeaking.com', '081234567890', '${hashedPassword}', 'student', 3, 3450, 950, 18, '/ma.png')
+      `);
+
+      // Student 2: Fariha (#2 Silver)
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Fariha', 'fariha_speaking', 'fariha@mahirspeaking.com', '081234567891', '${hashedPassword}', 'student', 3, 2890, 850, 14, '/mi.png')
+      `);
+
+      // Student 3: Ira (#3 Bronze)
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Ira', 'ira_fluent', 'ira@mahirspeaking.com', '081234567892', '${hashedPassword}', 'student', 2, 2450, 720, 11, '/mo.png')
+      `);
+
+      // Student 4: Pipit (#4)
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Pipit', 'pipit_voice', 'pipit@mahirspeaking.com', '081234567893', '${hashedPassword}', 'student', 2, 1980, 560, 9, '/ma.png')
+      `);
+
+      // Tutor User
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Coach David Miller', 'david_tutor', 'tutor@mahirspeaking.com', '081299988877', '${hashedPassword}', 'tutor', 3, 5000, 1500, 30, '/mi.png')
+      `);
+
+      // Admin User
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '${hashedPassword}', 'admin', 3, 9999, 9999, 99, '/mo.png')
+      `);
+    } else {
+      // Ensure existing database has Aci, Fariha, Ira, Pipit updated
+      await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 3450 WHERE email = 'student@mahirspeaking.com' OR email = 'aci@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Fariha', username = 'fariha_speaking', avatar = '/mi.png', xp = 2890 WHERE email = 'rian@mahirspeaking.com' OR email = 'fariha@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Ira', username = 'ira_fluent', avatar = '/mo.png', xp = 2450 WHERE email = 'nadia@mahirspeaking.com' OR email = 'ira@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Pipit', username = 'pipit_voice', avatar = '/ma.png', xp = 1980 WHERE email = 'budi@mahirspeaking.com' OR email = 'pipit@mahirspeaking.com'`);
+    }
+
+    // Check courses
+    const coursesCount = await query(`SELECT COUNT(*) as count FROM courses`);
+    if (coursesCount[0].count === 0) {
+      console.log('Seeding initial courses & lessons...');
+      const tutor = await query(`SELECT id FROM users WHERE role = 'tutor' LIMIT 1`);
+      const tutorId = tutor[0]?.id || 5;
+
+      await query(`
+        INSERT INTO courses (title, level, description, tutor_id, thumbnail, total_lessons)
+        VALUES 
+        ('Daily Conversation Mastery', 'A1 - Beginner', 'Learn essential English phrases for everyday introductions, ordering food, asking for directions, and small talk.', ${tutorId}, 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600', 4),
+        ('Business English Speaking & Pitching', 'B1 - Intermediate', 'Master professional workplace communication, meeting contributions, job interview answers, and elevator pitches.', ${tutorId}, 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=600', 3),
+        ('IELTS Speaking 7.0+ Intensive', 'B2 - Upper Intermediate', 'Advanced strategies for IELTS Speaking Parts 1, 2, and 3 with real examiner criteria and fluency drills.', ${tutorId}, 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600', 3),
+        ('Confident Public Speaking & Debating', 'C1 - Advanced', 'Hone persuasion skills, rhetorical devices, voice modulation, and spontaneous speech formulation.', ${tutorId}, 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=600', 2)
+      `);
+    }
+
+    console.log('Seed data initialization complete.');
+  } catch (err) {
+    console.error('Error during database seed initialization:', err.message);
+  }
+}

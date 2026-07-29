@@ -1,0 +1,17 @@
+{
+  "short_name": "Mahir Speaking",
+  "name": "Mahir Speaking - English E-Learning Platform",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#87CEFA",
+  "theme_color": "#0362C0",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Master English speaking fluency with AI voice coaching, native 1-on-1 tutors, and gamified CEFR learning paths."
+}

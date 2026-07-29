@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" width="600" height="150">
+  <g transform="translate(10, 15)">
+    <rect width="120" height="120" rx="32" fill="#0362C0"/>
+    <rect x="8" y="8" width="104" height="104" rx="24" fill="none" stroke="#C6F500" stroke-width="6"/>
+    <rect x="46" y="24" width="28" height="48" rx="14" fill="#C6F500"/>
+    <path d="M30 58 C30 84, 90 84, 90 58" fill="none" stroke="#FFFF00" stroke-width="8" stroke-linecap="round"/>
+    <line x1="60" y1="84" x2="60" y2="102" stroke="#FFFF00" stroke-width="8" stroke-linecap="round"/>
+    <line x1="38" y1="102" x2="82" y2="102" stroke="#FFFF00" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="150" y="82" font-family="Outfit, sans-serif" font-weight="900" font-size="52" fill="#0362C0">MAHIR</text>
+  <rect x="345" y="42" width="220" height="48" rx="12" fill="#0A1128"/>
+  <text x="360" y="76" font-family="Outfit, sans-serif" font-weight="900" font-size="34" fill="#C6F500">SPEAKING</text>
+  <text x="152" y="112" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="16" fill="#475569" letter-spacing="2">EDTECH ENGLISH PLATFORM</text>
+</svg>

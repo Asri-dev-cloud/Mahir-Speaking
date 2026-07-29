@@ -1,0 +1,5 @@
+# Mahir Speaking Robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://mahirspeaking.com/sitemap.xml
