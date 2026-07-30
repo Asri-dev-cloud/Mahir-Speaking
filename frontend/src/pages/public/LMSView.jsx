@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { useAuth } from '../../context/AuthContext';
 import { 
   Sparkles, Lock, Play, Star, Trophy, ArrowRight, BookOpen, ShieldCheck, 
   CheckCircle2, Zap, AlertCircle, X, HelpCircle, Layers, Award, Mic, Users,
-  Globe, MessageSquare, Target, Check, Clock, ChevronRight, Video
+  Globe, MessageSquare, Target, Check, Clock, ChevronRight, Video, RotateCcw, XCircle
 } from 'lucide-react';
 
 export default function LMSView() {
@@ -11,6 +12,14 @@ export default function LMSView() {
   const [selectedLevel, setSelectedLevel] = useState('ALL');
   const [showLockModal, setShowLockModal] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState(null);
+
+  // Quiz Hub States inside LMS
+  const [activeQuiz, setActiveQuiz] = useState(null);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [showAnswerFeedback, setShowAnswerFeedback] = useState(false);
 
   const levelsData = [
     {
@@ -215,20 +224,312 @@ export default function LMSView() {
     ? levelsData 
     : levelsData.filter(lvl => lvl.code === selectedLevel);
 
-  const handleLessonClick = (lesson, levelCode) => {
-    const isUserPaid = user && (user.isPaid || user.has_active_subscription || user.role === 'admin' || user.role === 'tutor');
-    
-    if (isUserPaid) {
-      setActiveTab('lesson-view');
+  const quizzesList = [
+    {
+      code: 'A1',
+      title: 'A1 Foundation & Everyday Speaking Quiz',
+      level: 'Level A1',
+      color: 'from-[#0C53CD] via-[#0E5AD6] to-[#0A4BB8]',
+      badgeBg: 'bg-blue-600',
+      desc: 'Uji pemahaman dasar frasa percakapan, cara berkenalan, dan memesan makanan di kafe.',
+      questions: [
+        {
+          id: 1,
+          question: "How do you politely order coffee in English at a cafe?",
+          options: [
+            "Give me one iced latte now.",
+            "Could I please get an iced oat milk latte?",
+            "I want coffee.",
+            "Make coffee fast."
+          ],
+          correctAnswer: 1,
+          explanation: "'Could I please get...' is the standard polite expression when ordering at food & beverage places."
+        },
+        {
+          id: 2,
+          question: "When someone asks 'How's your day going?', what is a natural friendly response?",
+          options: [
+            "Yes, I am.",
+            "It's going well, thanks! How about yours?",
+            "I go home.",
+            "Nothing day."
+          ],
+          correctAnswer: 1,
+          explanation: "Friendly small-talk response that acknowledges them and asks in return."
+        },
+        {
+          id: 3,
+          question: "Which expression is used to ask for street directions politely?",
+          options: [
+            "Excuse me, could you tell me how to get to the station?",
+            "Hey tell me where is station.",
+            "Station where now?",
+            "I want go station."
+          ],
+          correctAnswer: 0,
+          explanation: "'Excuse me, could you tell me how to get to...' is polite and natural."
+        }
+      ]
+    },
+    {
+      code: 'B1',
+      title: 'B1 Business English & Workplace Pitching Quiz',
+      level: 'Level B1',
+      color: 'from-[#D97706] via-[#F59E0B] to-[#B45309]',
+      badgeBg: 'bg-amber-600',
+      desc: 'Uji kemampuan percakapan profesional, metode STAR wawancara kerja, dan elevator pitch.',
+      questions: [
+        {
+          id: 1,
+          question: "In the STAR job interview method, what does the letter 'A' stand for?",
+          options: [
+            "Attitude",
+            "Action",
+            "Achievement",
+            "Analysis"
+          ],
+          correctAnswer: 1,
+          explanation: "STAR stands for Situation, Task, Action, and Result."
+        },
+        {
+          id: 2,
+          question: "Which phrase is best used to politely express a different opinion in a business meeting?",
+          options: [
+            "You are completely wrong.",
+            "I see your point, but have we considered this alternative?",
+            "Bad idea, stop talking.",
+            "No way."
+          ],
+          correctAnswer: 1,
+          explanation: "Diplomatic disagreement starts with acknowledging their point before offering another perspective."
+        },
+        {
+          id: 3,
+          question: "What is the primary goal of a 2-minute Elevator Pitch?",
+          options: [
+            "To read a 10-page report line by line",
+            "To hook the listener and clearly communicate key value",
+            "To speak as fast as possible without breathing",
+            "To ask for money immediately"
+          ],
+          correctAnswer: 1,
+          explanation: "An elevator pitch delivers high-impact core value in 60-120 seconds."
+        }
+      ]
+    },
+    {
+      code: 'B2',
+      title: 'B2 IELTS Speaking 7.0+ Intensive Mastery Quiz',
+      level: 'Level B2',
+      color: 'from-[#7C3AED] via-[#6D28D9] to-[#4C1D95]',
+      badgeBg: 'bg-purple-600',
+      desc: 'Uji kesiapan kisi-kisi tes IELTS Speaking, monolog cue card Part 2, dan idiom.',
+      questions: [
+        {
+          id: 1,
+          question: "In IELTS Speaking Part 2 Cue Card, how much preparation time are you given before speaking?",
+          options: [
+            "10 seconds",
+            "1 minute",
+            "5 minutes",
+            "No prep time at all"
+          ],
+          correctAnswer: 1,
+          explanation: "You receive exactly 1 minute to make quick notes on your cue card topic."
+        },
+        {
+          id: 2,
+          question: "Which idiom best describes an event that happens extremely rarely?",
+          options: [
+            "Once in a blue moon",
+            "Piece of cake",
+            "Break a leg",
+            "Bite the bullet"
+          ],
+          correctAnswer: 0,
+          explanation: "'Once in a blue moon' means an event occurs very rarely."
+        },
+        {
+          id: 3,
+          question: "What is the examiner evaluating in the 'Lexical Resource' criterion?",
+          options: [
+            "How loud your voice is",
+            "Range and precision of vocabulary including collocations",
+            "How fast you write on paper",
+            "Your accent background"
+          ],
+          correctAnswer: 1,
+          explanation: "Lexical Resource assesses vocabulary range, idiom accuracy, and word choice precision."
+        }
+      ]
+    },
+    {
+      code: 'C1',
+      title: 'C1 Public Speaking & Persuasive Debating Quiz',
+      level: 'Level C1',
+      color: 'from-[#0A1128] via-[#1E293B] to-[#020617]',
+      badgeBg: 'bg-slate-900',
+      desc: 'Uji penguasaan retorika pidato panggung, modulasi suara, dan debat spontan.',
+      questions: [
+        {
+          id: 1,
+          question: "What rhetorical device repeats words at the beginning of successive sentences for dramatic impact?",
+          options: [
+            "Anaphora",
+            "Metaphor",
+            "Alliteration",
+            "Hyperbole"
+          ],
+          correctAnswer: 0,
+          explanation: "Anaphora repeats a word or phrase at the beginning of successive clauses."
+        },
+        {
+          id: 2,
+          question: "In spontaneous debating, what does the 'Recognize & Refute' strategy involve?",
+          options: [
+            "Ignoring the opponent's argument completely",
+            "Acknowledging the opponent's premise before exposing its logical flaw",
+            "Screaming louder than the opponent",
+            "Admitting defeat right away"
+          ],
+          correctAnswer: 1,
+          explanation: "Recognize & Refute shows active listening while effectively dismantling the opposing claim."
+        }
+      ]
+    }
+  ];
+
+  const handleStartQuiz = (quiz) => {
+    setActiveQuiz(quiz);
+    setQuizIndex(0);
+    setSelectedOption(null);
+    setQuizScore(0);
+    setQuizCompleted(false);
+    setShowAnswerFeedback(false);
+  };
+
+  const handleSelectQuizOption = (optionIndex) => {
+    if (showAnswerFeedback) return;
+    setSelectedOption(optionIndex);
+    setShowAnswerFeedback(true);
+  };
+
+  const handleNextQuizQuestion = () => {
+    let currentCorrect = activeQuiz.questions[quizIndex].correctAnswer;
+    let isCorrect = selectedOption === currentCorrect;
+    let newScore = quizScore + (isCorrect ? 1 : 0);
+    if (isCorrect) {
+      setQuizScore(newScore);
+    }
+
+    if (quizIndex + 1 < activeQuiz.questions.length) {
+      setQuizIndex(prev => prev + 1);
+      setSelectedOption(null);
+      setShowAnswerFeedback(false);
     } else {
-      setSelectedLesson({ ...lesson, levelCode });
-      setShowLockModal(true);
+      setQuizCompleted(true);
+      try {
+        confetti({ particleCount: 90, spread: 60, origin: { y: 0.6 } });
+      } catch (e) {}
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
       
+      {/* LOGGED IN STUDENT DASHBOARD HEADER & PROGRESS BANNER */}
+      {user && (
+        <div className="bg-gradient-to-r from-slate-900 via-brand to-slate-950 rounded-[32px] sm:rounded-[48px] p-6 sm:p-10 text-white shadow-2xl border-2 border-slate-700 space-y-6 relative overflow-hidden">
+          
+          {/* Ambient Glow */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-lime/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          {/* User Welcome Row */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 bg-lime text-dark px-3.5 py-1 rounded-full text-xs font-black uppercase border border-dark">
+                <Sparkles className="w-3.5 h-3.5" /> Active Package: {user?.package_name || 'Standard Pro'} Plan
+              </div>
+              <h1 className="font-stinger font-black text-2xl sm:text-4xl text-white">
+                Welcome back, {user?.full_name || 'Learner'}! 👋
+              </h1>
+              <p className="text-slate-300 text-xs sm:text-sm font-semibold">
+                You are currently on a <strong className="text-lime">{user?.streak || 7}-Day Speaking Streak</strong>. Keep up the daily practice!
+              </p>
+            </div>
+
+            {/* User Gamified Stats */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex items-center gap-3 min-w-[130px]">
+                <div className="w-10 h-10 rounded-xl bg-lime/20 text-lime flex items-center justify-center font-black text-base">
+                  ⚡
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Total XP</div>
+                  <div className="font-stinger font-black text-lg text-lime">{user?.xp || 1450} XP</div>
+                </div>
+              </div>
+
+              <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex items-center gap-3 min-w-[130px]">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-black">
+                  🔥
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Streak</div>
+                  <div className="font-stinger font-black text-lg text-white">{user?.streak || 7} Days</div>
+                </div>
+              </div>
+
+              <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex items-center gap-3 min-w-[130px]">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black">
+                  <Award className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Points</div>
+                  <div className="font-stinger font-black text-lg text-emerald-400">{user?.points || 420} Pts</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Active Lesson Quick Action Widget */}
+          <div className="bg-slate-950/90 p-5 rounded-3xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+            <div className="space-y-1 text-center sm:text-left w-full sm:w-auto">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <span className="bg-lime/20 text-lime px-2.5 py-0.5 rounded text-[10px] font-black uppercase border border-lime/30">
+                  Level A1 • Modul 1.1
+                </span>
+                <span className="text-[11px] font-bold text-slate-400">Current Speaking Lesson</span>
+              </div>
+              <h3 className="font-stinger font-black text-lg text-white">Self Introduction & Icebreakers</h3>
+              <p className="text-xs text-slate-400 font-medium">Target Vocabulary: Delighted, Profession, Enthusiastic, Casual</p>
+              <div className="w-full sm:w-64 bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+                <div className="bg-lime h-full w-3/4 rounded-full"></div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <button
+                onClick={() => setActiveTab('lesson-view')}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-lime text-dark font-black text-xs shadow-limeGlow hover:scale-105 transition-transform flex items-center justify-center gap-2 border-2 border-dark cursor-pointer flex-shrink-0"
+              >
+                <Play className="w-4 h-4 fill-dark" />
+                <span>Resume Practice</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('ai-chat')}
+                className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 font-extrabold text-xs flex items-center justify-center gap-2 border border-slate-700 cursor-pointer flex-shrink-0"
+              >
+                <MessageSquare className="w-4 h-4 text-lime" />
+                <span>AI Coach</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      )}
+
       {/* HERO SECTION BANNER */}
       <div className="relative bg-gradient-to-br from-[#0845B2] via-[#0B52CE] to-[#052C77] rounded-[32px] sm:rounded-[48px] p-6 sm:p-12 text-white shadow-2xl overflow-hidden border border-blue-400/40 space-y-6">
         
@@ -282,38 +583,128 @@ export default function LMSView() {
 
       </div>
 
-      {/* FILTER LEVEL TABS */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-3 rounded-2xl border-2 border-slate-200/90 shadow-sm">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+      {/* FILTER LEVEL TABS (ULTRA-CLEAN NO-SCROLLBAR SUB-NAVBAR) */}
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white/95 backdrop-blur-2xl p-2.5 sm:p-3 rounded-3xl border-2 border-slate-200/90 shadow-xl relative z-20">
+        
+        {/* Horizontal Tabs without scrollbars */}
+        <div className="flex items-center gap-2 overflow-x-auto py-1 px-1 scrollbar-none [::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {[
-            { id: 'ALL', label: 'Semua Level (14 Modul)' },
-            { id: 'A1', label: 'A1 Foundation' },
-            { id: 'B1', label: 'B1 Business' },
-            { id: 'B2', label: 'B2 IELTS 7.0+' },
-            { id: 'C1', label: 'C1 Public Speaking' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setSelectedLevel(tab.id)}
-              className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex-shrink-0 border-2 ${
-                selectedLevel === tab.id 
-                  ? 'bg-brand text-lime border-dark shadow-glow scale-[1.02]' 
-                  : 'bg-slate-50 text-slate-700 border-transparent hover:bg-slate-100 hover:text-brand'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+            { id: 'ALL', label: 'Modul Mahir Speaking', count: '14 Modul' },
+            { id: 'QUIZ', label: '✦ Free Quizzes', isFree: true }
+          ].map((tab) => {
+            const isActive = selectedLevel === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedLevel(tab.id)}
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 flex-shrink-0 cursor-pointer border-2 ${
+                  isActive 
+                    ? 'bg-slate-900 text-white border-dark shadow-xl scale-[1.03]' 
+                    : tab.isFree 
+                      ? 'bg-lime/20 text-dark border-lime/60 hover:bg-lime hover:scale-105 shadow-sm'
+                      : 'bg-slate-50 text-slate-700 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+              >
+                <span>{tab.label}</span>
+                {tab.isFree ? (
+                  <span className="bg-lime text-dark text-[9px] font-black uppercase px-2 py-0.5 rounded-full border border-dark animate-pulse">
+                    FREE
+                  </span>
+                ) : (
+                  tab.count && (
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md ${
+                      isActive ? 'bg-lime text-dark font-black' : 'bg-slate-200 text-slate-600 font-extrabold'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  )
+                )}
+              </button>
+            );
+          })}
         </div>
 
+        {/* Pricing Quick Button */}
         <button
           onClick={() => setActiveTab('pricing')}
-          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-lime text-dark font-black text-xs border-2 border-dark shadow-limeGlow hover:scale-105 transition-transform flex items-center justify-center gap-2 flex-shrink-0"
+          className="w-full lg:w-auto px-6 py-3 rounded-2xl bg-lime text-dark font-black text-xs border-2 border-dark shadow-limeGlow hover:scale-105 transition-transform flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer"
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-4 h-4 text-dark" />
           <span>Buka Semua Akses (Pricing)</span>
         </button>
       </div>
+
+      {/* INTERACTIVE QUIZZES HUB SECTION (100% FREE FOR ALL LEARNERS) */}
+      {selectedLevel === 'QUIZ' && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          
+          {/* Header Banner */}
+          <div className="bg-gradient-to-br from-slate-900 via-[#0B192C] to-slate-950 p-6 sm:p-10 rounded-3xl sm:rounded-4xl text-white border-2 border-slate-700 shadow-2xl space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-lime/15 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div className="relative z-10 flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 bg-lime text-dark px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border border-dark shadow-md">
+                <Sparkles className="w-4 h-4 text-dark" />
+                <span>100% GRATIS UNTUK SEMUA PENGGUNA</span>
+              </div>
+              <span className="text-xs font-mono font-bold text-slate-400">Tanpa Perlu Berlangganan</span>
+            </div>
+
+            <div className="relative z-10 space-y-2 max-w-3xl">
+              <h2 className="font-stinger font-black text-3xl sm:text-5xl text-white tracking-wide">
+                Uji Kemampuan <span className="text-lime underline decoration-lime/50 decoration-wavy">Speaking & Grammar</span> Kamu
+              </h2>
+              <p className="text-slate-300 text-xs sm:text-base font-semibold leading-relaxed">
+                Pilih kuis interaktif sesuai level CEFR kamu. Dapatkan evaluasi skor instan, jawaban pembahasan mendalam, dan poin XP secara gratis!
+              </p>
+            </div>
+          </div>
+
+          {/* Quiz Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {quizzesList.map((qz) => (
+              <div 
+                key={qz.code}
+                className="bg-slate-950/90 text-white rounded-3xl p-6 sm:p-8 border-2 border-slate-800 hover:border-lime/60 shadow-xl transition-all space-y-6 flex flex-col justify-between group relative overflow-hidden"
+              >
+                <div className="space-y-4 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <span className={`${qz.badgeBg} text-white px-3.5 py-1 rounded-xl text-xs font-black uppercase tracking-wider border border-white/20`}>
+                      {qz.level}
+                    </span>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className="bg-lime/20 text-lime border border-lime/40 text-[10px] font-mono font-black px-2.5 py-0.5 rounded-md">
+                        100% FREE
+                      </span>
+                      <span className="text-xs font-mono font-bold text-slate-400">
+                        {qz.questions.length} Soal
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 className="font-stinger font-black text-xl sm:text-2xl text-white group-hover:text-lime transition-colors leading-snug">
+                    {qz.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+                    {qz.desc}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => handleStartQuiz(qz)}
+                  className="w-full py-4 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-[1.02] transition-transform flex items-center justify-center gap-2.5 border-2 border-dark cursor-pointer relative z-10"
+                >
+                  <Play className="w-4 h-4 fill-dark" />
+                  <span>Mulai Quiz Gratis ({qz.code})</span>
+                </button>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      )}
 
       {/* ROADMAP SECTIONS DISPLAY */}
       <div className="space-y-12">
@@ -533,6 +924,182 @@ export default function LMSView() {
                 </button>
               )}
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* INTERACTIVE QUIZ PLAYER MODAL */}
+      {activeQuiz && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-slate-900 text-white rounded-3xl sm:rounded-4xl p-6 sm:p-8 max-w-2xl w-full space-y-6 border-4 border-slate-700 shadow-2xl relative my-auto overflow-hidden">
+            
+            {/* Ambient Background Glow */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-lime/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            {/* Close Button */}
+            <button 
+              onClick={() => setActiveQuiz(null)}
+              className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors z-20"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {!quizCompleted ? (
+              <div className="space-y-6 relative z-10">
+                
+                {/* Header Info & Progress Bar */}
+                <div className="space-y-3 border-b border-slate-800 pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className={`${activeQuiz.badgeBg} text-white px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider shadow-sm`}>
+                        {activeQuiz.level} Quiz
+                      </span>
+                      <span className="bg-lime/20 text-lime text-[10px] font-mono font-black px-2.5 py-0.5 rounded-full border border-lime/30">
+                        100% FREE
+                      </span>
+                    </div>
+
+                    <span className="text-xs font-mono font-extrabold text-lime">
+                      Pertanyaan {quizIndex + 1} / {activeQuiz.questions.length}
+                    </span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-lime h-full transition-all duration-300 rounded-full shadow-limeGlow"
+                      style={{ width: `${((quizIndex + 1) / activeQuiz.questions.length) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Question */}
+                <div className="space-y-5">
+                  <span className="text-[11px] font-mono font-black text-slate-400 uppercase tracking-widest">
+                    PILIH JAWABAN YANG PALING TEPAT:
+                  </span>
+                  <h3 className="font-stinger font-black text-xl sm:text-2xl text-white leading-snug">
+                    {activeQuiz.questions[quizIndex].question}
+                  </h3>
+
+                  {/* Options */}
+                  <div className="space-y-3">
+                    {activeQuiz.questions[quizIndex].options.map((opt, idx) => {
+                      const isSelected = selectedOption === idx;
+                      const isCorrect = idx === activeQuiz.questions[quizIndex].correctAnswer;
+                      const optionLetters = ['A', 'B', 'C', 'D'];
+
+                      let optionStyle = "bg-slate-950/80 border-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-800/80";
+                      let letterStyle = "bg-slate-800 text-slate-300";
+
+                      if (showAnswerFeedback) {
+                        if (isCorrect) {
+                          optionStyle = "bg-emerald-950/90 border-2 border-emerald-500 text-emerald-100 font-extrabold shadow-lg";
+                          letterStyle = "bg-emerald-500 text-slate-950 font-black";
+                        } else if (isSelected) {
+                          optionStyle = "bg-red-950/90 border-2 border-red-500 text-red-100 font-extrabold shadow-lg";
+                          letterStyle = "bg-red-500 text-white font-black";
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleSelectQuizOption(idx)}
+                          disabled={showAnswerFeedback}
+                          className={`w-full p-4 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition-all flex items-center justify-between gap-3 ${optionStyle}`}
+                        >
+                          <div className="flex items-center gap-3.5">
+                            <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black flex-shrink-0 ${letterStyle}`}>
+                              {optionLetters[idx]}
+                            </span>
+                            <span>{opt}</span>
+                          </div>
+
+                          {showAnswerFeedback && isCorrect && (
+                            <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                          )}
+                          {showAnswerFeedback && isSelected && !isCorrect && (
+                            <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Explanation Box */}
+                {showAnswerFeedback && (
+                  <div className="bg-slate-950 border-l-4 border-lime p-4.5 rounded-2xl space-y-1.5 animate-in fade-in duration-200 shadow-lg">
+                    <div className="text-[11px] font-black text-lime uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-lime" /> Pembahasan & Kunci Jawaban:
+                    </div>
+                    <p className="text-xs text-slate-200 font-medium leading-relaxed">
+                      {activeQuiz.questions[quizIndex].explanation}
+                    </p>
+                  </div>
+                )}
+
+                {/* Next Button */}
+                {showAnswerFeedback && (
+                  <button
+                    onClick={handleNextQuizQuestion}
+                    className="w-full py-4 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-[1.01] transition-transform flex items-center justify-center gap-2 border-2 border-dark cursor-pointer"
+                  >
+                    <span>{quizIndex + 1 === activeQuiz.questions.length ? 'Lihat Hasil & Skor Quiz' : 'Pertanyaan Selanjutnya ➔'}</span>
+                  </button>
+                )}
+
+              </div>
+            ) : (
+              /* Quiz Finished View */
+              <div className="text-center space-y-6 py-4 animate-in zoom-in-95 duration-300 relative z-10">
+                <div className="w-20 h-20 rounded-3xl bg-lime/20 text-lime border-2 border-lime flex items-center justify-center mx-auto shadow-limeGlow">
+                  <Trophy className="w-10 h-10 text-lime" />
+                </div>
+
+                <div className="space-y-2">
+                  <span className="bg-lime text-dark px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider border border-dark">
+                    ✦ Quiz Completed!
+                  </span>
+                  <h2 className="font-stinger font-black text-3xl sm:text-4xl text-white">
+                    {activeQuiz.title}
+                  </h2>
+                  <p className="text-slate-300 text-xs sm:text-sm font-semibold">
+                    Selamat! Kamu telah menyelesaikan kuis interaktif level {activeQuiz.level}.
+                  </p>
+                </div>
+
+                <div className="bg-slate-950 p-6 rounded-3xl border border-slate-800 max-w-sm mx-auto space-y-2 shadow-2xl">
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-400">Skor Akhir Kamu</div>
+                  <div className="text-5xl font-black text-lime drop-shadow-md">
+                    {Math.round((quizScore / activeQuiz.questions.length) * 100)}%
+                  </div>
+                  <div className="text-xs font-bold text-slate-300">
+                    {quizScore} dari {activeQuiz.questions.length} soal dijawab benar (+{quizScore * 25} XP)
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => handleStartQuiz(activeQuiz)}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-slate-800 text-white font-extrabold text-xs hover:bg-slate-700 transition-colors flex items-center justify-center gap-2 border border-slate-700 cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4 text-lime" />
+                    <span>Coba Lagi Quiz Ini</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveQuiz(null)}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-105 transition-transform flex items-center justify-center gap-2 border-2 border-dark cursor-pointer"
+                  >
+                    <span>Selesai & Kembali ke LMS</span>
+                    <CheckCircle2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>

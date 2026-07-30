@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  Sparkles, Award, Play, ArrowRight, Video, Camera, Maximize2, X, 
+import {
+  Sparkles, Award, Play, ArrowRight, Video, Camera, Maximize2, X,
   UserCheck, Star, Users, CheckCircle2, ChevronRight, Volume2
 } from 'lucide-react';
 
@@ -24,35 +24,35 @@ export default function Branding() {
       id: 0,
       title: "1-on-1 Native Mentorship",
       category: "Native Session",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+      image: "/mo.png",
       instructor: "Mr. David Miller (UK Native Mentor)"
     },
     {
       id: 1,
       title: "Interactive Group Speaking",
       category: "Active Drill",
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
+      image: "/ma.png",
       instructor: "Miss Sarah Wijaya, M.Ed"
     },
     {
       id: 2,
       title: "Real Instructor Live Coaching",
       category: "Masterclass",
-      image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
+      image: "/mi.png",
       instructor: "Coach Alex, Cambridge Certified"
     },
     {
       id: 3,
       title: "IELTS Speaking Band 7.5+",
       category: "IELTS Prep",
-      image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
+      image: "/mo.png",
       instructor: "Mr. James Watson, IELTS Examiner"
     },
     {
       id: 4,
       title: "Business Pitching Mentorship",
       category: "Corporate",
-      image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
+      image: "/ma.png",
       instructor: "Coach Amanda, Corporate Mentor"
     }
   ];
@@ -60,57 +60,57 @@ export default function Branding() {
   const bentoWallPhotos = [
     {
       id: 1,
-      url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+      url: "/mo.png",
       title: "Sesi Mentorship 1-on-1 Tatap Muka",
       category: "tutor-1on1",
       categoryName: "Mentorship 1-on-1",
       desc: "Bimbingan langsung bersama Instruktur Ahli untuk koreksi pengucapan & intonasi secara akurat.",
-      instructor: "Miss Sarah Wijaya, M.Ed"
+      instructor: "Ms. Era Purike"
     },
     {
       id: 2,
-      url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
+      url: "/ma.png",
       title: "Group Speaking Drill & Practice",
       category: "workshop",
       categoryName: "IELTS & Business Prep",
       desc: "Diskusi kelompok interaktif dibimbing fasilitator senior untuk membangun refleks bicara spontan.",
-      instructor: "Coach Alex, Cambridge Certified"
+      instructor: "Ms. Deasy Puspawati"
     },
     {
       id: 3,
-      url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
+      url: "/mi.png",
       title: "Native Speaker Intensive Class",
       category: "native",
       categoryName: "Native Speaker",
       desc: "Praktik percakapan bahasa Inggris bisnis bersama penutur asli asal Inggris & Australia.",
-      instructor: "Mr. David Miller (UK Native)"
+      instructor: "Ms. Ade Ihdinayah"
     },
     {
       id: 4,
-      url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
+      url: "/mo.png",
       title: "Simulasi Ujian Lisan IELTS Band 7.5+",
       category: "workshop",
       categoryName: "IELTS & Business Prep",
       desc: "Simulasi cue card & pertanyaan IELTS bersama penguji lisan tersertifikasi.",
-      instructor: "Mr. James Watson, IELTS Examiner"
+      instructor: "Ms. Era Purike"
     },
     {
       id: 5,
-      url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
+      url: "/ma.png",
       title: "Business Pitching & Job Interview",
       category: "tutor-1on1",
       categoryName: "Mentorship 1-on-1",
       desc: "Latihan presentasi eksekutif dan persetujuan rapat bersama konsultan komunikasi.",
-      instructor: "Coach Amanda, Executive Mentor"
+      instructor: "Ms. Deasy Puspawati"
     },
     {
       id: 6,
-      url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
+      url: "/mi.png",
       title: "Komunitas Active Speaker Weekly",
       category: "native",
       categoryName: "Native Speaker",
       desc: "Pertemuan mingguan siswa dan alumni untuk menjaga kelancaran bicara bahasa Inggris.",
-      instructor: "Native Community Lead"
+      instructor: "Ms. Ade Ihdinayah"
     }
   ];
 
@@ -119,7 +119,7 @@ export default function Branding() {
       title: "Sesi Mentorship Speaking 1-on-1 Bersama Instruktur Profesional",
       level: "A1 - C1 All Levels",
       duration: "02:45",
-      thumbnail: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+      thumbnail: "/mo.png",
       embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
       description: "Siswa dibimbing secara langsung oleh Instruktur Ahli dalam memperbaiki artikulasi, tata bahasa, dan intonasi secara real-time."
     },
@@ -127,7 +127,7 @@ export default function Branding() {
       title: "Simulasi Lisan Ujian IELTS Speaking Band 7.5+ dengan Penguji Tersertifikasi",
       level: "B2 - Upper Intermediate",
       duration: "03:40",
-      thumbnail: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
+      thumbnail: "/ma.png",
       embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
       description: "Strategi praktis menjawab pertanyaan cue card IELTS dengan pembawaan percaya diri, intonasi tepat, dan variasi kosakata kaya."
     },
@@ -135,7 +135,7 @@ export default function Branding() {
       title: "Masterclass Business English Pitching Bersama Native Speaker Mentor",
       level: "B1 - Intermediate",
       duration: "01:50",
-      thumbnail: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=800",
+      thumbnail: "/mi.png",
       embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
       description: "Panduan presentasi profesional untuk wawancara kerja dan rapat tim internasional menggunakan Metode PREP Framework."
     }
@@ -143,43 +143,43 @@ export default function Branding() {
 
   const instructors = [
     {
-      name: "Mr. David Miller",
-      role: "Senior Native English Mentor",
-      origin: "United Kingdom (UK)",
-      exp: "12+ Tahun Pengalaman",
-      spec: "Native Accent & Professional Fluency",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600"
+      name: "Ms. Era Purike",
+      role: "Senior Speaking Specialist",
+      origin: "English Speaking Partner Tutor",
+      exp: "Experienced Tutor",
+      spec: "Integrated Modul & One on One Speaking",
+      image: "/mo.png"
     },
     {
-      name: "Miss Sarah Wijaya, M.Ed",
-      role: "Lead Master Instructor",
-      origin: "Alumni University of Melbourne",
-      exp: "8+ Tahun Pengalaman",
-      spec: "Pronunciation & Intonation Specialist",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600"
+      name: "Ms. Deasy Puspawati",
+      role: "IELTS & Grammar Specialist",
+      origin: "English Speaking Partner Tutor",
+      exp: "Experienced Tutor",
+      spec: "Daily Learning & Native Speaker Meeting",
+      image: "/ma.png"
     },
     {
-      name: "Mr. James Watson",
-      role: "Certified IELTS Examiner Mentor",
-      origin: "Australia",
-      exp: "10+ Tahun Pengalaman",
-      spec: "IELTS Speaking Band 7.5+ Coaching",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600"
+      name: "Ms. Ade Ihdinayah",
+      role: "Conversational Fluency Coach",
+      origin: "English Speaking Partner Mentor",
+      exp: "Experienced Tutor",
+      spec: "One-on-One Speaking & Native Workshops",
+      image: "/mi.png"
     }
   ];
 
-  const filteredPhotos = activeCategory === 'all' 
-    ? bentoWallPhotos 
+  const filteredPhotos = activeCategory === 'all'
+    ? bentoWallPhotos
     : bentoWallPhotos.filter(photo => photo.category === activeCategory);
 
   return (
-    <div className="bg-[#050C18] text-white min-h-screen -mt-4 sm:-mt-8 -mx-4 sm:-mx-6 lg:-mx-8 py-8 sm:py-14 space-y-16 sm:space-y-24 overflow-hidden">
-      
+    <div className="bg-[#050C18] text-white min-h-screen py-8 sm:py-14 px-4 sm:px-8 space-y-16 sm:space-y-24 overflow-x-hidden border-b-2 border-cyan-400/80">
+
       {/* ========================================================================= */}
       {/* SECTION 1: FAN-OUT 3D CAROUSEL GALLERY HERO (Reference Screenshot 1) */}
       {/* ========================================================================= */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative">
-        
+
 
 
         {/* 3D FAN-OUT CAROUSEL STACK */}
@@ -206,14 +206,13 @@ export default function Branding() {
                     zIndex: zIndexVal,
                     opacity: opacityVal
                   }}
-                  className={`absolute w-44 sm:w-60 md:w-72 h-56 sm:h-72 md:h-88 rounded-3xl sm:rounded-4xl overflow-hidden border-2 transition-all duration-500 ease-out cursor-pointer shadow-2xl ${
-                    isCenter 
-                      ? 'border-lime shadow-[0_0_60px_rgba(204,255,0,0.35)] ring-4 ring-lime/20' 
+                  className={`absolute w-44 sm:w-60 md:w-72 h-56 sm:h-72 md:h-88 rounded-3xl sm:rounded-4xl overflow-hidden border-2 transition-all duration-500 ease-out cursor-pointer shadow-2xl ${isCenter
+                      ? 'border-lime shadow-[0_0_60px_rgba(204,255,0,0.35)] ring-4 ring-lime/20'
                       : 'border-slate-700/80 hover:border-slate-400'
-                  }`}
+                    }`}
                 >
                   <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                  
+
                   {/* Overlay Gradient & Title */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050C18] via-transparent to-transparent flex flex-col justify-end p-4 text-left">
                     <span className="text-[10px] font-black uppercase text-lime tracking-wider">{item.category}</span>
@@ -254,10 +253,10 @@ export default function Branding() {
       {/* SECTION 2: MORPHIC HERO & BENTO WALL GALLERY (Reference Screenshot 2) */}
       {/* ========================================================================= */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
+
         {/* Top Header Split Layout (Morphic Style) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end border-t border-slate-800/80 pt-12">
-          
+
           {/* Left Headline */}
           <div className="lg:col-span-7 space-y-4">
             <div className="inline-flex items-center gap-2 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider">
@@ -308,11 +307,10 @@ export default function Branding() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap border ${
-                    activeCategory === cat.id
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap border ${activeCategory === cat.id
                       ? 'bg-lime text-slate-950 border-lime shadow-md'
                       : 'bg-slate-900/90 text-slate-400 border-slate-800 hover:text-white'
-                  }`}
+                    }`}
                 >
                   {cat.label}
                 </button>
@@ -447,11 +445,10 @@ export default function Branding() {
               <div
                 key={idx}
                 onClick={() => setActiveVideo(idx)}
-                className={`p-4 rounded-3xl cursor-pointer transition-all border flex items-center gap-4 ${
-                  activeVideo === idx
+                className={`p-4 rounded-3xl cursor-pointer transition-all border flex items-center gap-4 ${activeVideo === idx
                     ? 'bg-slate-900 text-white border-lime shadow-lg scale-[1.02]'
                     : 'bg-slate-900/60 text-slate-300 border-slate-800 hover:border-slate-600'
-                }`}
+                  }`}
               >
                 <div className="w-24 h-16 rounded-2xl overflow-hidden bg-black flex-shrink-0 relative">
                   <img src={vid.thumbnail} alt={vid.title} className="w-full h-full object-cover opacity-80" />
@@ -473,37 +470,6 @@ export default function Branding() {
           </div>
         </div>
       </div>
-
-      {/* PHOTO LIGHTBOX MODAL */}
-      {selectedPhoto && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
-          <div className="bg-slate-900 text-white rounded-3xl max-w-3xl w-full p-4 sm:p-6 border border-slate-700 shadow-2xl space-y-4 relative">
-            <button
-              onClick={() => setSelectedPhoto(null)}
-              className="absolute top-4 right-4 bg-slate-800 hover:bg-slate-700 text-white p-2 rounded-full cursor-pointer transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black">
-              <img src={selectedPhoto.url} alt={selectedPhoto.title} className="w-full h-full object-cover" />
-            </div>
-
-            <div className="space-y-2">
-              <span className="text-xs font-black text-lime uppercase bg-lime/10 px-3 py-1 rounded-full border border-lime/30">
-                {selectedPhoto.categoryName}
-              </span>
-              <h3 className="text-xl font-black text-white">{selectedPhoto.title}</h3>
-              <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">{selectedPhoto.desc}</p>
-              <div className="pt-2 flex items-center gap-2 text-xs font-bold text-slate-400 border-t border-slate-800">
-                <UserCheck className="w-4 h-4 text-lime" />
-                <span>Didampingi oleh: {selectedPhoto.instructor}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }

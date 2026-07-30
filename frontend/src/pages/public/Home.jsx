@@ -3,7 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { 
   Mic, Sparkles, Zap, Shield, Trophy, CheckCircle, ArrowRight, ArrowUpRight, Play, Volume2, 
   ChevronDown, ChevronUp, Star, Users, Check, Music, Coffee, Briefcase, Target, Lightbulb,
-  Globe, Mail, User, GraduationCap, Instagram, VolumeX, RefreshCw, Radio, BookOpen, Clock, Heart, Award
+  Globe, Mail, User, GraduationCap, Instagram, VolumeX, RefreshCw, Radio, BookOpen, Clock, Heart, Award,
+  Bot, MessageSquare
 } from 'lucide-react';
 
 export default function Home() {
@@ -261,191 +262,119 @@ export default function Home() {
 
       </section>
 
-      {/* SECTION 1B: ENHANCED INTERACTIVE AI VOICE COACH DEMO CARD (MATCHING HERO WIDTH EXACTLY) */}
+      {/* SECTION 1B: PERKENALAN KARAKTER MASHIRA (EDITORIAL CHARACTER SHOWCASE) */}
       <section className="relative px-2 sm:px-4 lg:px-6 max-w-[1440px] mx-auto">
         
-        {/* Main Enclosed Card Box (Matching Hero Box Width & Styling) */}
-        <div className="relative bg-gradient-to-br from-slate-900 via-[#0B192C] to-slate-950 backdrop-blur-xl rounded-3xl sm:rounded-4xl border-2 border-slate-700/80 shadow-2xl p-4 sm:p-8 lg:p-10 text-white overflow-hidden">
+        {/* Main Character Showcase Box */}
+        <div className="relative bg-gradient-to-br from-slate-900 via-[#0B192C] to-slate-950 backdrop-blur-xl rounded-3xl sm:rounded-4xl border-2 border-slate-700/80 shadow-2xl p-6 sm:p-10 lg:p-14 text-white overflow-hidden">
           
-          {/* Soft Ambient Neon Glows */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-lime/15 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+          {/* Subtle Ambient Glow Effect */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-lime/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-          {/* Header & Accent Controls Bar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5 relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="inline-flex items-center gap-2 bg-lime/15 text-lime border border-lime/30 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black shadow-sm">
-                <Sparkles className="w-4 h-4 text-lime animate-pulse" />
-                <span>✦ LIVE AI VOICE COACH DEMO (INTERAKTIF)</span>
-              </div>
-            </div>
-
-            {/* Accent Selector Toggle (US Accent / UK Accent) */}
-            <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 w-fit">
-              <button
-                onClick={() => setSelectedAccent('en-US')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                  selectedAccent === 'en-US' 
-                    ? 'bg-lime text-dark shadow-md scale-105' 
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                🇺🇸 US Accent
-              </button>
-              <button
-                onClick={() => setSelectedAccent('en-GB')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                  selectedAccent === 'en-GB' 
-                    ? 'bg-lime text-dark shadow-md scale-105' 
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                🇬🇧 UK Accent
-              </button>
-            </div>
-          </div>
-
-          {/* Scenario Selector Pills */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-5 relative z-10">
-            {scenarios.map((sc, idx) => {
-              const ScIcon = sc.icon;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setActiveScenario(idx);
-                    setMicFeedback(null);
-                  }}
-                  className={`p-3.5 rounded-2xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
-                    activeScenario === idx 
-                      ? 'bg-lime text-dark border-dark font-black shadow-limeGlow scale-[1.02]' 
-                      : 'bg-slate-900/80 text-white border-slate-800 hover:bg-slate-800/80 font-bold'
-                  }`}
-                >
-                  <div className="flex items-center justify-between text-xs mb-1.5">
-                    <ScIcon className={`w-4 h-4 ${activeScenario === idx ? 'text-dark' : 'text-lime'}`} />
-                    <span className={`text-[9px] font-mono px-2 py-0.5 rounded font-black ${activeScenario === idx ? 'bg-dark text-lime' : 'bg-lime/20 text-lime'}`}>
-                      {sc.level}
-                    </span>
-                  </div>
-                  <span className="text-xs sm:text-sm font-extrabold truncate">{sc.title}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Interactive Speech & Sound Wave Player */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch pt-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center relative z-10">
             
-            {/* Speech Sound Box (8 cols) */}
-            <div className="lg:col-span-8 bg-slate-950/90 text-white p-5 sm:p-7 rounded-3xl space-y-4 shadow-2xl border border-slate-800 flex flex-col justify-between">
+            {/* LEFT COLUMN: MASHIRA CHARACTER AVATAR SHOWCASE (5 cols - BORDERLESS WITHOUT BOX) */}
+            <div className="lg:col-span-5 flex flex-col items-center justify-center relative text-center">
               
-              <div className="flex items-center justify-between text-xs font-mono font-bold text-lime">
-                <span className="flex items-center gap-2">
-                  <Music className="w-4 h-4 text-lime" /> Target Sentence to Practice:
-                </span>
-                <span className="text-slate-400">Accent: {selectedAccent}</span>
+              {/* Status Badge */}
+              <div className="inline-flex items-center gap-2.5 bg-slate-900/90 border border-slate-700 px-4 py-1.5 rounded-full text-xs font-black text-emerald-400 mb-2 shadow-lg backdrop-blur-md">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>ONLINE 24/7 • MASHIRA AI</span>
               </div>
 
-              {/* Transcript Display */}
-              <p className="text-sm sm:text-xl font-bold text-white italic bg-slate-900/90 p-4 sm:p-6 rounded-2xl border border-slate-800 leading-relaxed shadow-inner">
-                "{scenarios[activeScenario].transcript}"
-              </p>
-
-              {/* Soundwave Equalizer Animation */}
-              <div className="flex items-center justify-center gap-2 py-3 bg-slate-900/60 rounded-2xl border border-slate-800/80">
-                <div className={`w-2 bg-lime rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-1' : 'h-3'}`}></div>
-                <div className={`w-2 bg-emerald-400 rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-2' : 'h-6'}`}></div>
-                <div className={`w-2 bg-white rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-3' : 'h-8'}`}></div>
-                <div className={`w-2 bg-amber-400 rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-4' : 'h-4'}`}></div>
-                <div className={`w-2 bg-lime rounded-full transition-all ${isPlayingDemo || isRecordingMic ? 'animate-soundwave-2' : 'h-7'}`}></div>
+              {/* Borderless Mashira Character Image */}
+              <div className="relative my-2 flex justify-center items-center w-full">
+                <div className="absolute inset-0 bg-lime/25 rounded-full blur-3xl pointer-events-none transform scale-90"></div>
+                <img 
+                  src="/4.png" 
+                  alt="Mashira - AI Speaking Companion" 
+                  className="h-80 sm:h-[430px] w-auto object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] relative z-10 hover:scale-105 transition-transform duration-500"
+                />
               </div>
 
-              {/* Dual Action Buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <button
-                  onClick={() => handlePlayDemo(scenarios[activeScenario].transcript)}
-                  className={`py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all border-2 cursor-pointer ${
-                    isPlayingDemo 
-                      ? 'bg-amber-400 text-dark border-dark shadow-goldGlow' 
-                      : 'bg-lime text-dark hover:bg-emerald-400 border-dark shadow-limeGlow hover:scale-[1.02]'
-                  }`}
-                >
-                  {isPlayingDemo ? (
-                    <>
-                      <Volume2 className="w-4 h-4 animate-spin" />
-                      <span>AI Coach Sedang Bicara...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 fill-dark" />
-                      <span>Dengar Suara Native (AI)</span>
-                    </>
-                  )}
-                </button>
-
-                <button
-                  onClick={handleStartMicDemo}
-                  className={`py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all border-2 cursor-pointer ${
-                    isRecordingMic 
-                      ? 'bg-red-500 text-white border-white animate-pulse shadow-lg' 
-                      : 'bg-emerald-500 text-white hover:bg-lime hover:text-dark border-emerald-400 shadow-md hover:scale-[1.02]'
-                  }`}
-                >
-                  <Mic className={`w-4 h-4 ${isRecordingMic ? 'animate-bounce' : ''}`} />
-                  <span>{isRecordingMic ? 'Mendengarkan Mic...' : 'Coba Bicara Live (Mic)'}</span>
-                </button>
+              {/* Clean Character Title */}
+              <div className="space-y-1 z-10 pt-2">
+                <h3 className="font-stinger font-black text-3xl sm:text-4xl text-white tracking-widest uppercase drop-shadow-md">
+                  MASHIRA
+                </h3>
+                <p className="text-xs font-mono font-extrabold text-lime tracking-wider uppercase">
+                  Official AI Speaking Companion
+                </p>
               </div>
 
             </div>
 
-            {/* AI Real-time Feedback & Tip Widget (4 cols) */}
-            <div className="lg:col-span-4 bg-slate-950/90 p-5 sm:p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 text-white">
+            {/* RIGHT COLUMN: EDITORIAL CHARACTER STORY & INTRODUCTION (7 cols) */}
+            <div className="lg:col-span-7 space-y-8 text-left">
               
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-lime bg-lime/20 px-2.5 py-1 rounded">
-                    ✦ AI Diagnostic Feedback
-                  </span>
-                  <Radio className="w-4 h-4 text-lime animate-pulse" />
+              {/* Header Badge & Title */}
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 bg-lime/15 text-lime border border-lime/30 px-4 py-1.5 rounded-full text-xs font-black tracking-wider uppercase shadow-sm">
+                  <Sparkles className="w-4 h-4 text-lime" />
+                  <span>MEET YOUR AI COMPANION</span>
                 </div>
-
-                {/* Pronunciation Score Card */}
-                <div className="bg-emerald-950/80 border border-emerald-500/40 p-4 rounded-2xl space-y-1">
-                  <div className="text-[10px] font-black uppercase text-slate-300">Skor Pengucapan AI</div>
-                  <div className="text-2xl sm:text-3xl font-black text-lime">
-                    {micFeedback?.score || "96 / 100"}
-                  </div>
-                  <div className="text-xs font-bold text-emerald-300">
-                    {micFeedback?.status || "Sangat Lancar & Alami"}
-                  </div>
-                </div>
-
-                {/* AI Tip Box */}
-                <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-1.5">
-                  <div className="text-[10px] font-black uppercase text-amber-400 flex items-center gap-1.5">
-                    <Lightbulb className="w-3.5 h-3.5 text-amber-400" /> Tips Kelancaran AI
-                  </div>
-                  <p className="text-xs text-slate-200 leading-relaxed font-semibold">
-                    {scenarios[activeScenario].aiTip}
-                  </p>
-                </div>
+                
+                <h2 className="font-stinger font-black text-3xl sm:text-5xl lg:text-6xl text-white leading-tight">
+                  Halo! Aku <span className="text-lime underline decoration-lime/50 decoration-wavy">Mashira</span>
+                </h2>
               </div>
 
-              {/* Status Message */}
-              {micFeedback?.text && (
-                <div className="bg-blue-950/80 border border-blue-400/40 p-3 rounded-xl text-xs font-semibold text-blue-200">
-                  {micFeedback.text}
+              {/* Mashira Greeting Speech Quote Box */}
+              <div className="relative bg-slate-950/90 border-l-4 border-lime p-6 sm:p-7 rounded-2xl sm:rounded-3xl border-y border-r border-slate-800 space-y-3 shadow-2xl">
+                <div className="flex items-center gap-2 text-xs font-black text-lime uppercase tracking-widest font-mono">
+                  <MessageSquare className="w-4 h-4 text-lime" />
+                  <span>Pesan Dari Mashira</span>
                 </div>
-              )}
+                <p className="text-slate-100 text-sm sm:text-lg font-semibold leading-relaxed italic">
+                  "Di sini aku bakal siap nemenin kamu latihan percakapan Bahasa Inggris kapan saja tanpa rasa takut atau canggung. Bersama aku, kamu bisa bebas mengekspresikan diri dan mengasah kelancaran bicara dengan santai!"
+                </p>
+              </div>
 
-              <button
-                onClick={() => setActiveTab(user ? 'student-dashboard' : 'auth')}
-                className="w-full py-3.5 rounded-xl bg-lime text-dark font-black text-xs sm:text-sm hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2 border-2 border-dark cursor-pointer shadow-limeGlow"
-              >
-                <span>{user ? 'Buka Sesi AI Penuh' : 'Mulai Latihan Bebas'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Character Role Highlights (Clean Editorial List - NO PILLS, NO EMOJIS) */}
+              <div className="space-y-4 pt-2">
+                <div className="flex items-start gap-4 p-3 rounded-2xl hover:bg-slate-900/60 transition-colors">
+                  <div className="p-2.5 rounded-xl bg-lime/10 text-lime border border-lime/20 flex-shrink-0 mt-0.5">
+                    <Bot className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-black text-sm text-white uppercase tracking-wider">
+                      Teman Percakapan 24/7
+                    </h4>
+                    <p className="text-xs text-slate-300 font-semibold leading-relaxed">
+                      Siap diajak ngobrol kapan pun kamu mau latihan percakapan Bahasa Inggris tanpa batasan waktu atau janji temu.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-3 rounded-2xl hover:bg-slate-900/60 transition-colors">
+                  <div className="p-2.5 rounded-xl bg-lime/10 text-lime border border-lime/20 flex-shrink-0 mt-0.5">
+                    <Shield className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-black text-sm text-white uppercase tracking-wider">
+                      Suasana Bebas Canggung
+                    </h4>
+                    <p className="text-xs text-slate-300 font-semibold leading-relaxed">
+                      Ruang aman dan ramah untuk berlatih bicara tanpa khawatir dihakimi atau merasa malu saat melakukan kesalahan.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-3 rounded-2xl hover:bg-slate-900/60 transition-colors">
+                  <div className="p-2.5 rounded-xl bg-lime/10 text-lime border border-lime/20 flex-shrink-0 mt-0.5">
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-black text-sm text-white uppercase tracking-wider">
+                      Responsif & Adaptif
+                    </h4>
+                    <p className="text-xs text-slate-300 font-semibold leading-relaxed">
+                      Menyesuaikan topik percakapan dan ritme komunikasi sesuai dengan tingkat kelancaran dan kebutuhan kamu.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
             </div>
 
@@ -463,30 +392,57 @@ export default function Home() {
         </div>
       </div>
 
-      {/* SECTION 3: LMS SILABUS PREVIEW BANNER (NEW HIGHLIGHT) */}
-      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-brand via-blue-700 to-indigo-900 rounded-3xl sm:rounded-5xl p-6 sm:p-10 text-white shadow-2xl border-4 border-white flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-          <div className="space-y-3 max-w-3xl relative z-10">
+      {/* SECTION 3: LMS SILABUS & FREE QUIZZES BANNER */}
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left 7 cols: LMS Silabus */}
+        <div className="lg:col-span-7 bg-gradient-to-r from-brand via-blue-700 to-indigo-900 rounded-3xl sm:rounded-4xl p-6 sm:p-8 text-white shadow-2xl border-4 border-white flex flex-col justify-between space-y-6 relative overflow-hidden">
+          <div className="space-y-3 relative z-10">
             <div className="inline-flex items-center gap-2 bg-lime text-dark px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border border-dark">
               <BookOpen className="w-4 h-4 text-dark" />
-              <span>Baru: LMS Silabus & Kurikulum 4 Level</span>
+              <span>Silabus Kurikulum 4 Level</span>
             </div>
-            <h2 className="font-stinger font-black text-2xl sm:text-4xl text-white leading-tight">
+            <h2 className="font-stinger font-black text-2xl sm:text-3xl text-white leading-tight">
               Ingin Tahu Apa Saja Yang Bakal Dipelajari?
             </h2>
             <p className="text-slate-200 text-xs sm:text-sm font-semibold leading-relaxed">
-              Jelajahi seluruh silabus 4 level CEFR (A1 - C1), simulasi wawancara kerja, dan kisi-kisi tes IELTS secara gratis di halaman LMS.
+              Jelajahi seluruh silabus 4 level CEFR (A1 - C1), modul latihan suara AI, simulasi wawancara kerja, dan persiapan IELTS di halaman LMS.
             </p>
           </div>
 
           <button
             onClick={() => setActiveTab('lms')}
-            className="relative z-10 px-8 py-4 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-105 transition-all border-2 border-dark flex items-center justify-center gap-3 flex-shrink-0 cursor-pointer"
+            className="relative z-10 px-6 py-3.5 rounded-2xl bg-white text-brand font-black text-xs sm:text-sm hover:scale-[1.02] transition-all flex items-center justify-center gap-2.5 cursor-pointer w-fit"
           >
             <span>Lihat Silabus LMS Lengkap</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Right 5 cols: 100% FREE QUIZ CTA */}
+        <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 via-slate-950 to-dark rounded-3xl sm:rounded-4xl p-6 sm:p-8 text-white shadow-2xl border-4 border-lime flex flex-col justify-between space-y-6 relative overflow-hidden">
+          <div className="space-y-3 relative z-10">
+            <div className="inline-flex items-center gap-2 bg-lime text-dark px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-dark animate-pulse">
+              <Sparkles className="w-3.5 h-3.5 text-dark" />
+              <span>100% GRATIS UNTUK SIAPA SAJA</span>
+            </div>
+            <h2 className="font-stinger font-black text-2xl sm:text-3xl text-white leading-tight">
+              Uji Kemampuan <span className="text-lime">Speaking & Grammar</span>
+            </h2>
+            <p className="text-slate-300 text-xs sm:text-sm font-semibold leading-relaxed">
+              Ikuti Kuis Interaktif Level A1-C1 sekarang. Gratis untuk umum tanpa perlu bayar atau berlangganan!
+            </p>
+          </div>
+
+          <button
+            onClick={() => setActiveTab('lms')}
+            className="relative z-10 px-6 py-3.5 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm shadow-limeGlow hover:scale-[1.02] transition-all border-2 border-dark flex items-center justify-center gap-2.5 cursor-pointer"
+          >
+            <Bot className="w-4 h-4 text-dark" />
+            <span>Mulai Quiz Interaktif Gratis ➔</span>
+          </button>
+        </div>
+
       </section>
 
       {/* SECTION 4: EDITORIAL BENTO GRID WITH ARROW ACTION BADGES (↗) */}
@@ -553,113 +509,175 @@ export default function Home() {
       {/* SECTION 5: PRICING PACKAGES BENTO */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="text-center space-y-3 max-w-3xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-2 bg-lime text-dark text-xs font-black px-4 py-1 rounded-full uppercase border border-dark shadow-sm">
+            <Sparkles className="w-4 h-4 text-dark" />
+            <span>ENGLISH SPEAKING PARTNER • OPEN FOR 2025</span>
+          </div>
           <h2 className="font-helios text-3xl sm:text-5xl font-black text-brand uppercase">
             Pilihan Paket Langganan
           </h2>
           <p className="text-slate-700 font-bold text-xs sm:text-base">
             Pilih paket yang paling sesuai dengan target belajar Anda.
           </p>
-
-          <div className="inline-flex items-center bg-white p-1.5 rounded-full border border-slate-200 shadow-sm mt-2">
-            <button
-              onClick={() => setBillingCycle('monthly')}
-              className={`px-4 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
-                billingCycle === 'monthly' ? 'bg-brand text-white shadow-sm' : 'text-slate-600'
-              }`}
-            >
-              Bulanan
-            </button>
-            <button
-              onClick={() => setBillingCycle('yearly')}
-              className={`px-4 py-1.5 rounded-full text-xs font-black transition-all flex items-center gap-1 cursor-pointer ${
-                billingCycle === 'yearly' ? 'bg-brand text-white shadow-sm' : 'text-slate-600'
-              }`}
-            >
-              <span>Tahunan</span>
-              <span className="bg-lime text-dark text-[9px] font-black px-1 py-0.2 rounded">HEMAT 20%</span>
-            </button>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        {/* 4 Pricing Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          {/* Basic */}
-          <div className="bento-card p-6 sm:p-8 rounded-3xl sm:rounded-5xl flex flex-col justify-between space-y-6 border-2 border-white">
+          {/* Card 1: Group Speaking Kursus */}
+          <div className="bento-card p-6 rounded-3xl border-2 border-slate-200 flex flex-col justify-between space-y-6 hover:shadow-xl transition-all bg-white">
             <div className="space-y-4">
-              <span className="bg-slate-200 text-slate-800 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">Basic</span>
-              <h3 className="font-stinger font-black text-2xl text-slate-900">Basic Starter</h3>
-              <div className="pt-2">
-                <span className="font-stinger text-3xl sm:text-4xl font-black text-brand">
-                  {billingCycle === 'yearly' ? 'Rp 79.000' : 'Rp 99.000'}
+              <span className="bg-slate-200 text-slate-800 text-[11px] font-black px-3 py-1 rounded-full uppercase">
+                Paket Kursus
+              </span>
+              <h3 className="font-stinger font-black text-xl text-slate-900">Group Speaking Kursus</h3>
+              <p className="text-xs text-slate-600 font-semibold leading-relaxed">
+                Program belajar kelompok interaktif dibimbing instruktur untuk membangun keberanian bicara.
+              </p>
+              
+              <div className="pt-2 border-t border-slate-200">
+                <div className="font-stinger text-2xl font-black text-slate-900">
+                  Konsultasi Spesial
+                </div>
+                <span className="text-[11px] font-bold text-slate-500">
+                  Tersedia Skema Hemat Berkelompok
                 </span>
-                <span className="text-xs text-slate-500 font-bold"> / bulan</span>
               </div>
-              <ul className="space-y-2.5 text-xs text-slate-700 pt-4 border-t font-semibold">
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Akses Modul Dasar A1</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> 10 Pesan AI Chat / Hari</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Leaderboard Komunitas</li>
+
+              <ul className="space-y-2.5 text-xs text-slate-700 pt-4 border-t border-slate-200 font-bold">
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Integrated Modul Pembelajaran</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Daily Learning & Interactive Drill</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Leaderboard Komunitas Siswa</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Akses Kuis Interaktif LMS</li>
               </ul>
             </div>
-            <button
-              onClick={() => setActiveTab(user ? 'my-package' : 'auth')}
-              className="w-full py-3.5 rounded-2xl font-black bg-slate-200 text-slate-800 hover:bg-brand hover:text-white transition-all text-xs cursor-pointer"
+
+            <a
+              href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20untuk%20informasi%20pendaftaran%20dan%20konsultasi%20program%20Group%20Speaking%20Kursus."
+              target="_blank"
+              rel="noreferrer"
+              className="w-full py-3.5 rounded-2xl font-black bg-slate-100 text-slate-800 hover:bg-slate-900 hover:text-white transition-all text-xs border border-slate-300 text-center block cursor-pointer"
             >
-              Pilih Paket Basic
-            </button>
+              Tanya Paket Kursus
+            </a>
           </div>
 
-          {/* Standard Pro */}
-          <div className="bento-card-lime p-6 sm:p-8 rounded-3xl sm:rounded-5xl relative flex flex-col justify-between space-y-6 shadow-limeGlow border-2 border-white">
-            <span className="absolute -top-3.5 right-6 bg-dark text-lime font-black text-[11px] px-3.5 py-1 rounded-full uppercase tracking-wider border border-dark">
-              PALING POPULER
+          {/* Card 2: English Speaking Partner (Bayar Tunai / Cash) */}
+          <div className="bento-card-lime p-6 rounded-3xl border-4 border-dark flex flex-col justify-between space-y-6 shadow-limeGlow relative overflow-hidden transform lg:-translate-y-2">
+            <span className="absolute top-0 right-0 bg-dark text-lime font-black text-[10px] uppercase px-3 py-1 rounded-bl-xl border-b border-l border-dark">
+              DISKON SPECIAL
             </span>
+
             <div className="space-y-4">
-              <span className="bg-dark/10 text-dark text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">Pro Speaker</span>
-              <h3 className="font-stinger font-black text-2xl text-dark">Standard Pro</h3>
-              <div className="pt-2">
-                <span className="font-stinger text-3xl sm:text-4xl font-black text-dark">
-                  {billingCycle === 'yearly' ? 'Rp 159.000' : 'Rp 199.000'}
-                </span>
-                <span className="text-xs text-dark/80 font-bold"> / bulan</span>
+              <span className="bg-dark text-lime text-[11px] font-black px-3 py-1 rounded-full uppercase">
+                Bayar Tunai / Cash
+              </span>
+              <h3 className="font-stinger font-black text-xl text-dark">English Speaking Partner (Cash)</h3>
+              <p className="text-xs text-dark/90 font-bold leading-relaxed">
+                Hemat 50% bayar lunas langsung. Pembimbing tutor, modul terintegrasi, & native.
+              </p>
+
+              <div className="pt-2 border-t border-dark/20 space-y-0.5">
+                <div className="text-xs text-dark/70 font-extrabold line-through">Biaya Normal: Rp 1.500.000 / 3 Bulan</div>
+                <div className="font-stinger text-3xl font-black text-dark">
+                  Rp 750.000
+                </div>
+                <div className="text-[10px] font-black text-dark bg-white/80 px-2 py-0.5 rounded inline-block">
+                  Potongan Harga Jadi Rp 750.000 (Bayar Langsung)
+                </div>
               </div>
+
               <ul className="space-y-2.5 text-xs text-dark pt-4 border-t border-dark/20 font-bold">
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> Akses Modul A1 - B1</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> 50 Pesan AI Chat / Hari</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> 2 Sesi Tutor Native / Bln</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> Sertifikat Kelulusan Resmi</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> Experienced Tutor Mentorship</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> Integrated Modul Lengkap</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> One on One Speaking Practice</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> Daily Learning & Diagnostic Drill</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-dark stroke-[3]" /> Native Speaker Meeting Session</li>
               </ul>
             </div>
+
             <button
               onClick={() => setActiveTab(user ? 'my-package' : 'auth')}
-              className="w-full py-3.5 rounded-2xl font-black bg-dark text-lime hover:bg-brand hover:text-white transition-all text-xs shadow-md cursor-pointer"
+              className="w-full py-3.5 rounded-2xl font-black bg-dark text-lime hover:bg-brand hover:text-white transition-all text-xs shadow-md border-2 border-dark cursor-pointer"
             >
-              Pilih Paket Standard Pro
+              Daftar Cash (Rp 750.000)
             </button>
           </div>
 
-          {/* Premium VIP */}
-          <div className="bento-card p-6 sm:p-8 rounded-3xl sm:rounded-5xl flex flex-col justify-between space-y-6 border-2 border-white">
+          {/* Card 3: English Speaking Partner (Skema Cicilan 3x) */}
+          <div className="bento-card p-6 rounded-3xl border-2 border-brand flex flex-col justify-between space-y-6 bg-white shadow-xl">
             <div className="space-y-4">
-              <span className="bg-purple-100 text-purple-900 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">VIP Master</span>
-              <h3 className="font-stinger font-black text-2xl text-purple-950">Premium VIP</h3>
-              <div className="pt-2">
-                <span className="font-stinger text-3xl sm:text-4xl font-black text-purple-950">
-                  {billingCycle === 'yearly' ? 'Rp 279.000' : 'Rp 349.000'}
-                </span>
-                <span className="text-xs text-slate-500 font-bold"> / bulan</span>
+              <span className="bg-brand text-lime text-[11px] font-black px-3 py-1 rounded-full uppercase">
+                Skema Cicilan 3x
+              </span>
+              <h3 className="font-stinger font-black text-xl text-brand">English Speaking Partner (Cicilan)</h3>
+              <p className="text-xs text-slate-600 font-semibold leading-relaxed">
+                Pembayaran diangsur 3 kali dengan skema persentase 70%, 15%, dan 15%.
+              </p>
+
+              <div className="pt-2 border-t border-slate-200 space-y-0.5">
+                <div className="text-xs text-slate-400 font-bold">Total Biaya Program: Rp 1.500.000</div>
+                <div className="font-stinger text-2xl font-black text-brand">
+                  70% • 15% • 15%
+                </div>
+                <div className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded inline-block">
+                  DP Cicilan 1: Rp 1.050.000 (70%)
+                </div>
               </div>
-              <ul className="space-y-2.5 text-xs text-slate-700 pt-4 border-t font-semibold">
-                <li className="flex items-center gap-2 font-bold text-amber-800"><Check className="w-4 h-4 text-amberIcon stroke-[3]" /> AI Chat & Voice TANPA BATAS 24/7</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> 8 Sesi Privat Tutor Native/bln</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Simulasi Tes IELTS/TOEFL</li>
+
+              <ul className="space-y-2.5 text-xs text-slate-700 pt-4 border-t border-slate-200 font-bold">
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Angsuran 1 (70%): Rp 1.050.000</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Angsuran 2 (15%): Rp 225.000</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Angsuran 3 (15%): Rp 225.000</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Mentorship Tutor & Modul Lengkap</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600 stroke-[3]" /> Native Speaker Meeting Session</li>
               </ul>
             </div>
+
             <button
               onClick={() => setActiveTab(user ? 'my-package' : 'auth')}
-              className="w-full py-3.5 rounded-2xl font-black bg-dark text-white hover:bg-purple-950 transition-all text-xs cursor-pointer"
+              className="w-full py-3.5 rounded-2xl font-black bg-brand text-lime hover:scale-[1.02] transition-all text-xs border border-dark cursor-pointer shadow-md"
             >
-              Pilih Paket Premium VIP
+              Daftar Skema Cicilan 3x
             </button>
+          </div>
+
+          {/* Card 4: Private 1-on-1 VIP */}
+          <div className="bento-card p-6 rounded-3xl border-2 border-slate-200 flex flex-col justify-between space-y-6 hover:shadow-xl transition-all bg-white">
+            <div className="space-y-4">
+              <span className="bg-purple-100 text-purple-900 text-[11px] font-black px-3 py-1 rounded-full uppercase">
+                Paket Private VIP
+              </span>
+              <h3 className="font-stinger font-black text-xl text-slate-900">Private 1-on-1 Intensive</h3>
+              <p className="text-xs text-slate-600 font-semibold leading-relaxed">
+                Bimbingan 1-on-1 privat intensif jadwal menyesuaikan (Ms. Era, Ms. Deasy, Ms. Ade).
+              </p>
+
+              <div className="pt-2 border-t border-slate-200">
+                <div className="font-stinger text-2xl font-black text-purple-950">
+                  Konsultasi Intensif
+                </div>
+                <span className="text-[11px] font-bold text-slate-500">
+                  Pendampingan Khusus Instruktur Senior
+                </span>
+              </div>
+
+              <ul className="space-y-2.5 text-xs text-slate-700 pt-4 border-t border-slate-200 font-bold">
+                <li className="flex items-center gap-2 text-purple-950"><Check className="w-4 h-4 text-purple-600 stroke-[3]" /> Full Private 1-on-1 Mentorship</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-purple-600 stroke-[3]" /> Bebas Atur Jadwal Belajar</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-purple-600 stroke-[3]" /> Native Speaker Meeting Prives</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-purple-600 stroke-[3]" /> Evaluasi & Diagnostic Test Gratis</li>
+              </ul>
+            </div>
+
+            <a
+              href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20untuk%20informasi%20pendaftaran%20dan%20konsultasi%20program%20Private%201-on-1%20VIP."
+              target="_blank"
+              rel="noreferrer"
+              className="w-full py-3.5 rounded-2xl font-black bg-slate-900 text-white hover:bg-purple-950 transition-all text-xs text-center block cursor-pointer"
+            >
+              Tanya Paket Private VIP
+            </a>
           </div>
 
         </div>

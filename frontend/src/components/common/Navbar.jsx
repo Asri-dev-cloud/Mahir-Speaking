@@ -42,6 +42,17 @@ export default function Navbar() {
                 </button>
 
                 <button
+                  onClick={() => setActiveTab('branding')}
+                  className={`px-4 sm:px-5 py-2 rounded-full transition-all ${
+                    activeTab === 'branding' 
+                      ? 'bg-brand text-lime shadow-glow font-black scale-105' 
+                      : 'hover:text-brand hover:bg-white text-slate-700 font-bold'
+                  }`}
+                >
+                  Branding
+                </button>
+
+                <button
                   onClick={() => setActiveTab('lms')}
                   className={`px-4 sm:px-5 py-2 rounded-full transition-all flex items-center gap-1 ${
                     activeTab === 'lms' 
@@ -54,14 +65,14 @@ export default function Navbar() {
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('branding')}
+                  onClick={() => setActiveTab('leaderboard-public')}
                   className={`px-4 sm:px-5 py-2 rounded-full transition-all ${
-                    activeTab === 'branding' 
+                    activeTab === 'leaderboard-public' 
                       ? 'bg-brand text-lime shadow-glow font-black scale-105' 
                       : 'hover:text-brand hover:bg-white text-slate-700 font-bold'
                   }`}
                 >
-                  Branding
+                  Leaderboard
                 </button>
 
                 <button
@@ -74,54 +85,51 @@ export default function Navbar() {
                 >
                   Pricing
                 </button>
-
-                <button
-                  onClick={() => setActiveTab('leaderboard-public')}
-                  className={`px-4 sm:px-5 py-2 rounded-full transition-all ${
-                    activeTab === 'leaderboard-public' 
-                      ? 'bg-brand text-lime shadow-glow font-black scale-105' 
-                      : 'hover:text-brand hover:bg-white text-slate-700 font-bold'
-                  }`}
-                >
-                  Leaderboard
-                </button>
               </div>
             ) : (
               <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-full border border-slate-200 shadow-inner">
                 {user.role === 'student' && (
                   <>
                     <button
-                      onClick={() => setActiveTab('student-dashboard')}
+                      onClick={() => setActiveTab('home')}
                       className={`px-4 py-2 rounded-full transition-all ${
-                        activeTab === 'student-dashboard' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                        activeTab === 'home' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
                       }`}
                     >
-                      Dashboard
+                      Home
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('branding')}
+                      className={`px-4 py-2 rounded-full transition-all ${
+                        activeTab === 'branding' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                      }`}
+                    >
+                      Branding
                     </button>
                     <button
                       onClick={() => setActiveTab('lms')}
-                      className={`px-4 py-2 rounded-full transition-all flex items-center gap-1 ${
-                        activeTab === 'lms' || activeTab === 'learning-path' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                      className={`px-4 py-2 rounded-full transition-all flex items-center gap-1.5 ${
+                        activeTab === 'lms' || activeTab === 'student-dashboard' || activeTab === 'learning-path' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
                       }`}
                     >
                       <BookOpen className="w-3.5 h-3.5" />
-                      <span>LMS</span>
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('ai-chat')}
-                      className={`px-4 py-2 rounded-full transition-all ${
-                        activeTab === 'ai-chat' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
-                      }`}
-                    >
-                      AI Coach
+                      <span>LMS & Progress</span>
                     </button>
                     <button
                       onClick={() => setActiveTab('leaderboard')}
                       className={`px-4 py-2 rounded-full transition-all ${
-                        activeTab === 'leaderboard' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                        activeTab === 'leaderboard' || activeTab === 'leaderboard-public' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
                       }`}
                     >
                       Leaderboard
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('pricing')}
+                      className={`px-4 py-2 rounded-full transition-all ${
+                        activeTab === 'pricing' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                      }`}
+                    >
+                      Pricing
                     </button>
                   </>
                 )}
@@ -151,8 +159,22 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* Right: Direct Profile Icon Button */}
+          {/* Right: Admin Panel Button + Profile Button */}
           <div className="flex items-center gap-2 flex-shrink-0">
+            
+            {/* Admin Control Button (Circle Icon Only - Pinggir Kiri Login) */}
+            <button
+              onClick={() => setActiveTab('admin-dashboard')}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-all shadow-md flex items-center justify-center border-2 border-white group flex-shrink-0 hover:scale-105 cursor-pointer ${
+                activeTab === 'admin-dashboard' || activeTab === 'manage-users' || activeTab === 'manage-packages'
+                  ? 'bg-brand text-lime shadow-glow'
+                  : 'bg-dark text-lime hover:bg-brand hover:text-white'
+              }`}
+              title="Panel Admin Master"
+            >
+              <Shield className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.5] group-hover:scale-110 transition-transform" />
+            </button>
+
             {!user ? (
               <button
                 onClick={() => setActiveTab('auth')}

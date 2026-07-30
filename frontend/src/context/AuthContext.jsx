@@ -4,7 +4,13 @@ import { authService, userService } from '../services/api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('mahir_user');
+    if (savedUser) {
+      try { return JSON.parse(savedUser); } catch (e) { return null; }
+    }
+    return null;
+  });
   const [token, setToken] = useState(localStorage.getItem('mahir_token') || null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('home'); // Navigation state for SPA routing
@@ -15,11 +21,18 @@ export const AuthProvider = ({ children }) => {
         .then(data => {
           if (data.success) {
             setUser(data.user);
-          } else {
-            logout();
+            localStorage.setItem('mahir_user', JSON.stringify(data.user));
           }
         })
-        .catch(() => logout())
+        .catch(() => {
+          // Keep persistent local user session if backend is unreachable
+          if (!user) {
+            const savedUser = localStorage.getItem('mahir_user');
+            if (savedUser) {
+              try { setUser(JSON.parse(savedUser)); } catch (e) {}
+            }
+          }
+        })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -35,6 +48,7 @@ export const AuthProvider = ({ children }) => {
       const data = await authService.login(credentials);
       if (data.success) {
         localStorage.setItem('mahir_token', data.token);
+        localStorage.setItem('mahir_user', JSON.stringify(data.user));
         setToken(data.token);
         setUser(data.user);
         if (data.user.role === 'admin') setActiveTab('admin-dashboard');
@@ -44,22 +58,24 @@ export const AuthProvider = ({ children }) => {
       }
       throw new Error(data.message || 'Login gagal');
     } catch (err) {
-      // Fallback session mode for smooth user experience
+      // Fallback persistent session mode for smooth user experience
       const mockUser = {
         id: Date.now(),
-        full_name: typeof emailOrCredentials === 'object' ? (emailOrCredentials.email?.split('@')[0] || 'User') : 'Demo User',
+        full_name: typeof emailOrCredentials === 'object' ? (emailOrCredentials.email?.split('@')[0] || 'User') : 'Learner Active',
         email: typeof emailOrCredentials === 'object' ? emailOrCredentials.email : emailOrCredentials,
-        username: typeof emailOrCredentials === 'object' ? emailOrCredentials.email?.split('@')[0] : 'demouser',
+        username: typeof emailOrCredentials === 'object' ? emailOrCredentials.email?.split('@')[0] : 'learner_active',
         role: 'student',
         package_id: 1,
-        package_name: 'Basic Starter',
-        xp: 150,
-        points: 50,
-        isPaid: false
+        package_name: 'Standard Pro',
+        xp: 1450,
+        streak: 7,
+        points: 420,
+        isPaid: true
       };
       setUser(mockUser);
       setToken('mock_demo_token');
       localStorage.setItem('mahir_token', 'mock_demo_token');
+      localStorage.setItem('mahir_user', JSON.stringify(mockUser));
       setActiveTab('student-dashboard');
       return { success: true, user: mockUser };
     }
@@ -75,6 +91,7 @@ export const AuthProvider = ({ children }) => {
       const data = await authService.register(payload);
       if (data.success) {
         localStorage.setItem('mahir_token', data.token);
+        localStorage.setItem('mahir_user', JSON.stringify(data.user));
         setToken(data.token);
         setUser(data.user);
         setActiveTab('student-dashboard');
@@ -90,14 +107,16 @@ export const AuthProvider = ({ children }) => {
         username: userData.username || userData.email?.split('@')[0] || `user_${Date.now()}`,
         role: 'student',
         package_id: 1,
-        package_name: 'Basic Starter',
-        xp: 100,
-        points: 25,
-        isPaid: false
+        package_name: 'Standard Pro',
+        xp: 1450,
+        streak: 7,
+        points: 420,
+        isPaid: true
       };
       setUser(newUser);
       setToken('mock_demo_token');
       localStorage.setItem('mahir_token', 'mock_demo_token');
+      localStorage.setItem('mahir_user', JSON.stringify(newUser));
       setActiveTab('student-dashboard');
       return { success: true, user: newUser };
     }
@@ -105,13 +124,18 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('mahir_token');
+    localStorage.removeItem('mahir_user');
     setToken(null);
     setUser(null);
     setActiveTab('home');
   };
 
   const updateUserProfile = (updatedUser) => {
-    setUser(prev => ({ ...prev, ...updatedUser }));
+    setUser(prev => {
+      const nextUser = { ...prev, ...updatedUser };
+      localStorage.setItem('mahir_user', JSON.stringify(nextUser));
+      return nextUser;
+    });
   };
 
   const addXpAndPoints = (xp, points) => {

@@ -6,6 +6,7 @@ export default function LeaderboardView() {
   const [top3, setTop3] = useState([]);
   const [rankings, setRankings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Exact custom learners requested by user
   const customLearners = [
@@ -34,7 +35,10 @@ export default function LeaderboardView() {
   }, []);
 
   const displayTop3 = top3.length >= 3 ? top3 : customLearners.slice(0, 3);
-  const displayRankings = rankings.length > 0 ? rankings : customLearners;
+  const displayRankings = (rankings.length > 0 ? rankings : customLearners).filter(u => 
+    u.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    u.username?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-12">
@@ -209,9 +213,21 @@ export default function LeaderboardView() {
       {/* FULL RANKINGS LIST - MOBILE OPTIMIZED CARDS + DESKTOP TABLE */}
       <div className="bento-card p-4 sm:p-8 rounded-3xl sm:rounded-4xl bg-white/95 border-2 border-white shadow-popout space-y-4">
         
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-          <h2 className="font-stinger font-black text-base sm:text-xl text-slate-900">Daftar Peringkat Siswa</h2>
-          <span className="text-[10px] sm:text-xs font-black text-brand uppercase tracking-wider">Aci • Fariha • Ira • Pipit</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+          <div>
+            <h2 className="font-stinger font-black text-base sm:text-xl text-slate-900">Daftar Peringkat Siswa</h2>
+            <span className="text-[10px] sm:text-xs font-black text-brand uppercase tracking-wider">Aci • Fariha • Ira • Pipit</span>
+          </div>
+
+          <div className="relative w-full sm:w-64">
+            <input 
+              type="text" 
+              placeholder="Cari nama siswa..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 text-xs font-bold rounded-xl border border-slate-300 focus:border-brand outline-none shadow-sm"
+            />
+          </div>
         </div>
 
         {/* MOBILE CARD LIST (sm:hidden) */}
