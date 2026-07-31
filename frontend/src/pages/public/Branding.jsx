@@ -12,6 +12,12 @@ import {
   Star,
   Users,
   X,
+  CheckCircle2,
+  XCircle,
+  Globe,
+  Award,
+  Video,
+  BookOpen
 } from "lucide-react";
 
 const activities = [
@@ -88,22 +94,66 @@ const categories = [
 const mentors = [
   {
     name: "Ms. Era Purike",
-    role: "Speaking Mentor",
-    focus: "One-on-One Speaking",
+    role: "Senior Speaking Mentor",
+    focus: "One-on-One Private Speaking & Confidence",
+    bio: "Pengalaman 6+ tahun membimbing ratusan siswa mengatasi rasa takut bicara, memperlancar kelancaran presentasi, dan wawancara kerja.",
     image: "/mo.png",
+    skills: ["Private 1-on-1", "Public Speaking", "Confidence Building"]
   },
   {
     name: "Ms. Deasy Puspawati",
-    role: "English Tutor",
-    focus: "Daily Learning & Conversation",
+    role: "English Tutor Specialist",
+    focus: "Daily Learning & Interactive Conversation",
+    bio: "Spesialis dalam membedah percakapan harian, grammar for speaking yang aplikatif, serta pembentukan kebiasaan berkomunikasi aktif.",
     image: "/ma.png",
+    skills: ["Daily Practice", "Grammar Drills", "Interactive Class"]
   },
   {
     name: "Ms. Ade Ihdinayah",
-    role: "Speaking Mentor",
-    focus: "Pronunciation & Confidence",
+    role: "Pronunciation & Accent Coach",
+    focus: "Pronunciation, Intonation & Accent Clarity",
+    bio: "Pakar pelafalan dan penekanan kata (stressing) agar pengucapan siswa terdengar jelas, natural, dan mudah dipahami native speaker.",
     image: "/mi.png",
+    skills: ["Phonetics", "Native Accent", "Speech Rhythm"]
   },
+];
+
+const programComparison = [
+  {
+    feature: "Akses Materi & Silabus",
+    free: "Sampel & Modul Dasar Singkat",
+    premium: "Modul Lengkap E-Book 4 Level CEFR + Audio Pack"
+  },
+  {
+    feature: "Mentorship Tutor Senior",
+    free: "Tidak Ada (Mandiri)",
+    premium: "Pendampingan Langsung 1-on-1 / Small Class (Ms. Era, Ms. Deasy, Ms. Ade)"
+  },
+  {
+    feature: "Native Speaker Meeting Session",
+    free: "Tidak Termasuk",
+    premium: "Tersedia Sesi Live Diskusi Bersama Native Speaker"
+  },
+  {
+    feature: "Laporan Progres & Evaluasi",
+    free: "Tanpa Laporan Evaluation",
+    premium: "Detailed Monthly Progress Report & Feedback Instruktur"
+  },
+  {
+    feature: "Akses Rekaman Kelas & LMS 24/7",
+    free: "Akses Terbatas 7 Hari",
+    premium: "Full Access 24/7 Rekaman Class, Kuis, & Modul LMS"
+  },
+  {
+    feature: "Placement Test & Diagnostic",
+    free: "Tes Singkat Mandiri",
+    premium: "Diagnostic Level Assessment & Personal Career Guidance"
+  },
+  {
+    feature: "Sertifikat Kelulusan Resmi",
+    free: "Tidak Dapat Sertifikat",
+    premium: "Official Certificate of Completion Ber-QR Code Verification"
+  }
 ];
 
 const quotes = [
@@ -150,6 +200,7 @@ export default function Branding() {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-[#08203C]">
+      {/* 1. HERO BRANDING GALLERY */}
       <section className="relative overflow-hidden bg-[#87CEFA] px-4 pb-7 pt-6 sm:px-8 sm:pb-10 sm:pt-12">
         <div className="absolute -left-20 top-8 h-56 w-56 rounded-full bg-white/25 blur-2xl" />
         <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-[#FFFF00]/20 blur-3xl" />
@@ -158,7 +209,7 @@ export default function Branding() {
           <div className="mx-auto max-w-2xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#0362C0] shadow-sm backdrop-blur sm:text-xs">
               <Camera size={15} />
-              Galeri Kegiatan Mahir Speaking
+              Galeri & Branding Mahir Speaking
             </div>
             <h1 className="mt-5 text-3xl font-black leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
               Belajar, berlatih,
@@ -243,93 +294,220 @@ export default function Branding() {
                 type="button"
                 aria-label={`Ke slide ${index + 1}`}
                 onClick={() => setActiveSlide(index)}
-                className={`h-2.5 rounded-full transition-all ${activeSlide === index
-                  ? "w-8 bg-[#0362C0]"
-                  : "w-2.5 bg-white/75"
-                  }`}
+                className={`h-2.5 rounded-full transition-all ${
+                  activeSlide === index
+                    ? "w-8 bg-[#0362C0]"
+                    : "w-2.5 bg-white/75"
+                }`}
               />
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-white px-4 py-12 sm:px-8 sm:py-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#0362C0]">
-                <Users size={15} className="text-[#FFA715]" />
-                Meet your mentors
-              </p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-4xl">
-                Ditemani mentor yang bikin kamu
-                <span className="text-[#0362C0]"> berani mencoba.</span>
-              </h2>
-            </div>
-            <p className="max-w-sm text-sm leading-6 text-slate-600">
-              Bukan hanya menjelaskan materi, mentor juga mendampingi setiap
-              proses latihanmu.
+      {/* 2. EDUKASI PROGRAM: FREE LEARNING vs KURSUS INTENSIF (PREMIUM) */}
+      <section className="bg-slate-900 text-white px-4 py-12 sm:px-8 sm:py-16">
+        <div className="mx-auto max-w-6xl space-y-10">
+          <div className="text-center space-y-3 max-w-3xl mx-auto">
+            <span className="inline-block rounded-full bg-[#C6F500] px-4 py-1.5 text-xs font-black uppercase text-[#0A1128]">
+              EDUKASI PROGRAM MAHIR SPEAKING
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-black text-white leading-tight">
+              Perbedaan <span className="text-[#C6F500]">Free Learning Program</span> vs <span className="text-cyan-400">Kursus Intensif (Premium)</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 font-semibold">
+              Pahami manfaat dari setiap program agar Anda dapat menentukan pilihan terbaik sesuai target kelancaran bicara Anda.
             </p>
           </div>
 
-          <div className="mt-7 grid gap-4 md:grid-cols-3">
-            {mentors.map((mentor, index) => (
-              <article
-                key={mentor.name}
-                className={`group relative flex items-center gap-4 overflow-hidden rounded-[24px] border p-4 transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(3,98,192,0.13)] ${index === 1
-                  ? "border-[#0362C0] bg-[#0362C0] text-white"
-                  : "border-[#0362C0]/10 bg-white shadow-[0_10px_30px_rgba(8,32,60,0.07)]"
-                  }`}
+          {/* Cards Split Showcase */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Free Learning Box */}
+            <div className="bg-slate-800 border-2 border-slate-700 p-6 rounded-3xl space-y-5 flex flex-col justify-between">
+              <div className="space-y-4">
+                <span className="bg-slate-700 text-slate-200 text-xs font-black px-3 py-1 rounded-full uppercase">
+                  Free Learning Program
+                </span>
+                <h3 className="text-xl font-black text-white">Komunitas & Latihan Mandiri</h3>
+                <p className="text-xs text-slate-300 font-semibold leading-relaxed">
+                  Program gratis tanpa biaya bagi umum untuk berkenalan dengan ekosistem latihan Mahir Speaking melalui webinar umum dan latihan kuis interaktif.
+                </p>
+                <ul className="space-y-2.5 text-xs text-slate-300 font-semibold pt-2 border-t border-slate-700">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Akses Kuis LMS Interaktif Publik</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Gabung Grup WA Komunitas Umum</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Mengikuti Weekly Live Webinar</li>
+                  <li className="flex items-center gap-2 text-slate-400"><XCircle className="w-4 h-4 text-slate-500 flex-shrink-0" /> Tanpa Pendampingan Tutor Private</li>
+                  <li className="flex items-center gap-2 text-slate-400"><XCircle className="w-4 h-4 text-slate-500 flex-shrink-0" /> Tanpa Sesi Native Speaker</li>
+                </ul>
+              </div>
+              <button
+                onClick={() => setActiveTab('lms')}
+                className="w-full py-3 rounded-2xl bg-slate-700 text-white font-black text-xs hover:bg-slate-600 transition-all border border-slate-600"
               >
-                <div className="relative shrink-0">
-                  <div
-                    className={`absolute -inset-1 rounded-full ${index === 1 ? "bg-[#FFFF00]" : "bg-[#87CEFA]"
-                      }`}
-                  />
-                  <img
-                    src={mentor.image}
-                    alt={mentor.name}
-                    className="relative h-20 w-20 rounded-full object-cover sm:h-24 sm:w-24"
-                  />
-                </div>
+                Coba Free Learning Sekarang ➔
+              </button>
+            </div>
 
-                <div className="relative min-w-0">
-                  <span
-                    className={`inline-block rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider ${index === 1
-                      ? "bg-white/10 text-[#FFFF00]"
-                      : "bg-[#EAF6FF] text-[#0362C0]"
-                      }`}
-                  >
-                    {mentor.role}
-                  </span>
-                  <h3 className="mt-2 truncate text-base font-black sm:text-lg">
-                    {mentor.name}
-                  </h3>
-                  <p
-                    className={`mt-1 text-xs font-semibold leading-5 ${index === 1 ? "text-white/65" : "text-slate-500"
-                      }`}
-                  >
-                    {mentor.focus}
-                  </p>
-                </div>
-
-                <Sparkles
-                  size={42}
-                  className={`absolute -bottom-2 -right-2 rotate-12 ${index === 1 ? "text-white/10" : "text-[#87CEFA]/30"
-                    }`}
-                />
-              </article>
-            ))}
+            {/* Premium Program Box */}
+            <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 border-4 border-[#C6F500] p-6 rounded-3xl space-y-5 flex flex-col justify-between shadow-2xl relative overflow-hidden">
+              <span className="absolute top-0 right-0 bg-[#C6F500] text-[#0A1128] text-[10px] font-black uppercase px-3 py-1 rounded-bl-xl">
+                RECOMMENDED PREPARATION
+              </span>
+              <div className="space-y-4">
+                <span className="bg-[#C6F500] text-[#0A1128] text-xs font-black px-3 py-1 rounded-full uppercase">
+                  Program Kursus Intensif (Premium)
+                </span>
+                <h3 className="text-xl font-black text-white">Full Mentorship & Guaranteed Fluency</h3>
+                <p className="text-xs text-slate-200 font-semibold leading-relaxed">
+                  Pendampingan intensif bersama Mentor Senior, evaluasi bulanan, rekaman materi 24/7, modul lengkap, & Native Speaker Meeting.
+                </p>
+                <ul className="space-y-2.5 text-xs text-slate-100 font-bold pt-2 border-t border-slate-700">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Mentorship Mentors Senior (Ms. Era, Ms. Deasy, Ms. Ade)</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Sesi Diskusi Native Speaker Meeting</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Diagnostic Placement Test & Personal Roadmap</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Full Rekaman Sesi LMS & E-Book Lengkap</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Sertifikat Kelulusan Resmi & Progress Report</li>
+                </ul>
+              </div>
+              <button
+                onClick={() => setActiveTab('pricing')}
+                className="w-full py-3 rounded-2xl bg-[#C6F500] text-[#0A1128] font-black text-xs hover:bg-emerald-400 transition-all border-2 border-dark"
+              >
+                Lihat Paket Kursus Premium ➔
+              </button>
+            </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-[#FFFF00] px-4 py-3 text-center text-xs font-black text-[#0362C0] sm:text-sm">
-            <Star size={16} fill="currentColor" />
-            “Kamu tidak harus sempurna untuk mulai speaking—kamu hanya perlu
-            berani mencoba.”
+          {/* Comparison Matrix Table */}
+          <div className="bg-slate-800/80 p-6 rounded-3xl border border-slate-700 overflow-x-auto">
+            <h3 className="text-lg font-black text-[#C6F500] mb-4 text-center">Tabel Perbandingan Fitur Detail</h3>
+            <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[600px]">
+              <thead>
+                <tr className="border-b border-slate-700 text-slate-300 font-black">
+                  <th className="p-3">Fitur Program</th>
+                  <th className="p-3 text-slate-400">Free Learning Program</th>
+                  <th className="p-3 text-[#C6F500]">Program Kursus Intensif (Premium)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-700/60 font-semibold text-slate-200">
+                {programComparison.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-slate-700/40 transition-colors">
+                    <td className="p-3 font-bold text-white">{row.feature}</td>
+                    <td className="p-3 text-slate-400">{row.free}</td>
+                    <td className="p-3 text-emerald-300 font-bold">{row.premium}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
+      {/* 3. PROFIL MENTOR & TUTOR EXPERIENCED + NATIVE SPEAKER MEETING */}
+      <section className="bg-white px-4 py-12 sm:px-8 sm:py-16">
+        <div className="mx-auto max-w-6xl space-y-12">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#0362C0]">
+                <Users size={15} className="text-[#FFA715]" />
+                Experienced Tutors & Mentors
+              </p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-4xl">
+                Ditemani instruktur profesional yang bikin kamu
+                <span className="text-[#0362C0]"> berani mencoba.</span>
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm leading-6 text-slate-600">
+              Bukan hanya menjelaskan teori, mentor mendampingi setiap ritme percakapanmu sampai lancar!
+            </p>
+          </div>
+
+          {/* Detailed Tutor Profile Cards */}
+          <div className="grid gap-6 md:grid-cols-3">
+            {mentors.map((mentor, index) => (
+              <div
+                key={mentor.name}
+                className="bg-white rounded-3xl border-2 border-slate-200 p-6 flex flex-col justify-between space-y-5 hover:border-[#0362C0] transition-all shadow-md group"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={mentor.image}
+                      alt={mentor.name}
+                      className="w-16 h-16 rounded-full object-cover border-4 border-[#0362C0]/20 group-hover:scale-105 transition-transform"
+                    />
+                    <div>
+                      <span className="bg-[#EAF6FF] text-[#0362C0] text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
+                        {mentor.role}
+                      </span>
+                      <h3 className="text-lg font-black text-slate-900 mt-1">{mentor.name}</h3>
+                      <p className="text-xs text-slate-500 font-bold">{mentor.focus}</p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-600 font-semibold leading-relaxed border-t border-slate-100 pt-3">
+                    {mentor.bio}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {mentor.skills.map((skill, sIdx) => (
+                      <span key={sIdx} className="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                        ✓ {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <a
+                  href={`https://wa.me/6285861171129?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ingin konsultasi jadwal belajar bersama ${mentor.name}.`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full py-2.5 rounded-xl bg-slate-100 text-slate-900 font-black text-xs text-center block hover:bg-[#0362C0] hover:text-white transition-all border border-slate-200"
+                >
+                  Konsultasi Mentor ➔
+                </a>
+              </div>
+            ))}
+          </div>
+
+          {/* 🌍 NATIVE SPEAKER MEETING SESSION SHOWCASE BOX */}
+          <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-8 sm:p-12 rounded-4xl border-4 border-cyan-400 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-cyan-400 text-slate-950 text-xs font-black px-3.5 py-1 rounded-full uppercase border border-white">
+                <Globe className="w-4 h-4 text-slate-950 animate-spin" />
+                <span>EXCLUSIVELY FOR PREMIUM STUDENTS</span>
+              </div>
+              <h3 className="font-stinger font-black text-2xl sm:text-4xl text-white">
+                Native Speaker Meeting Session
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-200 font-semibold leading-relaxed">
+                Uji langsung rasa percaya dirimu dan tingkatkan pemahaman aksen internasional dalam sesi live interaktif bersama Native Speakers dari negara berbahasa Inggris.
+              </p>
+              <div className="flex flex-wrap gap-3 text-xs font-bold text-cyan-200">
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-cyan-400" /> Sesi Diskusi Kebudayaan & Habit</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-cyan-400" /> Live Q&A & Pronunciation Check</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-cyan-400" /> Sertifikat Kehadiran Sesi Native</span>
+              </div>
+            </div>
+
+            <a
+              href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengikuti%20Sesi%20Native%20Speaker%20Meeting."
+              target="_blank"
+              rel="noreferrer"
+              className="px-6 py-4 rounded-2xl bg-cyan-400 text-slate-950 font-black text-xs hover:bg-white transition-all border-2 border-white flex-shrink-0 shadow-lg"
+            >
+              Ikuti Native Speaker Session ➔
+            </a>
+          </div>
+
+          <div className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-[#FFFF00] px-4 py-3 text-center text-xs font-black text-[#0362C0] sm:text-sm">
+            <Star size={16} fill="currentColor" />
+            “Kamu tidak harus sempurna untuk mulai speaking—kamu hanya perlu berani mencoba.”
+          </div>
+        </div>
+      </section>
+
+      {/* 4. GALLERY CATEGORY ACTIVITIES */}
       <section className="bg-[#F4FBFF] px-4 py-14 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -344,8 +522,7 @@ export default function Branding() {
               </h2>
             </div>
             <p className="max-w-md text-sm leading-6 text-slate-600">
-              Pilih kategori untuk melihat suasana belajar yang paling kamu
-              suka.
+              Pilih kategori untuk melihat suasana belajar yang paling kamu suka.
             </p>
           </div>
 
@@ -355,10 +532,11 @@ export default function Branding() {
                 key={category.id}
                 type="button"
                 onClick={() => setActiveCategory(category.id)}
-                className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-extrabold transition ${activeCategory === category.id
-                  ? "bg-[#0362C0] text-[#FFFF00] shadow-md"
-                  : "border border-[#0362C0]/15 bg-white text-[#42617F] hover:border-[#0362C0]/40"
-                  }`}
+                className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-extrabold transition ${
+                  activeCategory === category.id
+                    ? "bg-[#0362C0] text-[#FFFF00] shadow-md"
+                    : "border border-[#0362C0]/15 bg-white text-[#42617F] hover:border-[#0362C0]/40"
+                }`}
               >
                 {category.label}
               </button>
@@ -371,16 +549,18 @@ export default function Branding() {
                 key={item.id}
                 type="button"
                 onClick={() => setSelectedPhoto(item)}
-                className={`group overflow-hidden rounded-[24px] bg-white text-left shadow-[0_12px_35px_rgba(8,32,60,0.08)] ring-1 ring-[#0362C0]/10 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(3,98,192,0.15)] ${index === 0 && filteredActivities.length > 2
-                  ? "sm:row-span-2"
-                  : ""
-                  }`}
+                className={`group overflow-hidden rounded-[24px] bg-white text-left shadow-[0_12px_35px_rgba(8,32,60,0.08)] ring-1 ring-[#0362C0]/10 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(3,98,192,0.15)] ${
+                  index === 0 && filteredActivities.length > 2
+                    ? "sm:row-span-2"
+                    : ""
+                }`}
               >
                 <div
-                  className={`relative overflow-hidden ${index === 0 && filteredActivities.length > 2
-                    ? "h-64 sm:h-[420px]"
-                    : "h-56"
-                    }`}
+                  className={`relative overflow-hidden ${
+                    index === 0 && filteredActivities.length > 2
+                      ? "h-64 sm:h-[420px]"
+                      : "h-56"
+                  }`}
                 >
                   <img
                     src={item.image}
@@ -411,6 +591,7 @@ export default function Branding() {
         </div>
       </section>
 
+      {/* 5. QUOTES & CTA */}
       <section className="px-4 pb-14 sm:px-8 sm:pb-20">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[30px] bg-[#0362C0] px-5 py-8 text-white shadow-[0_20px_50px_rgba(3,98,192,0.22)] sm:px-10 sm:py-12">
           <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#FFFF00]">
@@ -420,10 +601,11 @@ export default function Branding() {
             {quotes.map((quote, index) => (
               <article
                 key={quote.tag}
-                className={`rounded-[22px] border p-5 ${index === 1
-                  ? "border-[#FFFF00] bg-[#FFFF00] text-[#08203C]"
-                  : "border-white/20 bg-white/10"
-                  }`}
+                className={`rounded-[22px] border p-5 ${
+                  index === 1
+                    ? "border-[#FFFF00] bg-[#FFFF00] text-[#08203C]"
+                    : "border-white/20 bg-white/10"
+                }`}
               >
                 <Star
                   size={20}
@@ -434,8 +616,9 @@ export default function Branding() {
                   “{quote.text}”
                 </p>
                 <p
-                  className={`mt-4 text-[10px] font-black uppercase tracking-[0.16em] ${index === 1 ? "text-[#0362C0]" : "text-white/60"
-                    }`}
+                  className={`mt-4 text-[10px] font-black uppercase tracking-[0.16em] ${
+                    index === 1 ? "text-[#0362C0]" : "text-white/60"
+                  }`}
                 >
                   {quote.tag}
                 </p>
@@ -456,17 +639,16 @@ export default function Branding() {
                 Mau jadi bagian dari cerita berikutnya?
               </h2>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                Mulai dari satu latihan kecil, lalu tumbuh bersama komunitas
-                Mahir Speaking.
+                Mulai dari satu latihan kecil, lalu tumbuh bersama komunitas Mahir Speaking.
               </p>
             </div>
           </div>
           <button
             type="button"
-            onClick={() => setActiveTab("lms")}
+            onClick={() => setActiveTab("pricing")}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0362C0] px-6 py-3.5 text-sm font-black text-[#FFFF00] shadow-md transition hover:-translate-y-0.5 sm:w-auto"
           >
-            Mulai Belajar
+            Daftar Kursus Sekarang
             <ChevronRight size={18} />
           </button>
         </div>
