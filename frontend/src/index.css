@@ -8,19 +8,25 @@
   }
 }
 
-/* Custom scrollbar for panel */
+/* Custom scrollbar for panel & modals */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
+}
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
+  border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(7, 27, 52, 0.15);
+  background-color: rgba(148, 163, 184, 0.4);
   border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(7, 27, 52, 0.3);
+  background-color: #0362C0;
 }
 
 .bento-card-lime {
@@ -28,3 +34,29 @@
   color: #0A1128 !important;
   box-shadow: 0 0 25px rgba(198, 245, 0, 0.5);
 }
+
+@keyframes wave-hand {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(18deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(18deg); }
+  60% { transform: rotate(-9deg); }
+  75% { transform: rotate(12deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-wave-hand {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: wave-hand 1.6s infinite ease-in-out;
+}
+
+@keyframes progress-timer-5s {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.animate-progress-5s {
+  animation: progress-timer-5s 5s linear forwards;
+}
+

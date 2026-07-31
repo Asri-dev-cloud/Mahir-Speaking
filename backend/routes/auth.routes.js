@@ -1,3 +1,4 @@
+// 🔐 Route Autentikasi Mahir Speaking: Tempat pendaftaran, login & reset password para pejuang English! ✨
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -6,7 +7,7 @@ import { JWT_SECRET } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Register User
+// 📝 Endpoint Register User Baru (Auto Happy, Dapet Bonus XP & Point Slay!) 🚀
 router.post('/register', async (req, res) => {
   try {
     const { full_name, username, email, whatsapp, password, role } = req.body;

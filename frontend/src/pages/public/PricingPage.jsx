@@ -126,7 +126,7 @@ export default function PricingPage() {
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 bg-lime text-dark text-xs font-black px-4 py-1.5 rounded-full uppercase border border-dark shadow-sm">
           <Sparkles className="w-4 h-4 text-dark animate-pulse" />
-          <span>SKEMA PEMBIAYAAAN RESMI 2025 • MAHIR SPEAKING</span>
+          <span>SKEMA PEMBIAYAAAN RESMI 2026 • MAHIR SPEAKING</span>
         </div>
         <h1 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
           Investasi Terjangkau untuk <span className="text-emerald-600 underline decoration-lime decoration-wavy">Kelancaran Bicara</span> Anda

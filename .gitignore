@@ -87,10 +87,10 @@ dist
 # Gatsby files
 .gatsby
 
-# Server Database files
+# Backend Database files
 *.db
 *.sqlite
-server/database/*.db
+backend/database/*.db
 
 # IDE settings
 .vscode/

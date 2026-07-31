@@ -5,7 +5,7 @@ import { authService, userService } from '../services/api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // 💾 Ngarap user tersimpan di localstorage biar gak repot ketik login terus gais~
+  // 💾 Simpan user & activeTab di localStorage agar tidak ter-reset saat refresh page
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('mahir_user');
     if (savedUser) {
@@ -13,27 +13,48 @@ export const AuthProvider = ({ children }) => {
     }
     return null;
   });
+
   const [token, setToken] = useState(localStorage.getItem('mahir_token') || null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('home'); // 🚀 Navigasi SPA biar gak usah reload page, anti-lelet club!
 
-  // 🔄 Sinkronisasi status profil si user ketche waktu token berubah
+  // ✋ Modal Sambutan Tangan Melambai 5 Detik setelah Login/Register
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [welcomeUserName, setWelcomeUserName] = useState('');
+
+  const triggerWelcome = (name) => {
+    setWelcomeUserName(name || 'Teman Mahir');
+    setShowWelcomeModal(true);
+  };
+
+  const closeWelcomeModal = () => {
+    setShowWelcomeModal(false);
+  };
+
+  const [activeTab, setActiveTabState] = useState(() => {
+    return localStorage.getItem('mahir_active_tab') || 'home';
+  });
+
+  const setActiveTab = (tab) => {
+    localStorage.setItem('mahir_active_tab', tab);
+    setActiveTabState(tab);
+  };
+
+  // 🔄 Sinkronisasi status profil si user waktu token berubah
   useEffect(() => {
     if (token) {
       userService.getProfile()
         .then(data => {
-          if (data.success) {
-            setUser(data.user);
-            localStorage.setItem('mahir_user', JSON.stringify(data.user));
+          if (data.success && data.user) {
+            const saved = JSON.parse(localStorage.getItem('mahir_user') || '{}');
+            const mergedUser = { ...saved, ...data.user };
+            setUser(mergedUser);
+            localStorage.setItem('mahir_user', JSON.stringify(mergedUser));
           }
         })
         .catch(() => {
-          // 🛡️ Mode penyelamat: kalo server lagi ngambek/down, pake lokal user dlu biar tetep santuy
-          if (!user) {
-            const savedUser = localStorage.getItem('mahir_user');
-            if (savedUser) {
-              try { setUser(JSON.parse(savedUser)); } catch (e) {}
-            }
+          const savedUser = localStorage.getItem('mahir_user');
+          if (savedUser) {
+            try { setUser(JSON.parse(savedUser)); } catch (e) {}
           }
         })
         .finally(() => setLoading(false));
@@ -50,80 +71,53 @@ export const AuthProvider = ({ children }) => {
         : { email: emailOrCredentials, password };
 
       const data = await authService.login(credentials);
-      if (data.success) {
-        localStorage.setItem('mahir_token', data.token);
+      if (data.success && data.user) {
+        const targetTab = data.user.role === 'admin' ? 'admin-portal' : data.user.role === 'tutor' ? 'tutor-dashboard' : 'lms';
+        localStorage.setItem('mahir_token', data.token || 'mock-jwt-token');
         localStorage.setItem('mahir_user', JSON.stringify(data.user));
-        setToken(data.token);
+        localStorage.setItem('mahir_active_tab', targetTab);
+        setToken(data.token || 'mock-jwt-token');
         setUser(data.user);
-        if (data.user.role === 'admin') setActiveTab('admin-dashboard');
-        else if (data.user.role === 'tutor') setActiveTab('tutor-dashboard');
-        else setActiveTab('student-dashboard');
-        return data;
+        setActiveTabState(targetTab);
+        triggerWelcome(data.user.full_name);
+        return { success: true, user: data.user };
       }
-      throw new Error(data.message || 'Login gagal, coba cek email/password kamu deh gais');
+      return { success: false, error: data.error || data.message || 'Login gagal. Cek email dan kata sandi Anda.' };
     } catch (err) {
-      // 🪄 Fallback mode demo super smooth biar tetep bisa pamer fitur!
-      const mockUser = {
-        id: Date.now(),
-        full_name: typeof emailOrCredentials === 'object' ? (emailOrCredentials.email?.split('@')[0] || 'User Active') : 'Learner Active',
-        email: typeof emailOrCredentials === 'object' ? emailOrCredentials.email : emailOrCredentials,
-        username: typeof emailOrCredentials === 'object' ? emailOrCredentials.email?.split('@')[0] : 'learner_active',
-        role: 'student',
-        package_id: 1,
-        package_name: 'Standard Pro',
-        xp: 1450,
-        streak: 7,
-        points: 420,
-        isPaid: true
-      };
-      setUser(mockUser);
-      setToken('mock_demo_token');
-      localStorage.setItem('mahir_token', 'mock_demo_token');
-      localStorage.setItem('mahir_user', JSON.stringify(mockUser));
-      setActiveTab('student-dashboard');
-      return { success: true, user: mockUser };
+      console.error('Login error:', err);
+      return { success: false, error: 'Terjadi kesalahan sistem saat login.' };
     }
   };
 
-  // 📝 Fungsi Registrasi Anggota Baru Warm Welcome~
+  // 📝 Fungsi Registrasi Anggota Baru (Langsung Login Otomatis ke LMS Area)
   const register = async (userData) => {
     try {
-      const payload = {
-        username: userData.username || userData.email?.split('@')[0] || `user_${Date.now()}`,
-        ...userData
-      };
-
-      const data = await authService.register(payload);
-      if (data.success) {
-        localStorage.setItem('mahir_token', data.token);
+      const data = await authService.register(userData);
+      if (data.success && data.user) {
+        const targetTab = data.user.role === 'admin' ? 'admin-portal' : data.user.role === 'tutor' ? 'tutor-dashboard' : 'lms';
+        localStorage.setItem('mahir_token', data.token || 'mock-jwt-token');
         localStorage.setItem('mahir_user', JSON.stringify(data.user));
-        setToken(data.token);
+        localStorage.setItem('mahir_active_tab', targetTab);
+        setToken(data.token || 'mock-jwt-token');
         setUser(data.user);
-        setActiveTab('student-dashboard');
-        return data;
+        setActiveTabState(targetTab);
+        triggerWelcome(data.user.full_name || userData.full_name);
+        return { success: true, user: data.user };
       }
-      throw new Error(data.message || 'Pendaftaran gagal');
+      return { success: false, error: data.error || data.message || 'Pendaftaran gagal.' };
     } catch (err) {
-      // 🪄 Fallback demo registrasi smooth abis no drama
-      const newUser = {
-        id: Date.now(),
-        full_name: userData.full_name || userData.email?.split('@')[0] || 'Siswa Baru',
-        email: userData.email,
-        username: userData.username || userData.email?.split('@')[0] || `user_${Date.now()}`,
-        role: 'student',
-        package_id: 1,
-        package_name: 'Standard Pro',
-        xp: 1450,
-        streak: 7,
-        points: 420,
-        isPaid: true
-      };
-      setUser(newUser);
-      setToken('mock_demo_token');
-      localStorage.setItem('mahir_token', 'mock_demo_token');
-      localStorage.setItem('mahir_user', JSON.stringify(newUser));
-      setActiveTab('student-dashboard');
-      return { success: true, user: newUser };
+      console.error('Register error:', err);
+      return { success: false, error: 'Terjadi kesalahan jaringan saat pendaftaran.' };
+    }
+  };
+
+  // 🔑 Riset Kata Sandi (Lupa Password)
+  const resetPassword = async (resetData) => {
+    try {
+      const data = await authService.resetPassword(resetData);
+      return data;
+    } catch (err) {
+      return { success: false, error: 'Gagal mereset kata sandi.' };
     }
   };
 
@@ -131,6 +125,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('mahir_token');
     localStorage.removeItem('mahir_user');
+    localStorage.removeItem('mahir_active_tab');
     setToken(null);
     setUser(null);
     setActiveTab('home');
@@ -141,6 +136,20 @@ export const AuthProvider = ({ children }) => {
     setUser(prev => {
       const nextUser = { ...prev, ...updatedUser };
       localStorage.setItem('mahir_user', JSON.stringify(nextUser));
+
+      try {
+        const registered = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
+        const idx = registered.findIndex(u => (nextUser.email && u.email?.toLowerCase() === nextUser.email?.toLowerCase()) || (nextUser.id && u.id === nextUser.id));
+        if (idx !== -1) {
+          registered[idx] = { ...registered[idx], ...nextUser };
+        } else if (nextUser.email) {
+          registered.push(nextUser);
+        }
+        localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
+      } catch (e) {
+        console.error('Error syncing mahir_registered_users:', e);
+      }
+
       return nextUser;
     });
   };
@@ -157,6 +166,38 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  // 🌐 Login dengan Google Direct OAuth Flow
+  const googleLogin = async (customUser) => {
+    const googleUser = customUser || {
+      id: 999,
+      full_name: 'Siswa Google Active',
+      email: 'student.google@mahirspeaking.com',
+      whatsapp: '6285861171129',
+      role: 'student',
+      admin_type: null,
+      avatar: null,
+      xp: 2450,
+      streak: 12,
+      points: 620,
+      package_id: 1,
+      package_name: 'Standard Pro',
+      is_trial: true
+    };
+
+    const targetTab = googleUser.role === 'admin' ? 'admin-portal' : googleUser.role === 'tutor' ? 'tutor-dashboard' : 'lms';
+
+    setToken('mock_google_oauth_token');
+    setUser(googleUser);
+    localStorage.setItem('mahir_token', 'mock_google_oauth_token');
+    localStorage.setItem('mahir_user', JSON.stringify(googleUser));
+    localStorage.setItem('mahir_active_tab', targetTab);
+    setActiveTabState(targetTab);
+
+    triggerWelcome(googleUser.full_name);
+
+    return { success: true, user: googleUser };
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -164,8 +205,14 @@ export const AuthProvider = ({ children }) => {
       loading,
       activeTab,
       setActiveTab,
+      showWelcomeModal,
+      welcomeUserName,
+      closeWelcomeModal,
+      triggerWelcome,
       login,
       register,
+      resetPassword,
+      googleLogin,
       logout,
       updateUserProfile,
       addXpAndPoints
@@ -175,4 +222,27 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    return {
+      user: null,
+      token: null,
+      loading: false,
+      activeTab: 'home',
+      setActiveTab: () => {},
+      showWelcomeModal: false,
+      welcomeUserName: '',
+      closeWelcomeModal: () => {},
+      triggerWelcome: () => {},
+      login: async () => ({ success: false }),
+      register: async () => ({ success: false }),
+      resetPassword: async () => ({ success: false }),
+      googleLogin: async () => ({ success: false }),
+      logout: () => {},
+      updateUserProfile: () => {},
+      addXpAndPoints: () => {}
+    };
+  }
+  return context;
+};

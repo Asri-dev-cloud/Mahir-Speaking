@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Home, Sparkles, Layers, Trophy, User } from 'lucide-react';
+import { Home, Sparkles, Layers, Trophy, User, Shield } from 'lucide-react';
 
 // 📱 Navigasi Bawah Layar HP: Si Mungil Penyelamat Pengguna Mobile~ 🤳
 export default function MobileNav() {
@@ -31,15 +31,15 @@ export default function MobileNav() {
         
         {/* 🏠 Tab 1: Home Utama */}
         <button
-          onClick={() => handleTabClick(user ? (user.role === 'admin' ? 'admin-dashboard' : user.role === 'tutor' ? 'tutor-dashboard' : 'student-dashboard') : 'home')}
+          onClick={() => handleTabClick('home')}
           className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
-            ['home', 'student-dashboard', 'tutor-dashboard', 'admin-dashboard'].includes(activeTab)
+            activeTab === 'home'
               ? 'text-brand font-black scale-105'
               : 'text-slate-500 hover:text-brand font-semibold'
           }`}
         >
           <div className={`p-1.5 rounded-xl transition-colors ${
-            ['home', 'student-dashboard', 'tutor-dashboard', 'admin-dashboard'].includes(activeTab)
+            activeTab === 'home'
               ? 'bg-brand text-lime shadow-sm'
               : 'group-hover:bg-slate-100 text-slate-600 group-hover:text-brand'
           }`}>
@@ -86,24 +86,45 @@ export default function MobileNav() {
           <span className="text-[10px] tracking-tight">LMS</span>
         </button>
 
-        {/* 🏆 Tab 4: Papan Juara Leaderboard */}
-        <button
-          onClick={() => handleTabClick(user ? 'leaderboard' : 'leaderboard-public')}
-          className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
-            ['leaderboard', 'leaderboard-public'].includes(activeTab)
-              ? 'text-brand font-black scale-105'
-              : 'text-slate-500 hover:text-brand font-semibold'
-          }`}
-        >
-          <div className={`p-1.5 rounded-xl transition-colors ${
-            ['leaderboard', 'leaderboard-public'].includes(activeTab)
-              ? 'bg-brand text-lime shadow-sm'
-              : 'group-hover:bg-slate-100 text-slate-600 group-hover:text-brand'
-          }`}>
-            <Trophy className="w-4.5 h-4.5 stroke-[2.5]" />
-          </div>
-          <span className="text-[10px] tracking-tight">Rank</span>
-        </button>
+        {/* 🛡️ Tab 4: Admin Portal (Khusus Admin Logged In) */}
+        {user && user.role === 'admin' ? (
+          <button
+            onClick={() => handleTabClick('admin-portal')}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
+              ['admin-portal', 'admin'].includes(activeTab)
+                ? 'text-emerald-600 font-black scale-105'
+                : 'text-slate-500 hover:text-emerald-600 font-semibold'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-colors ${
+              ['admin-portal', 'admin'].includes(activeTab)
+                ? 'bg-slate-900 text-emerald-400 shadow-sm'
+                : 'group-hover:bg-slate-100 text-slate-600 group-hover:text-emerald-600'
+            }`}>
+              <Shield className="w-4.5 h-4.5 stroke-[2.5]" />
+            </div>
+            <span className="text-[10px] tracking-tight">Admin</span>
+          </button>
+        ) : (
+          /* 🏆 Tab 4 Default: Leaderboard */
+          <button
+            onClick={() => handleTabClick(user ? 'leaderboard' : 'leaderboard-public')}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
+              ['leaderboard', 'leaderboard-public'].includes(activeTab)
+                ? 'text-brand font-black scale-105'
+                : 'text-slate-500 hover:text-brand font-semibold'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-colors ${
+              ['leaderboard', 'leaderboard-public'].includes(activeTab)
+                ? 'bg-brand text-lime shadow-sm'
+                : 'group-hover:bg-slate-100 text-slate-600 group-hover:text-brand'
+            }`}>
+              <Trophy className="w-4.5 h-4.5 stroke-[2.5]" />
+            </div>
+            <span className="text-[10px] tracking-tight">Rank</span>
+          </button>
+        )}
 
         {/* 👤 Tab 5: Profil Akun Pengguna / Pintu Masuk */}
         <button

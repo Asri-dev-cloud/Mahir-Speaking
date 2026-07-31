@@ -6,7 +6,7 @@ import { HelpCircle, CheckCircle2, XCircle, Trophy, ArrowRight, RotateCcw } from
 
 export default function QuizView() {
   const { setActiveTab, addXpAndPoints } = useAuth();
-  
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
@@ -71,11 +71,11 @@ export default function QuizView() {
       setIsCompleted(true);
       const totalXp = newScore * 25 + 20;
       addXpAndPoints(totalXp, Math.floor(totalXp / 2));
-      
+
       // Trigger Confetti
       try {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      } catch (e) {}
+      } catch (e) { }
 
       // Save to backend
       try {
@@ -84,16 +84,16 @@ export default function QuizView() {
           score: Math.round((newScore / quizQuestions.length) * 100),
           xp_earned: totalXp
         });
-      } catch (err) {}
+      } catch (err) { }
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
-      
+
       {!isCompleted ? (
         <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white shadow-glass space-y-6">
-          
+
           {/* Header Progress */}
           <div className="flex items-center justify-between border-b border-slate-200 pb-4">
             <div className="flex items-center gap-2 text-brand font-bold text-xs uppercase">
@@ -115,16 +115,14 @@ export default function QuizView() {
               <button
                 key={idx}
                 onClick={() => handleSelectOption(idx)}
-                className={`w-full p-4 rounded-2xl border text-left font-semibold text-sm transition-all flex items-center justify-between ${
-                  selectedOption === idx
+                className={`w-full p-4 rounded-2xl border text-left font-semibold text-sm transition-all flex items-center justify-between ${selectedOption === idx
                     ? 'bg-brand/10 border-brand text-brand ring-2 ring-brand/30'
                     : 'bg-white border-slate-200 text-slate-700 hover:border-brand'
-                }`}
+                  }`}
               >
                 <span>{option}</span>
-                <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs font-bold ${
-                  selectedOption === idx ? 'border-brand bg-brand text-white' : 'border-slate-300'
-                }`}>
+                <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs font-bold ${selectedOption === idx ? 'border-brand bg-brand text-white' : 'border-slate-300'
+                  }`}>
                   {String.fromCharCode(65 + idx)}
                 </span>
               </button>
@@ -135,11 +133,10 @@ export default function QuizView() {
           <button
             onClick={handleNextQuestion}
             disabled={selectedOption === null}
-            className={`w-full py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${
-              selectedOption !== null
+            className={`w-full py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${selectedOption !== null
                 ? 'bg-brand text-electric shadow-glow hover:bg-brand-600 cursor-pointer'
                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-            }`}
+              }`}
           >
             <span>{currentQuestionIndex + 1 === quizQuestions.length ? 'Submit Quiz & Calculate Score' : 'Next Question'}</span>
             <ArrowRight className="w-4 h-4" />

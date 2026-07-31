@@ -30,10 +30,10 @@ import Profile from './pages/student/Profile';
 import TutorDashboard from './pages/tutor/TutorDashboard';
 import UploadLesson from './pages/tutor/UploadLesson';
 
-// 👑 Singgasana Admin Penjaga Perdamaian App, Xixixi~ 🛡️
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ManageUsers from './pages/admin/ManageUsers';
-import ManagePackages from './pages/admin/ManagePackages';
+// 👑 Portal Khusus Admin Master & Asisten 🛡️
+import AdminPortal from './pages/admin/AdminPortal';
+
+import WelcomeModal from './components/common/WelcomeModal';
 
 // 🔮 Komponen Utama Pembawa Kebahagiaan Pengguna
 function MainContent() {
@@ -101,10 +101,9 @@ function MainContent() {
       case 'manage-courses': return <TutorDashboard />;
       case 'upload-lesson': return <UploadLesson />;
 
-      // ⚙️ Rute Admin
-      case 'admin-dashboard': return <AdminDashboard />;
-      case 'manage-users': return <ManageUsers />;
-      case 'manage-packages': return <ManagePackages />;
+      // 🛡️ Rute Dedicated Portal Admin
+      case 'admin-portal': return <AdminPortal />;
+      case 'admin': return <AdminPortal />;
 
       default: return <Home />;
     }
@@ -115,6 +114,7 @@ function MainContent() {
 
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden w-full max-w-full">
+      <WelcomeModal />
       {/* 📌 Anchor penyelamat dari keterpurukan scroll bawah */}
       <div id="top-of-page" className="absolute top-0 left-0 w-0 h-0 pointer-events-none" />
       <Navbar />

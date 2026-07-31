@@ -6,15 +6,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dbPath = path.join(__dirname, 'mahir_speaking.db');
 
+// 🗄️ Inisialisasi Database SQLite Mahir Speaking yang Super Setia & Anti Lag! ✨
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error('Error connecting to SQLite database:', err.message);
+    console.error('❌ Waduh, gagal konek ke database SQLite nih bestie:', err.message);
   } else {
-    console.log('Connected to SQLite database at', dbPath);
+    console.log('✅ Yippie! Berhasil konek ke database SQLite di:', dbPath, '~ slay!');
   }
 });
 
-// Helper for promises
+// ⚡ Helper Promise query database biar async-await makin smooth tanpa drama callback-hell~ 🚀
 export const query = (sql, params = []) => {
   return new Promise((resolve, reject) => {
     const isSelect = sql.trim().toUpperCase().startsWith('SELECT');

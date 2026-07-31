@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, LogOut, Shield, BookOpen } from 'lucide-react';
+import { User, LogOut, BookOpen, Shield } from 'lucide-react';
 
 // 🧭 Komponen Navigasi Utama: Penunjuk Jalan Menuju Keberhasilan Slay! ✨
 export default function Navbar() {
@@ -14,7 +14,8 @@ export default function Navbar() {
           {/* 🚀 Kiri: Logo & Nama Mahir Speaking */}
           <div
             className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
-            onClick={() => setActiveTab(user ? (user.role === 'admin' ? 'admin-dashboard' : user.role === 'tutor' ? 'tutor-dashboard' : 'student-dashboard') : 'home')}
+            onClick={() => setActiveTab('home')}
+            title="Ke Halaman Utama Mahir Speaking"
           >
             <img
               src="/MP.png"
@@ -83,7 +84,7 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-full border border-slate-200 shadow-inner">
-                {user.role === 'student' && (
+                {(user.role === 'student' || user.role === 'admin') && (
                   <>
                     <button
                       onClick={() => setActiveTab('home')}
@@ -124,6 +125,20 @@ export default function Navbar() {
                   </>
                 )}
 
+                {user.role === 'admin' && (
+                  <button
+                    onClick={() => setActiveTab('admin-portal')}
+                    className={`px-4 py-2 rounded-full transition-all flex items-center gap-1.5 cursor-pointer ${
+                      activeTab === 'admin-portal' || activeTab === 'admin'
+                        ? 'bg-slate-900 text-emerald-400 shadow-md font-black'
+                        : 'bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500 hover:text-white font-extrabold border border-emerald-500/30'
+                    }`}
+                  >
+                    <Shield className="w-4 h-4 text-emerald-500" />
+                    <span>Admin Portal</span>
+                  </button>
+                )}
+
                 {user.role === 'tutor' && (
                   <button
                     onClick={() => setActiveTab('tutor-dashboard')}
@@ -133,34 +148,12 @@ export default function Navbar() {
                     Dashboard
                   </button>
                 )}
-
-                {user.role === 'admin' && (
-                  <button
-                    onClick={() => setActiveTab('admin-dashboard')}
-                    className={`px-4 py-2 rounded-full transition-all ${activeTab === 'admin-dashboard' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
-                      }`}
-                  >
-                    Dashboard
-                  </button>
-                )}
               </div>
             )}
           </nav>
 
-          {/* 👑 Kanan: Tombol Panel Admin + Profile Avatar */}
+          {/* 👑 Kanan: Profile Avatar & Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
-
-            {/* 🛡️ Tombol Rahasia Admin Master */}
-            <button
-              onClick={() => setActiveTab('admin-dashboard')}
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-all shadow-md flex items-center justify-center border-2 border-white group flex-shrink-0 hover:scale-105 cursor-pointer ${activeTab === 'admin-dashboard' || activeTab === 'manage-users' || activeTab === 'manage-packages'
-                ? 'bg-brand text-lime shadow-glow'
-                : 'bg-dark text-lime hover:bg-brand hover:text-white'
-                }`}
-              title="Panel Admin Master"
-            >
-              <Shield className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.5] group-hover:scale-110 transition-transform" />
-            </button>
 
             {!user ? (
               <button
@@ -174,14 +167,23 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <div
                   onClick={() => setActiveTab('profile')}
-                  className="flex items-center gap-2 bg-slate-100 p-1 sm:pr-3 rounded-full border border-brand/30 cursor-pointer hover:border-brand transition-all"
+                  title="Lihat & Edit Profil Saya"
+                  className="flex items-center gap-2 bg-slate-100 p-1 sm:pr-3 rounded-full border border-brand/30 cursor-pointer hover:border-brand hover:bg-white transition-all shadow-sm group"
                 >
-                  <img
-                    src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250'}
-                    alt={user.full_name}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-brand"
-                  />
-                  <span className="font-extrabold text-xs text-slate-900 hidden sm:inline">{user.full_name}</span>
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.full_name}
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-brand"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-brand text-lime font-black text-xs flex items-center justify-center border-2 border-white uppercase shadow-sm">
+                      {user.full_name?.charAt(0) || 'U'}
+                    </div>
+                  )}
+                  <span className="font-extrabold text-xs text-slate-900 hidden sm:inline group-hover:text-brand transition-colors">
+                    {user.full_name}
+                  </span>
                 </div>
 
                 <button

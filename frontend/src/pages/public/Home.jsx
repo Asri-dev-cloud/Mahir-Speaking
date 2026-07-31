@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import PlacementTestModal from "../../components/modals/PlacementTestModal";
 import {
   Mic,
   Sparkles,
@@ -71,12 +72,6 @@ export default function Home() {
   const handleLeadSubmit = (e) => {
     e.preventDefault();
     if (!leadFormData.nama || !leadFormData.noWa) return;
-
-    // Save lead locally
-    const existingLeads = JSON.parse(localStorage.getItem('mahir_leads') || '[]');
-    const newLead = { ...leadFormData, date: new Date().toISOString() };
-    localStorage.setItem('mahir_leads', JSON.stringify([newLead, ...existingLeads]));
-
     setLeadsCount(prev => prev + 1);
     setPlacementStep(2);
   };
@@ -87,12 +82,32 @@ export default function Home() {
     if (quizAnswers.q2 === 'c') score += 1;
     if (quizAnswers.q3 === 'a') score += 1;
 
-    if (score === 3) setRecommendedLevel('Advanced Level');
-    else if (score === 2) setRecommendedLevel('Intermediate Level');
-    else setRecommendedLevel('Basic Level');
+    let levelRec = 'Basic Level';
+    if (score === 3) levelRec = 'Advanced Level';
+    else if (score === 2) levelRec = 'Intermediate Level';
 
+    setRecommendedLevel(levelRec);
     setPlacementStep(3);
     setLeadSubmitted(true);
+
+    // Save lead to localStorage for Admin Dashboard retrieval
+    const cleanWa = leadFormData.noWa ? leadFormData.noWa.replace(/[^0-9]/g, '') : '';
+    const existingLeads = JSON.parse(localStorage.getItem('mahir_leads') || '[]');
+    const newLead = {
+      id: Date.now(),
+      nama: leadFormData.nama,
+      noWa: cleanWa,
+      levelTarget: leadFormData.levelTarget || 'Basic',
+      jadwalTrial: leadFormData.jadwalTrial || 'Sabtu (10.00 WIB)',
+      recommendedLevel: levelRec,
+      score: `${score}/3`,
+      catatan: leadFormData.catatan || 'Tidak ada catatan khusus',
+      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      status: 'Belum Dihubungi'
+    };
+
+    const filtered = existingLeads.filter(l => l.noWa !== cleanWa);
+    localStorage.setItem('mahir_leads', JSON.stringify([newLead, ...filtered]));
   };
 
   const curriculumData = {
@@ -101,7 +116,7 @@ export default function Home() {
       badge: "Fondasi Utama & Keberanian Bicara",
       badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
       target: "Berani berbicara Bahasa Inggris tanpa rasa canggung, menguasai frasa harian dasar, serta pengucapan yang jelas.",
-      duration: "8 – 10 Sesi Interaktif (@90 Menit)",
+      duration: "8  Sesi Interaktif (@90 Menit)",
       focusItems: [
         { title: "Perkenalan Diri (Self Introduction)", desc: "Menyebutkan nama, asal, latar belakang, dan hobi dengan percaya diri & sopan." },
         { title: "Percakapan Harian (Daily Conversation)", desc: "Dialog sehari-hari di kafe, belanja, menyapa teman, dan menanyakan lokasi." },
@@ -166,7 +181,7 @@ export default function Home() {
 
   return (
     <div className="space-y-12 sm:space-y-20 pb-12 overflow-hidden">
-      
+
       {/* 🚀 SECTION 1: HERO SECTION WITH TAGLINE RESMI & DUAL CTA */}
       <section className="relative pt-2 sm:pt-6 pb-0 w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6">
         <div className="relative bg-gradient-to-br from-white via-emerald-50/50 to-teal-50/70 backdrop-blur-xl rounded-3xl sm:rounded-4xl border-2 border-slate-200 shadow-2xl p-4 sm:p-8 lg:p-12 overflow-hidden">
@@ -182,10 +197,6 @@ export default function Home() {
                 alt="Mahir Speaking Logo"
                 className="h-8 sm:h-11 w-auto object-contain drop-shadow-sm"
               />
-              <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-900 px-3 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-black border border-emerald-300 shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 animate-pulse" />
-                <span>#1 Premier English Speaking Course</span>
-              </div>
             </div>
 
             <div className="hidden sm:flex items-center gap-2 text-xs font-black text-slate-700 bg-white/80 px-3 py-1 rounded-full border border-slate-200">
@@ -196,15 +207,11 @@ export default function Home() {
 
           {/* Grid Layout */}
           <div className="grid grid-cols-12 gap-6 md:gap-8 items-center pt-4 sm:pt-6 pb-0 min-h-[400px] sm:min-h-[500px] relative z-10">
-            
-            {/* LEFT COLUMN: TAGLINE RESMI & DUAL CTA */}
+
+            {/* LEFT COLUMN: HERO TITLE & DUAL CTA */}
             <div className="col-span-12 md:col-span-7 lg:col-span-6 space-y-5 text-left z-20">
-              
-              {/* TAGLINE RESMI DISERTAKAN PROMINENTLY */}
+
               <div className="space-y-2">
-                <span className="bg-dark text-lime text-[11px] font-black uppercase px-3.5 py-1 rounded-full border border-dark tracking-wider inline-block">
-                  ✦ TAGLINE RESMI MAHIR SPEAKING
-                </span>
                 <h1 className="font-black text-3xl xs:text-4xl sm:text-5xl lg:text-6xl leading-[0.95] tracking-tighter uppercase font-sans text-slate-900">
                   BERANI BICARA, <br />
                   <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-lime-500 bg-clip-text text-transparent">
@@ -243,31 +250,6 @@ export default function Home() {
                   <span>Konsultasi WhatsApp</span>
                 </a>
               </div>
-
-              {/* LEADS PROGRESS COUNTER (TARGET 50 LEADS/BULAN) */}
-              <div className="pt-2">
-                <div className="bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200 shadow-md max-w-md space-y-2">
-                  <div className="flex items-center justify-between text-xs font-black">
-                    <span className="text-slate-700 flex items-center gap-1.5">
-                      <Target className="w-4 h-4 text-emerald-600" />
-                      Target Kuota Leads Bulan Ini
-                    </span>
-                    <span className="text-emerald-700 font-mono bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      {leadsCount} / 50 Leads
-                    </span>
-                  </div>
-                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                    <div
-                      className="h-full bg-gradient-to-r from-emerald-500 to-lime transition-all duration-500"
-                      style={{ width: `${(leadsCount / 50) * 100}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-[10px] text-slate-500 font-bold">
-                    🔥 Sisa {50 - leadsCount} slot Trial Class Gratis bulan ini. Amankan tempatmu sekarang!
-                  </p>
-                </div>
-              </div>
-
             </div>
 
             {/* RIGHT COLUMN: STUDENT IMAGE */}
@@ -283,11 +265,11 @@ export default function Home() {
 
           </div>
 
-          {/* TICKER RIBBON */}
+          {/* TICKER RIBBON (PITA MAHIR SPEAKING) */}
           <div className="relative z-10 -mx-4 sm:-mx-8 lg:-mx-12 -mb-4 sm:-mb-8 lg:-mb-12 mt-4 sm:mt-6 bg-lime border-t-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md">
             <div className="inline-flex items-center gap-6 font-stinger font-black text-xs sm:text-lg text-dark tracking-widest uppercase animate-pulse">
-              <span>BERANI BICARA, SIAP BERKARYA ✦ MAHIR SPEAKING ✦ TRIAL CLASS GRATIS ✦ NATIVE SPEAKER MEETING ✦ 50 LEADS TARGET ✦</span>
-              <span>BERANI BICARA, SIAP BERKARYA ✦ MAHIR SPEAKING ✦ TRIAL CLASS GRATIS ✦ NATIVE SPEAKER MEETING ✦ 50 LEADS TARGET ✦</span>
+              <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
+              <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
             </div>
           </div>
         </div>
@@ -439,33 +421,30 @@ export default function Home() {
         <div className="flex justify-center items-center gap-2 sm:gap-4 bg-slate-100 p-2 rounded-3xl border border-slate-200 max-w-2xl mx-auto">
           <button
             onClick={() => setActiveLevelTab('basic')}
-            className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
-              activeLevelTab === 'basic'
+            className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${activeLevelTab === 'basic'
                 ? 'bg-blue-600 text-white shadow-md scale-105'
                 : 'text-slate-700 hover:bg-white'
-            }`}
+              }`}
           >
             Level Basic
           </button>
 
           <button
             onClick={() => setActiveLevelTab('intermediate')}
-            className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
-              activeLevelTab === 'intermediate'
+            className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${activeLevelTab === 'intermediate'
                 ? 'bg-amber-500 text-slate-950 shadow-md scale-105'
                 : 'text-slate-700 hover:bg-white'
-            }`}
+              }`}
           >
             Level Intermediate
           </button>
 
           <button
             onClick={() => setActiveLevelTab('advanced')}
-            className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
-              activeLevelTab === 'advanced'
+            className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${activeLevelTab === 'advanced'
                 ? 'bg-purple-600 text-white shadow-md scale-105'
                 : 'text-slate-700 hover:bg-white'
-            }`}
+              }`}
           >
             Level Advanced
           </button>
@@ -554,192 +533,10 @@ export default function Home() {
       </section>
 
       {/* 📝 MODAL FORMULIR PLACEMENT TEST / LEADS CAPTURE */}
-      {showPlacementModal && (
-        <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto"
-          onClick={() => setShowPlacementModal(false)}
-        >
-          <div
-            className="relative w-full max-w-xl bg-white rounded-4xl border-4 border-dark shadow-2xl p-6 sm:p-8 my-8"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowPlacementModal(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-800 rounded-full bg-slate-100"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {placementStep === 1 && (
-              <form onSubmit={handleLeadSubmit} className="space-y-5">
-                <div className="space-y-2 text-center">
-                  <span className="bg-lime text-dark text-[10px] font-black px-3 py-1 rounded-full uppercase border border-dark">
-                    Formulir Trial Class Gratis
-                  </span>
-                  <h3 className="font-stinger font-black text-2xl text-slate-900">
-                    Placement Test & Pendaftaran Leads
-                  </h3>
-                  <p className="text-xs text-slate-600 font-semibold">
-                    Isi data diri Anda untuk mengamankan slot Trial Class & mengejar target 50 leads/bulan.
-                  </p>
-                </div>
-
-                <div className="space-y-4 text-left">
-                  <div>
-                    <label className="block text-xs font-black text-slate-700 mb-1">Nama Lengkap *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Masukkan nama lengkap Anda"
-                      value={leadFormData.nama}
-                      onChange={(e) => setLeadFormData({ ...leadFormData, nama: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 text-xs font-bold focus:border-brand outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-black text-slate-700 mb-1">Nomor WhatsApp Active *</label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="Contoh: 085861171129"
-                      value={leadFormData.noWa}
-                      onChange={(e) => setLeadFormData({ ...leadFormData, noWa: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 text-xs font-bold focus:border-brand outline-none"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-black text-slate-700 mb-1">Target Level Belajar</label>
-                      <select
-                        value={leadFormData.levelTarget}
-                        onChange={(e) => setLeadFormData({ ...leadFormData, levelTarget: e.target.value })}
-                        className="w-full px-3 py-3 rounded-2xl border-2 border-slate-200 text-xs font-bold focus:border-brand outline-none bg-white"
-                      >
-                        <option value="basic">Basic (Beginner)</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-black text-slate-700 mb-1">Pilihan Jadwal Trial</label>
-                      <select
-                        value={leadFormData.jadwalTrial}
-                        onChange={(e) => setLeadFormData({ ...leadFormData, jadwalTrial: e.target.value })}
-                        className="w-full px-3 py-3 rounded-2xl border-2 border-slate-200 text-xs font-bold focus:border-brand outline-none bg-white"
-                      >
-                        <option value="Sabtu (10.00 WIB)">Sabtu (10.00 WIB)</option>
-                        <option value="Minggu (14.00 WIB)">Minggu (14.00 WIB)</option>
-                        <option value="Weekday (19.00 WIB)">Weekday (19.00 WIB)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-black text-slate-700 mb-1">Catatan / Target Belajar (Opsional)</label>
-                    <textarea
-                      rows={2}
-                      placeholder="Contoh: Ingin lancar wawancara kerja & presentasi"
-                      value={leadFormData.catatan}
-                      onChange={(e) => setLeadFormData({ ...leadFormData, catatan: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-2xl border-2 border-slate-200 text-xs font-bold focus:border-brand outline-none resize-none"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3.5 rounded-2xl bg-lime text-dark font-black text-xs shadow-limeGlow border-2 border-dark cursor-pointer hover:bg-emerald-400 transition-all flex items-center justify-center gap-2"
-                >
-                  <span>Lanjut Ke Mini Placement Quiz ➔</span>
-                </button>
-              </form>
-            )}
-
-            {placementStep === 2 && (
-              <div className="space-y-6 text-left">
-                <div className="space-y-1 text-center">
-                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full uppercase">
-                    Langkah 2 dari 2: Tes Diagnosis Singkat
-                  </span>
-                  <h3 className="font-stinger font-black text-2xl text-slate-900">
-                    Mini Diagnostic Test
-                  </h3>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <p className="text-xs font-black text-slate-900">1. Bagaimana Anda menyapa seseorang dalam konteks formal?</p>
-                    <div className="space-y-1.5 text-xs font-semibold">
-                      <label className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border cursor-pointer hover:bg-slate-100">
-                        <input type="radio" name="q1" value="a" onChange={() => setQuizAnswers({ ...quizAnswers, q1: 'a' })} />
-                        <span>A. What's up bro?</span>
-                      </label>
-                      <label className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border cursor-pointer hover:bg-slate-100">
-                        <input type="radio" name="q1" value="b" onChange={() => setQuizAnswers({ ...quizAnswers, q1: 'b' })} />
-                        <span>B. Good morning, pleased to meet you.</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-xs font-black text-slate-900">2. Kalimat mana yang menyatakan pengalaman masa lalu?</p>
-                    <div className="space-y-1.5 text-xs font-semibold">
-                      <label className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border cursor-pointer hover:bg-slate-100">
-                        <input type="radio" name="q2" value="c" onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'c' })} />
-                        <span>A. I have worked in tech for 3 years.</span>
-                      </label>
-                      <label className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border cursor-pointer hover:bg-slate-100">
-                        <input type="radio" name="q2" value="d" onChange={() => setQuizAnswers({ ...quizAnswers, q2: 'd' })} />
-                        <span>B. I go to work tomorrow.</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleFinishPlacement}
-                  className="w-full py-3.5 rounded-2xl bg-brand text-lime font-black text-xs border-2 border-dark cursor-pointer hover:scale-[1.02] transition-all"
-                >
-                  Lihat Rekomendasi Level Saya ➔
-                </button>
-              </div>
-            )}
-
-            {placementStep === 3 && (
-              <div className="space-y-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center border-2 border-emerald-300">
-                  <CheckCircle className="w-10 h-10" />
-                </div>
-                <div className="space-y-2">
-                  <span className="bg-lime text-[#08203C] text-[10px] font-black px-3 py-1 rounded-full uppercase border border-dark">
-                    Pendaftaran Lead Berhasil
-                  </span>
-                  <h3 className="font-stinger font-black text-2xl text-slate-900">
-                    Hasil Rekomendasi: <span className="text-brand">{recommendedLevel}</span>
-                  </h3>
-                  <p className="text-xs text-slate-600 font-semibold leading-relaxed">
-                    Terima kasih <strong>{leadFormData.nama}</strong>! Data Anda telah terdaftar untuk Trial Class <strong>{leadFormData.jadwalTrial}</strong>.
-                  </p>
-                </div>
-
-                <a
-                  href={`https://wa.me/6285861171129?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ${leadFormData.nama} (WA: ${leadFormData.noWa}) telah mendaftar Placement Test dengan rekomendasi ${recommendedLevel} untuk Trial Class ${leadFormData.jadwalTrial}.`)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full py-4 rounded-2xl bg-emerald-500 text-white font-black text-xs shadow-lg hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 border-2 border-emerald-700"
-                >
-                  <MessageCircle className="w-4 h-4 fill-white" />
-                  <span>Konfirmasi Jadwal Ke WhatsApp Business (0858-6117-1129)</span>
-                </a>
-              </div>
-            )}
-
-          </div>
-        </div>
-      )}
+      <PlacementTestModal
+        isOpen={showPlacementModal}
+        onClose={() => setShowPlacementModal(false)}
+      />
 
     </div>
   );

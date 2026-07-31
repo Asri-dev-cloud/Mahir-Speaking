@@ -1,5 +1,5 @@
 {
-  "name": "mahir-speaking-server",
+  "name": "mahir-speaking-backend",
   "version": "1.0.0",
   "description": "Backend API for Mahir Speaking English E-Learning Platform",
   "main": "server.js",

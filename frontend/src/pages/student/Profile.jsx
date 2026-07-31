@@ -8,7 +8,7 @@ export default function Profile() {
 
   const [fullName, setFullName] = useState(user?.full_name || '');
   const [whatsapp, setWhatsapp] = useState(user?.whatsapp || '');
-  const [avatar, setAvatar] = useState(user?.avatar || '/ma.png');
+  const [avatar, setAvatar] = useState(user?.avatar || '');
   const [speakingGoal, setSpeakingGoal] = useState(user?.speaking_goal || 'Persiapan IELTS 7.0+ & Business Pitch');
   const [bio, setBio] = useState(user?.bio || 'Sangat bersemangat melatih kelancaran percakapan Bahasa Inggris bersama Mahir Speaking!');
   const [saving, setSaving] = useState(false);
@@ -86,11 +86,17 @@ export default function Profile() {
       
       {/* Profile Header Card */}
       <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white shadow-glass flex flex-col sm:flex-row items-center gap-6 bg-gradient-to-r from-slate-900 via-brand to-slate-950 text-white">
-        <img
-          src={avatar || user?.avatar || '/ma.png'}
-          alt={fullName || user?.full_name}
-          className="w-24 h-24 rounded-full object-cover border-4 border-lime shadow-xl flex-shrink-0"
-        />
+        {avatar || user?.avatar ? (
+          <img
+            src={avatar || user?.avatar}
+            alt={fullName || user?.full_name}
+            className="w-24 h-24 rounded-full object-cover border-4 border-lime shadow-xl flex-shrink-0"
+          />
+        ) : (
+          <div className="w-24 h-24 rounded-full bg-brand text-lime font-black text-3xl flex items-center justify-center border-4 border-lime shadow-xl flex-shrink-0 uppercase">
+            {(fullName || user?.full_name || 'U').charAt(0)}
+          </div>
+        )}
         <div className="space-y-1.5 text-center sm:text-left flex-1">
           <div className="flex items-center justify-center sm:justify-start gap-2.5">
             <h1 className="font-stinger font-black text-2xl sm:text-3xl text-white">{fullName || user?.full_name || 'Student Learner'}</h1>

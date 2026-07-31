@@ -1,3 +1,4 @@
+// ⚡ Konfigurasi Vite Frontend Mahir Speaking: Wusss kenceng anti lag & proxy backend super sat-set! 🚀
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
