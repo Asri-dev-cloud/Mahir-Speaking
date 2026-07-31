@@ -7,9 +7,9 @@ export default function FloatingWhatsApp() {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
-    <div className="fixed bottom-16 sm:bottom-6 right-4 sm:right-6 z-40 flex items-center gap-3">
+    <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex items-center gap-3">
       {/* Tooltip Label */}
-      <a 
+      <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
@@ -20,7 +20,7 @@ export default function FloatingWhatsApp() {
       </a>
 
       {/* Floating Button */}
-      <a 
+      <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"

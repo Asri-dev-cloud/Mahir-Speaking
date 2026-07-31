@@ -9,7 +9,7 @@ import FloatingWhatsApp from './components/common/FloatingWhatsApp';
 import { FloatingAssistant } from './components/FloatingAssistant';
 import { MashiraAssistant } from './components/MashiraAssistant';
 
-// Public Pages
+// 🌟 Halaman Publik yang aesthetic nan memanjakan mata gais~ ✨
 import Home from './pages/public/Home';
 import LMSView from './pages/public/LMSView';
 import Portfolio from './pages/public/Portfolio';
@@ -18,9 +18,7 @@ import Branding from './pages/public/Branding';
 import AuthPage from './pages/public/AuthPage';
 import ForgotPassword from './pages/public/ForgotPassword';
 
-// Student Pages
-import StudentDashboard from './pages/student/StudentDashboard';
-import LearningPath from './pages/student/LearningPath';
+// 🎓 Zona Belajar Para Pejuang Fluency yang Super Slay~ 🚀
 import LessonView from './pages/student/LessonView';
 import QuizView from './pages/student/QuizView';
 import AIChatView from './pages/student/AIChatView';
@@ -28,20 +26,22 @@ import LeaderboardView from './pages/student/LeaderboardView';
 import MyPackage from './pages/student/MyPackage';
 import Profile from './pages/student/Profile';
 
-// Tutor Pages
+// 👨‍🏫 Area Khusus Tentor Ketche nan Idaman, No Cap! 📚
 import TutorDashboard from './pages/tutor/TutorDashboard';
 import UploadLesson from './pages/tutor/UploadLesson';
 
-// Admin Pages
+// 👑 Singgasana Admin Penjaga Perdamaian App, Xixixi~ 🛡️
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageUsers from './pages/admin/ManageUsers';
 import ManagePackages from './pages/admin/ManagePackages';
 
+// 🔮 Komponen Utama Pembawa Kebahagiaan Pengguna
 function MainContent() {
   const { activeTab } = useAuth();
   const [isAssistantOpen, setIsAssistantOpen] = React.useState(false);
   const floatingButtonRef = React.useRef(null);
 
+  // 🚀 Efek magis biar setiap pindah tab langsung auto-scroll ke paling atas, santuy abis!
   React.useEffect(() => {
     const scrollToTop = () => {
       const topAnchor = document.getElementById('top-of-page');
@@ -71,9 +71,10 @@ function MainContent() {
     };
   }, [activeTab]);
 
+  // 🎯 Router manual yang super ringkas & gak bikin pusing kepala
   const renderCurrentPage = () => {
     switch (activeTab) {
-      // Public
+      // 🌈 Rute Publik
       case 'home': return <Home />;
       case 'lms': return <LMSView />;
       case 'branding': return <Branding />;
@@ -85,7 +86,7 @@ function MainContent() {
       case 'register': return <AuthPage />;
       case 'forgot-password': return <ForgotPassword />;
 
-      // Student
+      // 🎒 Rute Student
       case 'student-dashboard': return <LMSView />;
       case 'learning-path': return <LMSView />;
       case 'lesson-view': return <LessonView />;
@@ -95,12 +96,12 @@ function MainContent() {
       case 'my-package': return <MyPackage />;
       case 'profile': return <Profile />;
 
-      // Tutor
+      // 📝 Rute Tutor
       case 'tutor-dashboard': return <TutorDashboard />;
       case 'manage-courses': return <TutorDashboard />;
       case 'upload-lesson': return <UploadLesson />;
 
-      // Admin
+      // ⚙️ Rute Admin
       case 'admin-dashboard': return <AdminDashboard />;
       case 'manage-users': return <ManageUsers />;
       case 'manage-packages': return <ManagePackages />;
@@ -109,19 +110,24 @@ function MainContent() {
     }
   };
 
+  const publicTabs = ['home', 'branding', 'portfolio', 'pricing', 'auth', 'login', 'register', 'forgot-password'];
+  const isPublicPage = publicTabs.includes(activeTab);
+
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden w-full max-w-full">
+      {/* 📌 Anchor penyelamat dari keterpurukan scroll bawah */}
       <div id="top-of-page" className="absolute top-0 left-0 w-0 h-0 pointer-events-none" />
       <Navbar />
-      <main key={activeTab} className="flex-1 pb-28 md:pb-12 overflow-x-hidden w-full">
+      <main key={activeTab} className="flex-1 overflow-x-hidden w-full">
         {renderCurrentPage()}
       </main>
       <Footer />
-      <FloatingWhatsApp />
+      {isPublicPage && <FloatingWhatsApp />}
       <FloatingAssistant
         isOpen={isAssistantOpen}
         onToggle={() => setIsAssistantOpen(prev => !prev)}
         buttonRef={floatingButtonRef}
+        hasWhatsAppBelow={isPublicPage}
       />
       <MashiraAssistant
         isOpen={isAssistantOpen}
@@ -133,6 +139,7 @@ function MainContent() {
   );
 }
 
+// 🧁 Provider Pembungkus Aplikasi Biar Semuanya Tetap Warm & Slay~
 export default function App() {
   return (
     <AuthProvider>

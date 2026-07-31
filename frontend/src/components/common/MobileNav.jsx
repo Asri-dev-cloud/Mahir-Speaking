@@ -2,9 +2,11 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Home, Sparkles, Layers, Trophy, User } from 'lucide-react';
 
+// 📱 Navigasi Bawah Layar HP: Si Mungil Penyelamat Pengguna Mobile~ 🤳
 export default function MobileNav() {
   const { user, activeTab, setActiveTab } = useAuth();
 
+  // 🚀 Pindah tab plus auto-scroll ke paling atas biar jempol gak pegel bestie!
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
     const forceScroll = () => {
@@ -27,7 +29,7 @@ export default function MobileNav() {
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-1.5 px-2">
       <div className="flex items-center justify-around max-w-md mx-auto">
         
-        {/* Tab 1: Home */}
+        {/* 🏠 Tab 1: Home Utama */}
         <button
           onClick={() => handleTabClick(user ? (user.role === 'admin' ? 'admin-dashboard' : user.role === 'tutor' ? 'tutor-dashboard' : 'student-dashboard') : 'home')}
           className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
@@ -46,7 +48,7 @@ export default function MobileNav() {
           <span className="text-[10px] tracking-tight">Home</span>
         </button>
 
-        {/* Tab 2: Branding */}
+        {/* 🎨 Tab 2: Showcase Branding */}
         <button
           onClick={() => handleTabClick('branding')}
           className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
@@ -65,7 +67,7 @@ export default function MobileNav() {
           <span className="text-[10px] tracking-tight">Branding</span>
         </button>
 
-        {/* Tab 3: LMS */}
+        {/* ✨ Tab 3: Pusat Belajar LMS */}
         <button
           onClick={() => handleTabClick('lms')}
           className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
@@ -84,7 +86,7 @@ export default function MobileNav() {
           <span className="text-[10px] tracking-tight">LMS</span>
         </button>
 
-        {/* Tab 4: Leaderboard */}
+        {/* 🏆 Tab 4: Papan Juara Leaderboard */}
         <button
           onClick={() => handleTabClick(user ? 'leaderboard' : 'leaderboard-public')}
           className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
@@ -103,7 +105,7 @@ export default function MobileNav() {
           <span className="text-[10px] tracking-tight">Rank</span>
         </button>
 
-        {/* Tab 5: Akun / Masuk */}
+        {/* 👤 Tab 5: Profil Akun Pengguna / Pintu Masuk */}
         <button
           onClick={() => handleTabClick(user ? 'profile' : 'auth')}
           className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${

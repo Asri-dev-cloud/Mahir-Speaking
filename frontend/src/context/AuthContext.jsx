@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService, userService } from '../services/api';
 
+// 🔑 Konteks Autentikasi Pengjaga Gerbang Keamanan App~ 🚪
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // 💾 Ngarap user tersimpan di localstorage biar gak repot ketik login terus gais~
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('mahir_user');
     if (savedUser) {
@@ -13,8 +15,9 @@ export const AuthProvider = ({ children }) => {
   });
   const [token, setToken] = useState(localStorage.getItem('mahir_token') || null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('home'); // Navigation state for SPA routing
+  const [activeTab, setActiveTab] = useState('home'); // 🚀 Navigasi SPA biar gak usah reload page, anti-lelet club!
 
+  // 🔄 Sinkronisasi status profil si user ketche waktu token berubah
   useEffect(() => {
     if (token) {
       userService.getProfile()
@@ -25,7 +28,7 @@ export const AuthProvider = ({ children }) => {
           }
         })
         .catch(() => {
-          // Keep persistent local user session if backend is unreachable
+          // 🛡️ Mode penyelamat: kalo server lagi ngambek/down, pake lokal user dlu biar tetep santuy
           if (!user) {
             const savedUser = localStorage.getItem('mahir_user');
             if (savedUser) {
@@ -39,6 +42,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
+  // 🔐 Fungsi Login Pembuka Pintu Masuk
   const login = async (emailOrCredentials, password) => {
     try {
       const credentials = typeof emailOrCredentials === 'object'
@@ -56,12 +60,12 @@ export const AuthProvider = ({ children }) => {
         else setActiveTab('student-dashboard');
         return data;
       }
-      throw new Error(data.message || 'Login gagal');
+      throw new Error(data.message || 'Login gagal, coba cek email/password kamu deh gais');
     } catch (err) {
-      // Fallback persistent session mode for smooth user experience
+      // 🪄 Fallback mode demo super smooth biar tetep bisa pamer fitur!
       const mockUser = {
         id: Date.now(),
-        full_name: typeof emailOrCredentials === 'object' ? (emailOrCredentials.email?.split('@')[0] || 'User') : 'Learner Active',
+        full_name: typeof emailOrCredentials === 'object' ? (emailOrCredentials.email?.split('@')[0] || 'User Active') : 'Learner Active',
         email: typeof emailOrCredentials === 'object' ? emailOrCredentials.email : emailOrCredentials,
         username: typeof emailOrCredentials === 'object' ? emailOrCredentials.email?.split('@')[0] : 'learner_active',
         role: 'student',
@@ -81,6 +85,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 📝 Fungsi Registrasi Anggota Baru Warm Welcome~
   const register = async (userData) => {
     try {
       const payload = {
@@ -99,7 +104,7 @@ export const AuthProvider = ({ children }) => {
       }
       throw new Error(data.message || 'Pendaftaran gagal');
     } catch (err) {
-      // Fallback session mode for smooth registration experience
+      // 🪄 Fallback demo registrasi smooth abis no drama
       const newUser = {
         id: Date.now(),
         full_name: userData.full_name || userData.email?.split('@')[0] || 'Siswa Baru',
@@ -122,6 +127,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 🚪 Pamit Keluar/Logout
   const logout = () => {
     localStorage.removeItem('mahir_token');
     localStorage.removeItem('mahir_user');
@@ -130,6 +136,7 @@ export const AuthProvider = ({ children }) => {
     setActiveTab('home');
   };
 
+  // ✏️ Update Profil Pengguna
   const updateUserProfile = (updatedUser) => {
     setUser(prev => {
       const nextUser = { ...prev, ...updatedUser };
@@ -138,6 +145,7 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  // ✨ Tambah XP & Poin Biar Makin Slay di Leaderboard
   const addXpAndPoints = (xp, points) => {
     setUser(prev => {
       if (!prev) return prev;

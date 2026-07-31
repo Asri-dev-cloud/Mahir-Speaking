@@ -1,9 +1,10 @@
 import bcrypt from 'bcryptjs';
 import { query } from './db.js';
 
+// 🪴 Fungsi Penyemaian Data Awal Database (Seed Data Bikin DB Slay)
 export async function initSeedData() {
   try {
-    // Create Tables
+    // 🏗️ Bikin Tabel Database Kalo Belum Ada Gais~
     await query(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,10 +109,10 @@ export async function initSeedData() {
       )
     `);
 
-    // Check if packages exist
+    // 📦 Cek & Semai Paket Langganan Biar User BIsa Belanja
     const packagesCount = await query(`SELECT COUNT(*) as count FROM packages`);
     if (packagesCount[0].count === 0) {
-      console.log('Seeding initial packages...');
+      console.log('Nyiapin paket-paket langganan ketche dlu gais...');
       await query(`
         INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
         VALUES 
@@ -121,10 +122,10 @@ export async function initSeedData() {
       `);
     }
 
-    // Check if users exist or refresh leaderboard users with Aci, Fariha, Ira, Pipit
+    // 👑 Cek & Semai User Awal Termasuk Juara Leaderboard Aci, Fariha, Ira, Pipit
     const usersCount = await query(`SELECT COUNT(*) as count FROM users`);
     if (usersCount[0].count === 0) {
-      console.log('Seeding initial users with Aci, Fariha, Ira, Pipit...');
+      console.log('Nyiapin data user & juara leaderboard (Aci, Fariha, Ira, Pipit)...');
       const hashedPassword = await bcrypt.hash('password123', 10);
 
       // Student 1: Aci (#1 Champion)
@@ -163,17 +164,17 @@ export async function initSeedData() {
         VALUES ('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '${hashedPassword}', 'admin', 3, 9999, 9999, 99, '/mo.png')
       `);
     } else {
-      // Ensure existing database has Aci, Fariha, Ira, Pipit updated
+      // 🌟 Tetep pastikan leaderboard di-sync cantik ke Aci, Fariha, Ira, Pipit
       await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 3450 WHERE email = 'student@mahirspeaking.com' OR email = 'aci@mahirspeaking.com'`);
       await query(`UPDATE users SET full_name = 'Fariha', username = 'fariha_speaking', avatar = '/mi.png', xp = 2890 WHERE email = 'rian@mahirspeaking.com' OR email = 'fariha@mahirspeaking.com'`);
       await query(`UPDATE users SET full_name = 'Ira', username = 'ira_fluent', avatar = '/mo.png', xp = 2450 WHERE email = 'nadia@mahirspeaking.com' OR email = 'ira@mahirspeaking.com'`);
       await query(`UPDATE users SET full_name = 'Pipit', username = 'pipit_voice', avatar = '/ma.png', xp = 1980 WHERE email = 'budi@mahirspeaking.com' OR email = 'pipit@mahirspeaking.com'`);
     }
 
-    // Check courses
+    // 📚 Cek Kursus & Materi Pembelajaran
     const coursesCount = await query(`SELECT COUNT(*) as count FROM courses`);
     if (coursesCount[0].count === 0) {
-      console.log('Seeding initial courses & lessons...');
+      console.log('Nyiapin materi kursus yang daging semua gais...');
       const tutor = await query(`SELECT id FROM users WHERE role = 'tutor' LIMIT 1`);
       const tutorId = tutor[0]?.id || 5;
 
@@ -187,8 +188,8 @@ export async function initSeedData() {
       `);
     }
 
-    console.log('Seed data initialization complete.');
+    console.log('Seed data database beres dengan sempurna, slay abis! ✨');
   } catch (err) {
-    console.error('Error during database seed initialization:', err.message);
+    console.error('Ada error waktu seeding DB gais:', err.message);
   }
 }

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { aiService } from '../services/api';
 import { useAuth } from './AuthContext';
 
+// 🤖 Konteks Chatbot AI Mashira: Sahabat Curhat & Voice Coach Pintar! 💬
 const AIChatContext = createContext();
 
 export const AIChatProvider = ({ children }) => {
@@ -14,11 +15,12 @@ export const AIChatProvider = ({ children }) => {
       content: `Welcome to **Mahir AI Coach**! 🚀\n\nI am your 24/7 personal English Speaking Assistant. What would you like to practice today?\n\n- **🎙️ Speaking Practice:** Formulate speech responses using the PREP method.\n- **🔍 Grammar Corrector:** Paste any sentence to check and perfect its grammar.\n- **📚 Vocabulary Booster:** Learn idioms, synonyms, and natural collocations.\n- **🇮🇩 ⇄ 🇬🇧 Indonesian-English Translator:** Translate with natural conversational nuances.`
     }
   ]);
-  const [activeMode, setActiveMode] = useState('general'); // general, grammar, speaking, vocab, translator
+  const [activeMode, setActiveMode] = useState('general'); // 🎨 Mode chat (general, grammar, speaking, vocab, translator)
   const [isTyping, setIsTyping] = useState(false);
   const [limitWarning, setLimitWarning] = useState(null);
   const [speakingMessageId, setSpeakingMessageId] = useState(null);
 
+  // 📜 Ambil riwayat chat lama si doi kalo udah login
   useEffect(() => {
     if (user) {
       aiService.getHistory()
@@ -31,6 +33,7 @@ export const AIChatProvider = ({ children }) => {
     }
   }, [user]);
 
+  // 🚀 Kirim pesan ke Mashira AI Coach
   const sendMessage = async (text) => {
     if (!text.trim() || isTyping) return;
 
@@ -43,7 +46,7 @@ export const AIChatProvider = ({ children }) => {
       const data = await aiService.sendMessage(text, activeMode);
       if (data.success) {
         setMessages(prev => [...prev, data.aiMessage]);
-        // Auto Speak the AI response if in speaking practice mode
+        // 🎙️ Auto-Speak balasan AI kalo lagi di mode latihan percakapan/speaking!
         if (activeMode === 'speaking') {
           speakText(data.aiMessage.content, data.aiMessage.id);
         }
@@ -58,7 +61,7 @@ export const AIChatProvider = ({ children }) => {
             id: Date.now() + 1,
             role: 'assistant',
             mode: activeMode,
-            content: `⚠️ System Note: High server load. Here is your quick AI feedback for "${text}":\n\n> "Excellent effort! Remember to keep your intonation rising at the end of open questions."`
+            content: `⚠️ Note dari Sistem: Server lagi padat gais. Ini feedback kilat buat kamu untuk "${text}":\n\n> "Awesome effort! Tetep percaya diri & perhatikan intonasi di akhir kalimat ya bestie~"`
           }
         ]);
       }
@@ -67,6 +70,7 @@ export const AIChatProvider = ({ children }) => {
     }
   };
 
+  // 🧹 Bersihin riwayat chat biar makin fresh mulus
   const clearChat = async () => {
     try {
       await aiService.clearHistory();
@@ -76,19 +80,19 @@ export const AIChatProvider = ({ children }) => {
         id: Date.now(),
         role: 'assistant',
         mode: 'general',
-        content: `New practice session initialized. Select a mode above to start!`
+        content: `Sesi latihan baru udah siap gais! Silakan pilih mode di atas yuk ✨`
       }
     ]);
   };
 
-  // Web Speech API Text to Speech
+  // 🗣️ Fitur Web Speech API: Membacakan teks dengan suara native yang merdu~
   const speakText = (text, messageId = null) => {
     if (!('speechSynthesis' in window)) {
-      alert('Speech synthesis is not supported in your browser.');
+      alert('Browser kamu belum mendukung fitur suara nih bestie, coba pake Chrome/Edge ya! 🙏');
       return;
     }
 
-    window.speechSynthesis.cancel(); // stop previous speech
+    window.speechSynthesis.cancel(); // Stop suara sebelumnya biar gak tabrakan gais
 
     const cleanText = text.replace(/[*_#>`-]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -103,6 +107,7 @@ export const AIChatProvider = ({ children }) => {
     window.speechSynthesis.speak(utterance);
   };
 
+  // 🛑 Hentikan suara yang lagi ngomong
   const stopSpeaking = () => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();

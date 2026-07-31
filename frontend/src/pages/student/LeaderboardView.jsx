@@ -1,355 +1,461 @@
-import React, { useState, useEffect } from 'react';
-import { leaderboardService } from '../../services/api';
-import { Trophy, Award, Flame, Star, Crown, Sparkles, Medal, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { leaderboardService } from "../../services/api";
+import {
+  Award,
+  Crown,
+  Flame,
+  Medal,
+  Search,
+  Sparkles,
+  Star,
+  Trophy,
+  Zap,
+} from "lucide-react";
+
+const fallbackLearners = [
+  {
+    rank: 1,
+    full_name: "Aci",
+    username: "aci_master",
+    xp: 3450,
+    points: 950,
+    streak: 18,
+    avatar: "/ma.png",
+    package_badge: "VIP Master",
+  },
+  {
+    rank: 2,
+    full_name: "Fariha",
+    username: "fariha_speaking",
+    xp: 2890,
+    points: 850,
+    streak: 14,
+    avatar: "/mi.png",
+    package_badge: "Pro Speaker",
+  },
+  {
+    rank: 3,
+    full_name: "Ira",
+    username: "ira_fluent",
+    xp: 2450,
+    points: 720,
+    streak: 11,
+    avatar: "/mo.png",
+    package_badge: "Pro Speaker",
+  },
+  {
+    rank: 4,
+    full_name: "Pipit",
+    username: "pipit_voice",
+    xp: 1980,
+    points: 560,
+    streak: 9,
+    avatar: "/ma.png",
+    package_badge: "Starter",
+  },
+];
+
+const podiumStyles = {
+  1: {
+    order: "order-1 sm:order-2",
+    card: "bg-[#0362C0] text-white sm:-translate-y-6",
+    ring: "border-[#FFFF00]",
+    badge: "bg-[#FFFF00] text-[#08203C]",
+    height: "sm:min-h-[310px]",
+  },
+  2: {
+    order: "order-2 sm:order-1",
+    card: "bg-white text-[#08203C]",
+    ring: "border-[#AFC2D6]",
+    badge: "bg-[#DDE8F2] text-[#34516D]",
+    height: "sm:min-h-[270px]",
+  },
+  3: {
+    order: "order-3",
+    card: "bg-white text-[#08203C]",
+    ring: "border-[#FFA715]",
+    badge: "bg-[#FFF0D2] text-[#9A5700]",
+    height: "sm:min-h-[250px]",
+  },
+};
+
+function formatXp(value = 0) {
+  return new Intl.NumberFormat("id-ID").format(value);
+}
+
+function getAvatar(user, rank) {
+  if (user?.avatar) return user.avatar;
+  if (rank === 1) return "/ma.png";
+  if (rank === 2) return "/mi.png";
+  return "/mo.png";
+}
 
 export default function LeaderboardView() {
   const [top3, setTop3] = useState([]);
   const [rankings, setRankings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Exact custom learners requested by user
-  const customLearners = [
-    { rank: 1, full_name: 'Aci', username: 'aci_master', xp: 3450, points: 950, streak: 18, avatar: '/ma.png', package_badge: 'VIP Master' },
-    { rank: 2, full_name: 'Fariha', username: 'fariha_speaking', xp: 2890, points: 850, streak: 14, avatar: '/mi.png', package_badge: 'Pro Speaker' },
-    { rank: 3, full_name: 'Ira', username: 'ira_fluent', xp: 2450, points: 720, streak: 11, avatar: '/mo.png', package_badge: 'Pro Speaker' },
-    { rank: 4, full_name: 'Pipit', username: 'pipit_voice', xp: 1980, points: 560, streak: 9, avatar: '/ma.png', package_badge: 'Starter' },
-  ];
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    leaderboardService.getLeaderboard()
-      .then(data => {
-        if (data.success && data.rankings && data.rankings.length > 0) {
-          setTop3(data.top3 || data.rankings.slice(0, 3));
+    leaderboardService
+      .getLeaderboard()
+      .then((data) => {
+        if (data.success && data.rankings?.length) {
+          setTop3(
+            data.top3?.length >= 3 ? data.top3 : data.rankings.slice(0, 3),
+          );
           setRankings(data.rankings);
-        } else {
-          setTop3(customLearners.slice(0, 3));
-          setRankings(customLearners);
+          return;
         }
+
+        setTop3(fallbackLearners.slice(0, 3));
+        setRankings(fallbackLearners);
       })
       .catch(() => {
-        setTop3(customLearners.slice(0, 3));
-        setRankings(customLearners);
+        setTop3(fallbackLearners.slice(0, 3));
+        setRankings(fallbackLearners);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  const displayTop3 = top3.length >= 3 ? top3 : customLearners.slice(0, 3);
-  const displayRankings = (rankings.length > 0 ? rankings : customLearners).filter(u => 
-    u.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.username?.toLowerCase().includes(searchQuery.toLowerCase())
+  const displayTop3 = top3.length >= 3 ? top3 : fallbackLearners.slice(0, 3);
+  const allRankings = rankings.length ? rankings : fallbackLearners;
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const displayRankings = allRankings.filter(
+    (user) =>
+      user.full_name?.toLowerCase().includes(normalizedSearch) ||
+      user.username?.toLowerCase().includes(normalizedSearch),
   );
+  const champion = displayTop3[0] || fallbackLearners[0];
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#F4FBFF] px-4 py-8 sm:px-8">
+        <div className="mx-auto max-w-6xl animate-pulse space-y-5">
+          <div className="h-52 rounded-[30px] bg-[#87CEFA]/60" />
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="h-64 rounded-[26px] bg-white shadow-sm"
+              />
+            ))}
+          </div>
+          <div className="h-80 rounded-[26px] bg-white shadow-sm" />
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-12">
-      
-      {/* MOBILE & DESKTOP HEADER */}
-      <div className="text-center space-y-2 sm:space-y-3 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-1.5 bg-lime text-dark font-black text-[10px] sm:text-xs px-3.5 py-1 rounded-full uppercase border-2 border-dark shadow-sm">
-          <Trophy className="w-3.5 h-3.5 fill-dark" /> Global Hall of Fame
-        </div>
-        <h1 className="font-helios text-2xl sm:text-5xl font-black text-brand uppercase tracking-tight">
-          Leaderboard Siswa
-        </h1>
-        <p className="text-slate-700 text-xs sm:text-sm font-bold">
-          Siswa teraktif dengan skor XP kelancaran tertinggi minggu ini.
-        </p>
-      </div>
+    <main className="min-h-screen overflow-x-hidden bg-[#F4FBFF] pb-20 text-[#08203C]">
+      <section className="relative overflow-hidden bg-[#87CEFA] px-4 pb-28 pt-8 sm:px-8 sm:pb-32 sm:pt-12">
+        <div className="absolute -left-24 -top-16 h-72 w-72 rounded-full bg-white/30 blur-3xl" />
+        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-[#FFFF00]/20 blur-3xl" />
+        <div className="absolute left-[15%] top-16 h-3 w-3 rounded-full bg-[#FFFF00]" />
+        <div className="absolute right-[18%] top-24 h-4 w-4 rotate-12 bg-white/70" />
 
-      {/* FEATURED CHAMPION CARD (#1 ACI) - MOBILE OPTIMIZED */}
-      <div className="bento-card-lime p-4 sm:p-8 rounded-3xl sm:rounded-4xl border-3 sm:border-4 border-dark shadow-limeGlow flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 relative overflow-hidden">
-        <div className="flex items-center gap-3.5 sm:gap-5 w-full sm:w-auto relative z-10">
-          <div className="relative flex-shrink-0">
-            <img 
-              src={displayTop3[0]?.avatar || '/ma.png'} 
-              alt={displayTop3[0]?.full_name || 'Aci'} 
-              className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl object-cover border-3 sm:border-4 border-dark shadow-xl bg-white" 
-            />
-            <div className="absolute -top-2.5 -right-2.5 bg-amberIcon text-dark p-1 sm:p-1.5 rounded-full border-2 border-dark shadow-md animate-bounce">
-              <Crown className="w-4 h-4 sm:w-5 sm:h-5 fill-dark" />
+        <div className="relative mx-auto flex max-w-6xl flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/75 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-[#0362C0] shadow-sm backdrop-blur">
+              <Trophy size={15} fill="currentColor" />
+              Weekly Hall of Fame
             </div>
-          </div>
-
-          <div className="space-y-0.5 sm:space-y-1 flex-1">
-            <span className="bg-dark text-lime font-black text-[9px] sm:text-[10px] px-2.5 py-0.5 sm:py-1 rounded-full uppercase tracking-wider inline-block">
-              ✦ Juara #1 Minggu Ini
-            </span>
-            <h2 className="font-stinger font-black text-xl sm:text-3xl text-dark">
-              {displayTop3[0]?.full_name || 'Aci'}
-            </h2>
-            <p className="text-[10px] sm:text-xs font-bold text-dark/90 leading-tight">
-              18 Hari Streak Belajar Non-stop!
+            <h1 className="mt-5 text-3xl font-black leading-[1.03] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Setiap latihan
+              <span className="block text-[#FFFF00]">membawamu naik.</span>
+            </h1>
+            <p className="mt-4 max-w-xl text-sm font-semibold leading-6 text-[#083F78] sm:text-base">
+              Kumpulkan XP dari materi, speaking mission, dan konsistensi
+              belajar. Siapa yang akan menjadi juara berikutnya?
             </p>
           </div>
-        </div>
 
-        <div className="flex items-center justify-between w-full sm:w-auto bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border-2 border-dark shadow-md">
-          <span className="text-[10px] font-black text-slate-500 uppercase sm:hidden">Perolehan Skor</span>
-          <div className="text-right sm:text-right w-full sm:w-auto">
-            <div className="text-[9px] font-black text-slate-400 uppercase hidden sm:block">Total Perolehan XP</div>
-            <div className="font-stinger font-black text-lg sm:text-2xl text-brand">
-              ⚡ {displayTop3[0]?.xp || 3450} XP
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* TOP 3 PODIUM - MOBILE & DESKTOP ULTRA RESPONSIVE */}
-      <div className="pt-4 pb-2 max-w-4xl mx-auto">
-        
-        {/* MOBILE COMPACT PODIUM CARD ROW (sm:hidden) */}
-        <div className="grid grid-cols-3 gap-2 sm:hidden items-end">
-          
-          {/* #2 Fariha (Silver - Left) */}
-          <div className="bento-card p-3 rounded-2xl text-center space-y-1.5 border border-slate-300 bg-slate-100/90 shadow-sm flex flex-col items-center">
-            <div className="relative">
-              <img src={displayTop3[1]?.avatar || '/mi.png'} alt={displayTop3[1]?.full_name || 'Fariha'} className="w-12 h-12 rounded-full object-cover border-2 border-slate-300 shadow-md" />
-              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-slate-800 text-slate-100 text-[8px] font-black px-1.5 rounded-full">#2</span>
-            </div>
-            <div className="font-stinger font-black text-xs text-slate-900 truncate w-full">{displayTop3[1]?.full_name || 'Fariha'}</div>
-            <div className="text-[10px] font-black text-brand bg-white px-1.5 py-0.5 rounded-full border text-center w-full">⚡ {displayTop3[1]?.xp || 2890}</div>
-          </div>
-
-          {/* #1 Aci (Gold - Center Tallest) */}
-          <div className="bento-card-lime p-3.5 rounded-2xl text-center space-y-1.5 border-2 border-dark shadow-limeGlow flex flex-col items-center -translate-y-2">
-            <Crown className="w-5 h-5 text-amberIcon animate-bounce -mb-1" />
-            <div className="relative">
-              <img src={displayTop3[0]?.avatar || '/ma.png'} alt={displayTop3[0]?.full_name || 'Aci'} className="w-14 h-14 rounded-full object-cover border-2 border-dark shadow-md" />
-              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-amberIcon text-dark text-[8px] font-black px-1.5 rounded-full border border-dark">#1</span>
-            </div>
-            <div className="font-stinger font-black text-sm text-dark truncate w-full">{displayTop3[0]?.full_name || 'Aci'}</div>
-            <div className="text-[10px] font-black text-dark bg-white px-1.5 py-0.5 rounded-full border border-dark text-center w-full">⚡ {displayTop3[0]?.xp || 3450}</div>
-          </div>
-
-          {/* #3 Ira (Bronze - Right) */}
-          <div className="bento-card p-3 rounded-2xl text-center space-y-1.5 border border-amber-300 bg-amber-50/90 shadow-sm flex flex-col items-center">
-            <div className="relative">
-              <img src={displayTop3[2]?.avatar || '/mo.png'} alt={displayTop3[2]?.full_name || 'Ira'} className="w-12 h-12 rounded-full object-cover border-2 border-amber-600 shadow-md" />
-              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-[8px] font-black px-1.5 rounded-full">#3</span>
-            </div>
-            <div className="font-stinger font-black text-xs text-slate-900 truncate w-full">{displayTop3[2]?.full_name || 'Ira'}</div>
-            <div className="text-[10px] font-black text-brand bg-white px-1.5 py-0.5 rounded-full border text-center w-full">⚡ {displayTop3[2]?.xp || 2450}</div>
-          </div>
-
-        </div>
-
-        {/* DESKTOP 3D PODIUM (hidden on mobile, visible on sm and up) */}
-        <div className="hidden sm:flex items-end justify-center gap-6">
-          
-          {/* RANK 2: FARIHA */}
-          <div className="w-1/3 flex flex-col items-center">
-            <div className="relative mb-3 group">
-              <div className="w-28 h-28 rounded-full border-4 border-slate-300 overflow-hidden shadow-xl bg-white p-1">
-                <img src={displayTop3[1]?.avatar || '/mi.png'} alt={displayTop3[1]?.full_name || 'Fariha'} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="absolute -bottom-2 right-1/2 translate-x-1/2 bg-slate-800 text-slate-100 text-xs font-black px-3 py-0.5 rounded-full border border-slate-300 shadow">
-                #2 Fariha
-              </span>
-            </div>
-            <div className="bento-card w-full p-5 rounded-t-4xl border-2 border-slate-300 text-center space-y-2 shadow-popout bg-slate-100/90">
-              <h3 className="font-stinger font-black text-lg text-slate-900 truncate">{displayTop3[1]?.full_name || 'Fariha'}</h3>
-              <div className="text-xs font-black text-brand bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm inline-block">
-                ⚡ {displayTop3[1]?.xp || 2890} XP
-              </div>
+          <div className="relative w-full max-w-sm rounded-[28px] border border-white/70 bg-white/80 p-5 shadow-[0_20px_55px_rgba(3,98,192,0.18)] backdrop-blur lg:w-[340px]">
+            <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] bg-slate-300 text-slate-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase inline-block">
-                  {displayTop3[1]?.package_badge || 'Pro Speaker'}
-                </span>
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#0362C0]">
+                  Champion this week
+                </p>
+                <h2 className="mt-1 text-2xl font-black">
+                  {champion.full_name}
+                </h2>
+              </div>
+              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#FFFF00] text-[#0362C0]">
+                <Crown size={25} fill="currentColor" />
               </div>
             </div>
-          </div>
-
-          {/* RANK 1: ACI */}
-          <div className="w-1/3 flex flex-col items-center">
-            <Crown className="w-10 h-10 text-amberIcon animate-bounce mb-1 stroke-[2.5]" />
-            <div className="relative mb-3 group">
-              <div className="w-36 h-36 rounded-full border-4 border-amberIcon overflow-hidden shadow-goldGlow bg-white p-1">
-                <img src={displayTop3[0]?.avatar || '/ma.png'} alt={displayTop3[0]?.full_name || 'Aci'} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform" />
+            <div className="mt-5 flex items-center gap-3 rounded-2xl bg-[#0362C0] p-3 text-white">
+              <img
+                src={getAvatar(champion, 1)}
+                alt={champion.full_name}
+                className="h-14 w-14 rounded-2xl border-2 border-[#FFFF00] object-cover"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-bold text-white/65">
+                  @{champion.username}
+                </p>
+                <p className="mt-1 flex items-center gap-1.5 text-lg font-black text-[#FFFF00]">
+                  <Zap size={17} fill="currentColor" />
+                  {formatXp(champion.xp)} XP
+                </p>
               </div>
-              <span className="absolute -bottom-3 right-1/2 translate-x-1/2 bg-amberIcon text-dark text-xs font-black px-4 py-1 rounded-full border-2 border-dark shadow-md">
-                #1 Aci (Champion)
-              </span>
-            </div>
-            <div className="bento-card-lime w-full p-7 rounded-t-4xl border-4 border-dark text-center space-y-2 shadow-limeGlow">
-              <h3 className="font-stinger font-black text-2xl text-dark truncate">{displayTop3[0]?.full_name || 'Aci'}</h3>
-              <div className="text-sm font-black text-dark bg-white px-4 py-1 rounded-full border-2 border-dark shadow-sm inline-block">
-                ⚡ {displayTop3[0]?.xp || 3450} XP
-              </div>
-              <div>
-                <span className="text-[10px] bg-dark text-lime font-black px-3 py-1 rounded-full uppercase inline-block">
-                  {displayTop3[0]?.package_badge || 'VIP Master'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* RANK 3: IRA */}
-          <div className="w-1/3 flex flex-col items-center">
-            <div className="relative mb-3 group">
-              <div className="w-28 h-28 rounded-full border-4 border-amber-700 overflow-hidden shadow-xl bg-white p-1">
-                <img src={displayTop3[2]?.avatar || '/mo.png'} alt={displayTop3[2]?.full_name || 'Ira'} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="absolute -bottom-2 right-1/2 translate-x-1/2 bg-amber-800 text-white text-xs font-black px-3 py-0.5 rounded-full border border-amber-600 shadow">
-                #3 Ira
-              </span>
-            </div>
-            <div className="bento-card w-full p-5 rounded-t-4xl border-2 border-amber-300 text-center space-y-2 shadow-popout bg-amber-50/90">
-              <h3 className="font-stinger font-black text-lg text-slate-900 truncate">{displayTop3[2]?.full_name || 'Ira'}</h3>
-              <div className="text-xs font-black text-brand bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm inline-block">
-                ⚡ {displayTop3[2]?.xp || 2450} XP
-              </div>
-              <div>
-                <span className="text-[10px] bg-amber-700 text-white font-extrabold px-2.5 py-0.5 rounded-full uppercase inline-block">
-                  {displayTop3[2]?.package_badge || 'Pro Speaker'}
-                </span>
+              <div className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1.5 text-xs font-black">
+                <Flame
+                  size={14}
+                  className="text-[#FFA715]"
+                  fill="currentColor"
+                />
+                {champion.streak || 0}
               </div>
             </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* FULL RANKINGS LIST - MOBILE OPTIMIZED CARDS + DESKTOP TABLE */}
-      <div className="bento-card p-4 sm:p-8 rounded-3xl sm:rounded-4xl bg-white/95 border-2 border-white shadow-popout space-y-4">
-        
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
-          <div>
-            <h2 className="font-stinger font-black text-base sm:text-xl text-slate-900">Daftar Peringkat Siswa</h2>
-            <span className="text-[10px] sm:text-xs font-black text-brand uppercase tracking-wider">Aci • Fariha • Ira • Pipit</span>
-          </div>
-
-          <div className="relative w-full sm:w-64">
-            <input 
-              type="text" 
-              placeholder="Cari nama siswa..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 text-xs font-bold rounded-xl border border-slate-300 focus:border-brand outline-none shadow-sm"
-            />
           </div>
         </div>
+      </section>
 
-        {/* MOBILE CARD LIST (sm:hidden) */}
-        <div className="space-y-3 sm:hidden">
-          {displayRankings.map((user, idx) => {
-            const rankNum = user.rank || idx + 1;
-            return (
-              <div 
-                key={user.id || idx}
-                className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 shadow-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <span className={`w-7 h-7 rounded-xl flex items-center justify-center text-[10px] font-black border flex-shrink-0 ${
-                    rankNum === 1 
-                      ? 'bg-amberIcon text-dark border-dark' 
-                      : rankNum === 2 
-                      ? 'bg-slate-200 text-slate-900 border-slate-300' 
-                      : rankNum === 3 
-                      ? 'bg-amber-700 text-white border-amber-800' 
-                      : 'bg-slate-100 text-slate-700 border-slate-200'
-                  }`}>
-                    #{rankNum}
-                  </span>
+      <section className="relative z-10 -mt-20 px-4 sm:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-7 text-center">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#0362C0]">
+              Top performers
+            </p>
+            <h2 className="mt-1 text-2xl font-black sm:text-3xl">
+              Podium Minggu Ini
+            </h2>
+          </div>
 
-                  <img 
-                    src={user.avatar || (rankNum === 1 ? '/ma.png' : rankNum === 2 ? '/mi.png' : rankNum === 3 ? '/mo.png' : '/ma.png')} 
-                    alt={user.full_name} 
-                    className="w-10 h-10 rounded-full object-cover border-2 border-brand flex-shrink-0" 
-                  />
+          <div className="grid gap-4 sm:grid-cols-3 sm:items-end">
+            {displayTop3.map((user, index) => {
+              const rank = index + 1;
+              const style = podiumStyles[rank];
 
-                  <div className="space-y-0.5">
-                    <div className="font-stinger font-black text-slate-900 text-xs">{user.full_name}</div>
-                    <div className="flex items-center gap-1.5 text-[9px]">
-                      <span className="bg-brand text-lime px-1.5 rounded font-bold">{user.package_badge || 'Pro'}</span>
-                      <span className="text-orange-600 font-bold flex items-center gap-0.5">
-                        <Flame className="w-3 h-3 fill-orange-500 text-orange-500" /> {user.streak || 10}d
+              return (
+                <article
+                  key={user.id || user.username || rank}
+                  className={`${style.order} ${style.card} ${style.height} relative flex overflow-hidden rounded-[28px] p-5 shadow-[0_18px_45px_rgba(8,32,60,0.12)] transition hover:-translate-y-2 sm:flex-col sm:justify-between sm:p-6`}
+                >
+                  <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full border-[18px] border-[#87CEFA]/15" />
+                  <div className="relative flex w-full items-center gap-4 sm:flex-col sm:text-center">
+                    <div className="relative shrink-0">
+                      {rank === 1 && (
+                        <Crown
+                          size={29}
+                          className="absolute -top-6 left-1/2 z-10 -translate-x-1/2 text-[#FFFF00]"
+                          fill="currentColor"
+                        />
+                      )}
+                      <img
+                        src={getAvatar(user, rank)}
+                        alt={user.full_name}
+                        className={`h-20 w-20 rounded-[22px] border-4 ${style.ring} object-cover shadow-md sm:h-28 sm:w-28 sm:rounded-full`}
+                      />
+                      <span
+                        className={`absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-black ${style.badge}`}
+                      >
+                        #{rank}
+                      </span>
+                    </div>
+
+                    <div className="min-w-0 flex-1 sm:mt-3">
+                      <h3 className="truncate text-xl font-black">
+                        {user.full_name}
+                      </h3>
+                      <p
+                        className={`truncate text-xs font-semibold ${rank === 1 ? "text-white/60" : "text-slate-400"
+                          }`}
+                      >
+                        @{user.username}
+                      </p>
+                      <span
+                        className={`mt-2 inline-block rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider ${rank === 1
+                            ? "bg-white/10 text-[#FFFF00]"
+                            : "bg-[#EAF6FF] text-[#0362C0]"
+                          }`}
+                      >
+                        {user.package_badge || "Starter"}
                       </span>
                     </div>
                   </div>
-                </div>
 
-                <div className="font-stinger font-black text-brand text-xs bg-white px-2.5 py-1 rounded-xl border border-slate-200 flex-shrink-0">
-                  ⚡ {user.xp}
-                </div>
-              </div>
-            );
-          })}
+                  <div
+                    className={`relative ml-auto flex shrink-0 flex-col items-end sm:ml-0 sm:mt-5 sm:w-full sm:flex-row sm:items-center sm:justify-between sm:rounded-2xl sm:p-3 ${rank === 1 ? "sm:bg-white/10" : "sm:bg-[#F4FBFF]"
+                      }`}
+                  >
+                    <p className="flex items-center gap-1 text-lg font-black">
+                      <Zap
+                        size={17}
+                        className={
+                          rank === 1 ? "text-[#FFFF00]" : "text-[#0362C0]"
+                        }
+                        fill="currentColor"
+                      />
+                      {formatXp(user.xp)}
+                    </p>
+                    <p
+                      className={`mt-2 flex items-center gap-1 text-[11px] font-black sm:mt-0 ${rank === 1 ? "text-white/70" : "text-[#D46A00]"
+                        }`}
+                    >
+                      <Flame
+                        size={14}
+                        className="text-[#FFA715]"
+                        fill="currentColor"
+                      />
+                      {user.streak || 0} hari
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
+      </section>
 
-        {/* DESKTOP TABLE VIEW (hidden on mobile, visible on sm and up) */}
-        <div className="hidden sm:block overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 text-[11px] font-black text-slate-500 uppercase tracking-wider">
-                <th className="py-3 px-4">Peringkat</th>
-                <th className="py-3 px-4">Siswa</th>
-                <th className="py-3 px-4">Badge Akun</th>
-                <th className="py-3 px-4">Daily Streak</th>
-                <th className="py-3 px-4 text-right">Total Poin XP</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-xs sm:text-sm font-bold">
-              {displayRankings.map((user, idx) => {
-                const rankNum = user.rank || idx + 1;
+      <section className="px-4 pt-14 sm:px-8 sm:pt-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#0362C0]">
+                <Sparkles size={15} className="text-[#FFA715]" />
+                Keep climbing
+              </p>
+              <h2 className="mt-2 text-2xl font-black sm:text-4xl">
+                Peringkat Semua Siswa
+              </h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Ranking diperbarui mengikuti progres belajar terbaru.
+              </p>
+            </div>
+
+            <label className="relative block w-full sm:w-72">
+              <Search
+                size={17}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0362C0]"
+              />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Cari nama siswa..."
+                className="w-full rounded-2xl border border-[#0362C0]/15 bg-white py-3.5 pl-11 pr-4 text-sm font-semibold outline-none shadow-sm transition placeholder:text-slate-400 focus:border-[#0362C0] focus:ring-4 focus:ring-[#87CEFA]/30"
+              />
+            </label>
+          </div>
+
+          <div className="mt-7 overflow-hidden rounded-[28px] border border-[#0362C0]/10 bg-white shadow-[0_16px_45px_rgba(8,32,60,0.08)]">
+            <div className="hidden grid-cols-[80px_1.5fr_1fr_1fr_1fr] border-b border-slate-100 bg-[#EAF6FF] px-6 py-4 text-[10px] font-black uppercase tracking-[0.14em] text-[#42617F] md:grid">
+              <span>Rank</span>
+              <span>Siswa</span>
+              <span>Level</span>
+              <span>Streak</span>
+              <span className="text-right">Total XP</span>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {displayRankings.map((user, index) => {
+                const rank = user.rank || index + 1;
+                const isTopThree = rank <= 3;
+
                 return (
-                  <tr key={user.id || idx} className="hover:bg-slate-50 transition-colors">
-                    
-                    <td className="py-4 px-4">
-                      <span className={`w-8 h-8 rounded-2xl flex items-center justify-center text-xs font-black border ${
-                        rankNum === 1 
-                          ? 'bg-amberIcon text-dark border-dark shadow-sm' 
-                          : rankNum === 2 
-                          ? 'bg-slate-200 text-slate-900 border-slate-300' 
-                          : rankNum === 3 
-                          ? 'bg-amber-700 text-white border-amber-800' 
-                          : 'bg-slate-100 text-slate-700 border-slate-200'
-                      }`}>
-                        #{rankNum}
-                      </span>
-                    </td>
+                  <article
+                    key={user.id || user.username || index}
+                    className="group flex items-center gap-3 p-4 transition hover:bg-[#F4FBFF] md:grid md:grid-cols-[80px_1.5fr_1fr_1fr_1fr] md:px-6 md:py-4"
+                  >
+                    <div
+                      className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-black ${rank === 1
+                          ? "bg-[#FFFF00] text-[#0362C0]"
+                          : rank === 2
+                            ? "bg-[#DDE8F2] text-[#34516D]"
+                            : rank === 3
+                              ? "bg-[#FFF0D2] text-[#9A5700]"
+                              : "bg-[#EAF6FF] text-[#0362C0]"
+                        }`}
+                    >
+                      {isTopThree ? <Medal size={17} /> : `#${rank}`}
+                    </div>
 
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <img 
-                          src={user.avatar || (rankNum === 1 ? '/ma.png' : rankNum === 2 ? '/mi.png' : rankNum === 3 ? '/mo.png' : '/ma.png')} 
-                          alt={user.full_name} 
-                          className="w-10 h-10 rounded-full object-cover border-2 border-brand shadow-sm" 
-                        />
-                        <div>
-                          <div className="font-stinger font-black text-slate-900 text-sm sm:text-base">{user.full_name}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">@{user.username}</div>
-                        </div>
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <img
+                        src={getAvatar(user, rank)}
+                        alt={user.full_name}
+                        className="h-11 w-11 shrink-0 rounded-2xl border-2 border-[#87CEFA] object-cover"
+                      />
+                      <div className="min-w-0">
+                        <h3 className="truncate text-sm font-black">
+                          {user.full_name}
+                        </h3>
+                        <p className="truncate text-[10px] font-semibold text-slate-400">
+                          @{user.username}
+                        </p>
                       </div>
-                    </td>
+                    </div>
 
-                    <td className="py-4 px-4">
-                      <span className="bg-brand text-lime text-[10px] font-black px-3 py-1 rounded-full uppercase border border-brand/20">
-                        {user.package_badge || 'Starter'}
+                    <div className="hidden md:block">
+                      <span className="rounded-full bg-[#EAF6FF] px-3 py-1.5 text-[10px] font-black uppercase text-[#0362C0]">
+                        {user.package_badge || "Starter"}
                       </span>
-                    </td>
+                    </div>
 
-                    <td className="py-4 px-4">
-                      <div className="inline-flex items-center gap-1.5 bg-orange-50 border border-orange-200 px-3 py-1 rounded-full text-orange-700 text-xs font-black">
-                        <Flame className="w-4 h-4 fill-orange-500 text-orange-500" />
-                        <span>{user.streak || 10} Hari</span>
-                      </div>
-                    </td>
+                    <div className="hidden items-center gap-1.5 text-xs font-black text-[#D46A00] md:flex">
+                      <Flame
+                        size={16}
+                        className="text-[#FFA715]"
+                        fill="currentColor"
+                      />
+                      {user.streak || 0} hari
+                    </div>
 
-                    <td className="py-4 px-4 text-right">
-                      <span className="font-stinger font-black text-brand text-base sm:text-lg bg-slate-100 px-3 py-1 rounded-2xl border border-slate-200 inline-block">
-                        ⚡ {user.xp} XP
-                      </span>
-                    </td>
-
-                  </tr>
+                    <div className="ml-auto text-right">
+                      <p className="flex items-center justify-end gap-1 text-sm font-black text-[#0362C0] sm:text-base">
+                        <Zap size={15} fill="currentColor" />
+                        {formatXp(user.xp)}
+                      </p>
+                      <p className="mt-1 flex items-center justify-end gap-1 text-[9px] font-bold text-[#D46A00] md:hidden">
+                        <Flame size={11} fill="currentColor" />
+                        {user.streak || 0} hari
+                      </p>
+                    </div>
+                  </article>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-    </div>
+              {!displayRankings.length && (
+                <div className="px-5 py-14 text-center">
+                  <Search size={30} className="mx-auto text-[#87CEFA]" />
+                  <h3 className="mt-3 font-black">Siswa belum ditemukan</h3>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Coba cari dengan nama atau username yang berbeda.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pt-12 sm:px-8 sm:pt-16">
+        <div className="mx-auto flex max-w-6xl flex-col gap-5 overflow-hidden rounded-[28px] bg-[#0362C0] p-6 text-white shadow-[0_20px_50px_rgba(3,98,192,0.2)] sm:flex-row sm:items-center sm:justify-between sm:p-9">
+          <div className="flex items-start gap-4">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#FFFF00] text-[#0362C0]">
+              <Star size={23} fill="currentColor" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#FFFF00]">
+                Your turn to shine
+              </p>
+              <h2 className="mt-1 text-xl font-black sm:text-2xl">
+                Bukan soal langsung jadi nomor satu.
+              </h2>
+              <p className="mt-1 max-w-xl text-sm leading-6 text-white/70">
+                Naik satu langkah dari dirimu kemarin juga merupakan kemenangan.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-start rounded-2xl bg-white/10 px-4 py-3 text-xs font-black text-[#FFFF00] sm:self-center">
+            <Award size={18} />
+            Learn • Practise • Speak
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

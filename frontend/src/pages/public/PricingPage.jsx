@@ -6,7 +6,7 @@ export default function PricingPage() {
   const { setActiveTab, user } = useAuth();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pt-3 pb-10 sm:py-14 space-y-8 sm:space-y-12">
       
       {/* Page Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
