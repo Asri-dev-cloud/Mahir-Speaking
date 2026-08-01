@@ -229,6 +229,15 @@ export const dbCompleteLesson = async (userId, lessonId, score, xpReward) => {
             const user = await query('SELECT xp, points FROM users WHERE id = ?', [userId]);
             const progress = await query('SELECT id FROM user_progress WHERE user_id = ? AND lesson_id = ?', [userId, lessonId]);
 
+            if (user.length === 0) {
+              return resolve({
+                progress_id: progress[0]?.id || 0,
+                new_xp: 0,
+                new_points: 0,
+                status_code: 'USER_NOT_FOUND'
+              });
+            }
+
             return resolve({
               progress_id: progress[0]?.id || 0,
               new_xp: user[0].xp,
@@ -260,6 +269,14 @@ export const dbCompleteLesson = async (userId, lessonId, score, xpReward) => {
           );
 
           const updatedUser = await query(`SELECT xp, points FROM users WHERE id = ?`, [userId]);
+          if (updatedUser.length === 0) {
+            return resolve({
+              progress_id: progressId,
+              new_xp: 0,
+              new_points: 0,
+              status_code: 'USER_NOT_FOUND'
+            });
+          }
 
           resolve({
             progress_id: progressId,
