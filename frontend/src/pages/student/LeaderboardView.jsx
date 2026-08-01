@@ -103,7 +103,7 @@ export default function LeaderboardView() {
     leaderboardService.getLeaderboard()
       .then(res => {
         if (!isMounted) return;
-        if (res && res.success && res.rankings && res.rankings.length > 0) {
+        if (res && res.success && res.rankings) {
           setTop3(res.top3 || res.rankings.slice(0, 3));
           setRankings(res.rankings);
           setLoading(false);
@@ -116,7 +116,7 @@ export default function LeaderboardView() {
       });
 
     function fallbackToLocalData() {
-      // Ambil pengguna terdaftar dari localStorage DAN current logged-in user (Tanpa User Dummy Palsu)
+      // Ambil pengguna terdaftar dari localStorage DAN current logged-in user
       const savedReg = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
       let currentUser = null;
       try {
@@ -133,32 +133,23 @@ export default function LeaderboardView() {
         }
       }
 
-      // Bersihkan user dummy palsu seperti 'Aci Student' & 'Siswa Google Active'
-      allUsers = allUsers.filter(u => u && u.full_name !== 'Aci Student' && u.full_name !== 'Siswa Google Active');
+      // Bersihkan user dummy palsu
+      allUsers = allUsers.filter(u => u && u.full_name !== 'Aci Student' && u.full_name !== 'Siswa Google Active' && u.full_name !== 'Fariha Salsabila' && u.full_name !== 'Ira Kusuma' && u.full_name !== 'Pipit Andriani');
 
-      const quizCompletedStudents = allUsers.filter(u => 
-        u && (u.has_completed_quiz === true || u.quiz_completed === true || (u.quizzes_completed && u.quizzes_completed > 0) || (u.xp && u.xp > 0))
-      );
+      const sorted = [...allUsers].sort((a, b) => (b.xp || 0) - (a.xp || 0));
+      const formatted = sorted.map((u, idx) => ({
+        rank: idx + 1,
+        full_name: u.full_name,
+        username: u.username || u.email?.split('@')[0] || `user_${u.id}`,
+        xp: u.xp || 0,
+        points: u.points || 0,
+        streak: u.streak || 0,
+        avatar: u.avatar || null,
+        package_badge: u.role === 'admin' ? 'Admin Senior' : (u.package_name || "Active Member")
+      }));
 
-      if (quizCompletedStudents.length > 0) {
-        const sorted = [...quizCompletedStudents].sort((a, b) => (b.xp || 0) - (a.xp || 0));
-        const formatted = sorted.map((u, idx) => ({
-          rank: idx + 1,
-          full_name: u.full_name,
-          username: u.username || u.email?.split('@')[0] || `user_${u.id}`,
-          xp: u.xp || 5,
-          points: u.points || 5,
-          streak: u.streak || 1,
-          avatar: u.avatar || null,
-          package_badge: u.role === 'admin' ? 'Admin Senior' : (u.package_name || "Active Member")
-        }));
-
-        setTop3(formatted.slice(0, 3));
-        setRankings(formatted);
-      } else {
-        setTop3(fallbackLearners.slice(0, 3));
-        setRankings(fallbackLearners);
-      }
+      setTop3(formatted.slice(0, 3));
+      setRankings(formatted);
       setLoading(false);
     }
 
