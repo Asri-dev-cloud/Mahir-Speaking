@@ -175,51 +175,51 @@ export async function initSeedData() {
       // Student 1: Aci (#1 Champion)
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Aci', 'aci_master', 'aci@mahirspeaking.com', '081234567890', '${hashedPassword}', 'student', 3, 3450, 950, 18, '/ma.png')
+        VALUES ('Aci', 'aci_master', 'aci@mahirspeaking.com', '081234567890', '${hashedPassword}', 'student', 3, 0, 0, 0, '/ma.png')
       `);
 
       // Student 2: Fariha (#2 Silver)
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Fariha', 'fariha_speaking', 'fariha@mahirspeaking.com', '081234567891', '${hashedPassword}', 'student', 3, 2890, 850, 14, '/mi.png')
+        VALUES ('Fariha', 'fariha_speaking', 'fariha@mahirspeaking.com', '081234567891', '${hashedPassword}', 'student', 3, 0, 0, 0, '/mi.png')
       `);
 
       // Student 3: Ira (#3 Bronze)
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Ira', 'ira_fluent', 'ira@mahirspeaking.com', '081234567892', '${hashedPassword}', 'student', 2, 2450, 720, 11, '/mo.png')
+        VALUES ('Ira', 'ira_fluent', 'ira@mahirspeaking.com', '081234567892', '${hashedPassword}', 'student', 2, 0, 0, 0, '/mo.png')
       `);
 
       // Student 4: Pipit (#4)
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Pipit', 'pipit_voice', 'pipit@mahirspeaking.com', '081234567893', '${hashedPassword}', 'student', 2, 1980, 560, 9, '/ma.png')
+        VALUES ('Pipit', 'pipit_voice', 'pipit@mahirspeaking.com', '081234567893', '${hashedPassword}', 'student', 2, 0, 0, 0, '/ma.png')
       `);
 
       // Tutor User
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Coach David Miller', 'david_tutor', 'tutor@mahirspeaking.com', '081299988877', '${hashedPassword}', 'tutor', 3, 5000, 1500, 30, '/mi.png')
+        VALUES ('Coach David Miller', 'david_tutor', 'tutor@mahirspeaking.com', '081299988877', '${hashedPassword}', 'tutor', 3, 0, 0, 0, '/mi.png')
       `);
 
       // Admin User
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '${hashedPassword}', 'admin', 3, 9999, 9999, 99, '/mo.png')
+        VALUES ('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '${hashedPassword}', 'admin', 3, 0, 0, 0, '/mo.png')
       `);
 
       const hashedAdminPassword = await bcrypt.hash('20424014', 10);
       // Admin Senior (Hartini Asri)
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6285156916211', '${hashedAdminPassword}', 'admin', 5, 99999, 8888, 120, '/ma.png')
+        VALUES ('Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6285156916211', '${hashedAdminPassword}', 'admin', 5, 0, 0, 0, '/ma.png')
       `);
     } else {
       // 🌟 Tetep pastikan leaderboard di-sync cantik ke Aci, Fariha, Ira, Pipit
-      await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 3450 WHERE email = 'student@mahirspeaking.com' OR email = 'aci@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Fariha', username = 'fariha_speaking', avatar = '/mi.png', xp = 2890 WHERE email = 'rian@mahirspeaking.com' OR email = 'fariha@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Ira', username = 'ira_fluent', avatar = '/mo.png', xp = 2450 WHERE email = 'nadia@mahirspeaking.com' OR email = 'ira@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Pipit', username = 'pipit_voice', avatar = '/ma.png', xp = 1980 WHERE email = 'budi@mahirspeaking.com' OR email = 'pipit@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 0, points = 0, streak = 0 WHERE email = 'student@mahirspeaking.com' OR email = 'aci@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Fariha', username = 'fariha_speaking', avatar = '/mi.png', xp = 0, points = 0, streak = 0 WHERE email = 'rian@mahirspeaking.com' OR email = 'fariha@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Ira', username = 'ira_fluent', avatar = '/mo.png', xp = 0, points = 0, streak = 0 WHERE email = 'nadia@mahirspeaking.com' OR email = 'ira@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Pipit', username = 'pipit_voice', avatar = '/ma.png', xp = 0, points = 0, streak = 0 WHERE email = 'budi@mahirspeaking.com' OR email = 'pipit@mahirspeaking.com'`);
     }
 
     // 📚 Cek Kursus & Materi Pembelajaran

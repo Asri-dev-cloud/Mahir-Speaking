@@ -5,7 +5,7 @@ import { courseService } from '../../services/api';
 import { HelpCircle, CheckCircle2, XCircle, Trophy, ArrowRight, RotateCcw } from 'lucide-react';
 
 export default function QuizView() {
-  const { setActiveTab, addXpAndPoints } = useAuth();
+  const { setActiveTab, addXpAndPoints, updateUserProfile, user } = useAuth();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -79,12 +79,22 @@ export default function QuizView() {
 
       // Save to backend
       try {
-        await courseService.completeLesson({
+        const res = await courseService.completeLesson({
           lesson_id: 1,
           score: Math.round((newScore / quizQuestions.length) * 100),
           xp_earned: totalXp
         });
-      } catch (err) { }
+        if (res.success && res.xp !== undefined && user) {
+          // Sinkronisasi dengan XP dan poin terbaru dari database cloud
+          updateUserProfile({
+            ...user,
+            xp: res.xp,
+            points: res.points
+          });
+        }
+      } catch (err) {
+        console.error('Quiz save backend error:', err);
+      }
     }
   };
 

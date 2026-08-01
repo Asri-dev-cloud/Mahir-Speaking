@@ -158,11 +158,26 @@ export const AuthProvider = ({ children }) => {
   const addXpAndPoints = (xp, points) => {
     setUser(prev => {
       if (!prev) return prev;
-      return {
+      const updated = {
         ...prev,
         xp: (prev.xp || 0) + xp,
         points: (prev.points || 0) + points
       };
+      localStorage.setItem('mahir_user', JSON.stringify(updated));
+
+      // Update juga di list registered users biar sinkron cantik
+      try {
+        const registered = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
+        const idx = registered.findIndex(u => u.email?.toLowerCase() === prev.email?.toLowerCase());
+        if (idx !== -1) {
+          registered[idx] = { ...registered[idx], ...updated };
+          localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
+        }
+      } catch (e) {
+        console.error('Error syncing local registered users:', e);
+      }
+
+      return updated;
     });
   };
 

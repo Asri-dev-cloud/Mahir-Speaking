@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from '../database/db.js';
+import { query, dbType } from '../database/db.js';
 import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -52,11 +52,17 @@ router.post('/chat', verifyToken, async (req, res) => {
 
     // Check today's message count
     if (dailyLimit !== -1) {
-      const todayCountResult = await query(
-        `SELECT COUNT(*) as count FROM ai_chats 
-         WHERE user_id = ? AND role = 'user' AND DATE(created_at) = DATE('now')`,
-        [userId]
-      );
+      const todayCountResult = dbType === 'postgres'
+        ? await query(
+            `SELECT COUNT(*) as count FROM ai_chats 
+             WHERE user_id = ? AND role = 'user' AND created_at::date = CURRENT_DATE`,
+            [userId]
+          )
+        : await query(
+            `SELECT COUNT(*) as count FROM ai_chats 
+             WHERE user_id = ? AND role = 'user' AND DATE(created_at) = DATE('now')`,
+            [userId]
+          );
       const todayCount = todayCountResult[0]?.count || 0;
 
       if (todayCount >= dailyLimit) {
