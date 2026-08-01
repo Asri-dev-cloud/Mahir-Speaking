@@ -302,6 +302,7 @@ const sectionTabs = [
 
 export default function LMSView() {
   const { user, setActiveTab, updateUserProfile } = useAuth();
+  const [liveUser, setLiveUser] = useState(user);
   const [filter, setFilter] = useState("ALL");
   const [activeHubTab, setActiveHubTab] = useState("path"); // path | downloads | recordings
   const [selectedLesson, setSelectedLesson] = useState(null);
@@ -339,20 +340,45 @@ export default function LMSView() {
   const [customDownloads, setCustomDownloads] = useState([]);
   const [customRecordings, setCustomRecordings] = useState([]);
 
+  // Sinkronkan XP, streak, points, dan progres dengan database saat LMS dibuka.
+  useEffect(() => {
+    let active = true;
+
+    const loadLatestUser = async () => {
+      if (!user) return;
+      try {
+        const profileRes = await userService.getProfile();
+        if (!active || !profileRes.success || !profileRes.user) return;
+
+        setLiveUser(profileRes.user);
+        updateUserProfile(profileRes.user);
+      } catch (err) {
+        console.error('Gagal mengambil data LMS terbaru:', err);
+      }
+    };
+
+    loadLatestUser();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (user) setLiveUser(user);
+  }, [user]);
+
   useEffect(() => {
     const savedMods = localStorage.getItem('mahir_custom_modules');
     if (savedMods) {
       try {
         const parsed = JSON.parse(savedMods);
         if (Array.isArray(parsed)) setCustomDownloads(parsed);
-      } catch (e) {}
+      } catch (e) { }
     }
     const savedVids = localStorage.getItem('mahir_custom_recordings');
     if (savedVids) {
       try {
         const parsed = JSON.parse(savedVids);
         if (Array.isArray(parsed)) setCustomRecordings(parsed);
-      } catch (e) {}
+      } catch (e) { }
     }
   }, []);
 
@@ -373,8 +399,8 @@ export default function LMSView() {
 
   const progress = user ? Math.round((completedIds.length / lessons.length) * 100) : 0;
   const displayCompletedCount = user ? completedIds.length : 0;
-  const displayStreak = user ? (user.streak || 0) : 0;
-  const displayXp = user ? (user.xp || 0) : 0;
+  const displayStreak = liveUser ? (liveUser.streak || 0) : 0;
+  const displayXp = liveUser ? (liveUser.xp || 0) : 0;
 
   const currentLesson =
     lessons.find((lesson) => !completedIds.includes(lesson.id)) ||
@@ -513,20 +539,19 @@ export default function LMSView() {
     if (user) {
       const addedXp = customXp !== undefined ? customXp : (selectedLesson.xp || 100);
       const score = quizScore !== undefined ? quizScore : 100;
-      
+
       const updatedUser = {
-        ...user,
-        xp: (user.xp || 0) + addedXp,
+        ...(liveUser || user),
         has_completed_quiz: true,
         quiz_completed: true,
-        quizzes_completed: (user.quizzes_completed || 0) + 1,
+        quizzes_completed: ((liveUser || user).quizzes_completed || 0) + 1,
         completed_units: nextCompleted
       };
-      
+
       if (typeof updateUserProfile === 'function') {
         updateUserProfile(updatedUser);
       }
-      
+
       localStorage.setItem('mahir_user', JSON.stringify(updatedUser));
       try {
         const registered = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
@@ -537,7 +562,7 @@ export default function LMSView() {
           registered.push(updatedUser);
         }
         localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
-      } catch (e) {}
+      } catch (e) { }
 
       // Save to backend database
       try {
@@ -557,6 +582,7 @@ export default function LMSView() {
           const profileRes = await userService.getProfile();
           console.log('⚡ [LMS debug] Respon getProfile:', profileRes);
           if (profileRes.success && profileRes.user) {
+            setLiveUser(profileRes.user);
             updateUserProfile(profileRes.user);
           }
         }
@@ -575,7 +601,7 @@ export default function LMSView() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#EAF6FF] text-slate-950 pb-16">
-      
+
       {/* 🌟 HERO BANNER & STUDENT AREA CONTROLS */}
       <section className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
         <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#0362C0] via-blue-700 to-slate-950 p-5 text-white shadow-2xl sm:rounded-[40px] sm:p-9 lg:p-12 border border-white/20">
@@ -614,11 +640,11 @@ export default function LMSView() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-black text-[#FFFF00] bg-black/30 px-3 py-1.5 rounded-xl border border-[#FFFF00]/30 inline-flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 fill-[#FFFF00]" />
-                      <span>{user.xp ?? 0} XP</span>
+                      <span>{displayXp} XP</span>
                     </span>
                     <span className="text-xs font-black text-orange-300 bg-black/30 px-3 py-1.5 rounded-xl border border-orange-400/30 inline-flex items-center gap-1.5">
                       <Flame className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                      <span>{user.streak ?? 0} Hari Streak</span>
+                      <span>{displayStreak} Hari Streak</span>
                     </span>
                   </div>
                 </div>
@@ -643,11 +669,10 @@ export default function LMSView() {
                 <button
                   type="button"
                   onClick={() => setActiveHubTab("path")}
-                  className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${
-                    activeHubTab === 'path'
+                  className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${activeHubTab === 'path'
                       ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
                       : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
-                  }`}
+                    }`}
                 >
                   <BookOpen className="h-4 w-4 stroke-[2.5]" />
                   <span>Misi Learning Path</span>
@@ -656,11 +681,10 @@ export default function LMSView() {
                 <button
                   type="button"
                   onClick={() => setActiveHubTab("downloads")}
-                  className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${
-                    activeHubTab === 'downloads'
+                  className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${activeHubTab === 'downloads'
                       ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
                       : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
-                  }`}
+                    }`}
                 >
                   <Download className="h-4 w-4 stroke-[2.5]" />
                   <span>Download E-Book & Modul</span>
@@ -669,11 +693,10 @@ export default function LMSView() {
                 <button
                   type="button"
                   onClick={() => setActiveHubTab("recordings")}
-                  className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${
-                    activeHubTab === 'recordings'
+                  className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${activeHubTab === 'recordings'
                       ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
                       : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
-                  }`}
+                    }`}
                 >
                   <Video className="h-4 w-4 stroke-[2.5]" />
                   <span>Rekaman Sesi Kelas</span>
@@ -718,9 +741,8 @@ export default function LMSView() {
             </div>
 
             {downloadNotice && (
-              <div className={`p-4 rounded-2xl font-black text-xs shadow-md animate-pulse ${
-                downloadNotice.includes('🔒') ? 'bg-amber-500 text-slate-950' : 'bg-emerald-500 text-white'
-              }`}>
+              <div className={`p-4 rounded-2xl font-black text-xs shadow-md animate-pulse ${downloadNotice.includes('🔒') ? 'bg-amber-500 text-slate-950' : 'bg-emerald-500 text-white'
+                }`}>
                 {downloadNotice}
               </div>
             )}
@@ -746,11 +768,10 @@ export default function LMSView() {
                   </div>
                   <button
                     onClick={() => handleDownload(item)}
-                    className={`w-full py-3.5 rounded-2xl font-black text-xs sm:text-sm transition-all border-2 border-dark flex items-center justify-center gap-2 cursor-pointer shadow-md ${
-                      user
+                    className={`w-full py-3.5 rounded-2xl font-black text-xs sm:text-sm transition-all border-2 border-dark flex items-center justify-center gap-2 cursor-pointer shadow-md ${user
                         ? 'bg-[#FFFF00] text-slate-950 hover:bg-yellow-300 hover:scale-[1.01]'
                         : 'bg-slate-200 text-slate-800 hover:bg-slate-300'
-                    }`}
+                      }`}
                   >
                     {user ? <Download className="w-4 h-4 stroke-[2.5]" /> : <Lock className="w-4 h-4 text-amber-600" />}
                     <span>{user ? `Download ${item.type || 'Modul'}` : 'Download (Wajib Login)'}</span>
@@ -820,7 +841,7 @@ export default function LMSView() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {allRecordings.map((session) => (
                 <div key={session.id} className="bg-slate-800 border border-slate-700 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-[#FFFF00] transition-all overflow-hidden">
-                  
+
                   {/* THUMBNAIL PREVIEW (HANYA 1 TOMBOL PLAY DI TENGAH TERSEDIA) */}
                   {session.thumbnail && (
                     <div
@@ -1040,7 +1061,7 @@ export default function LMSView() {
         return (
           <div className="fixed inset-0 top-0 left-0 right-0 bottom-0 w-screen h-screen z-[99999] overflow-y-auto bg-slate-950/85 p-2 sm:p-6 backdrop-blur-md flex items-center justify-center custom-scrollbar">
             <div className="mx-auto w-full max-w-4xl max-h-[92vh] flex flex-col justify-between overflow-y-auto rounded-[24px] sm:rounded-[32px] bg-white shadow-2xl border-2 sm:border-4 border-slate-900 custom-scrollbar">
-              
+
               {/* Header Modal Kuis Responsif Mobile */}
               <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-[#0362C0] to-blue-700 p-3.5 sm:px-8 text-white gap-2 shrink-0">
                 <div className="flex items-center gap-2.5 min-w-0">
@@ -1069,7 +1090,7 @@ export default function LMSView() {
               </div>
 
               <div className="p-4 sm:p-8 space-y-5 flex-1 overflow-y-auto custom-scrollbar">
-                
+
                 {/* 🔢 NAVIGATOR 20 NOMOR SOAL (GRID 5 KOLOM PAS DI MOBILE) */}
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2.5">
                   <div className="flex items-center justify-between text-xs font-black text-slate-700">
@@ -1086,15 +1107,14 @@ export default function LMSView() {
                         <button
                           key={idx}
                           onClick={() => setQuizIndex(idx)}
-                          className={`h-8 sm:h-9 rounded-xl font-black text-xs transition-all cursor-pointer border flex items-center justify-center ${
-                            isCurrent
+                          className={`h-8 sm:h-9 rounded-xl font-black text-xs transition-all cursor-pointer border flex items-center justify-center ${isCurrent
                               ? 'ring-4 ring-blue-500 scale-105 shadow-md border-slate-900 bg-white text-slate-900'
                               : isAnswered
-                              ? isCorrect
-                                ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm'
-                                : 'bg-rose-500 text-white border-rose-600 shadow-sm'
-                              : 'bg-white text-slate-700 hover:bg-slate-200 border-slate-300'
-                          }`}
+                                ? isCorrect
+                                  ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm'
+                                  : 'bg-rose-500 text-white border-rose-600 shadow-sm'
+                                : 'bg-white text-slate-700 hover:bg-slate-200 border-slate-300'
+                            }`}
                         >
                           {idx + 1}
                         </button>
@@ -1210,11 +1230,10 @@ export default function LMSView() {
 
                     {/* PENJELASAN SAAT JAWABAN DIPILIH (TANPA EMOJI) */}
                     {quizAnswers[quizIndex] !== undefined && (
-                      <div className={`p-3.5 sm:p-4 rounded-2xl border text-xs font-semibold flex items-start gap-2.5 ${
-                        quizAnswers[quizIndex] === currentQ.ans
+                      <div className={`p-3.5 sm:p-4 rounded-2xl border text-xs font-semibold flex items-start gap-2.5 ${quizAnswers[quizIndex] === currentQ.ans
                           ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
                           : 'bg-rose-50 border-rose-300 text-rose-950'
-                      }`}>
+                        }`}>
                         {quizAnswers[quizIndex] === currentQ.ans ? (
                           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                         ) : (
@@ -1222,8 +1241,8 @@ export default function LMSView() {
                         )}
                         <div>
                           <p className="font-black text-xs sm:text-sm">
-                            {quizAnswers[quizIndex] === currentQ.ans 
-                              ? 'Jawaban Anda Benar!' 
+                            {quizAnswers[quizIndex] === currentQ.ans
+                              ? 'Jawaban Anda Benar!'
                               : `Jawaban Anda Belum Tepat! (Kunci: Pilihan ${['A', 'B', 'C', 'D'][currentQ.ans]})`}
                           </p>
                           <p className="mt-1 leading-relaxed"><strong>Penjelasan:</strong> {currentQ.exp}</p>

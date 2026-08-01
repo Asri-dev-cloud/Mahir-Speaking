@@ -7,6 +7,10 @@ const router = express.Router();
 // Get Current User Profile with Package Details
 router.get('/profile', verifyToken, async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+
     const users = await query(
       `SELECT u.id, u.full_name, u.username, u.email, u.whatsapp, u.role, u.package_id, u.xp, u.points, u.streak, u.avatar, u.created_at,
               p.name as package_name, p.ai_daily_limit, p.tutor_sessions, p.badge as package_badge

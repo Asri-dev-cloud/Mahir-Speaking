@@ -17,6 +17,7 @@ export const apiFetch = async (endpoint, options = {}) => {
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
+      cache: 'no-store',
       headers
     });
 
