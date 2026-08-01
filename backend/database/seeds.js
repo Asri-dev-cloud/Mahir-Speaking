@@ -153,18 +153,18 @@ export async function initSeedData() {
       )
     `);
 
-    // 📦 Cek & Semai Paket Langganan Biar User BIsa Belanja
-    const packagesCount = await query(`SELECT COUNT(*) as count FROM packages`);
-    if (packagesCount[0].count === 0) {
-      console.log('Nyiapin paket-paket langganan ketche dlu gais...');
-      await query(`
-        INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
-        VALUES 
-        (1, 'Basic', 99000, 'monthly', 10, 0, 'Starter', '["Access to Foundation Courses", "10 Daily AI Chat Messages", "Community Leaderboard", "Vocabulary Flashcards"]'),
-        (2, 'Standard', 199000, 'monthly', 50, 2, 'Pro Speaker', '["All Foundation & Intermediate Courses", "50 Daily AI Chat Messages", "AI Speaking Coach Feedback", "2 Live Tutor Practice Sessions/mo", "Certificate of Completion"]'),
-        (3, 'Premium', 349000, 'monthly', -1, 8, 'VIP Master', '["Unlimited Access to All Courses", "UNLIMITED AI Chat & Voice Assistant", "8 Live 1-on-1 Tutor Sessions/mo", "Priority Pronunciation Doctor", "IELTS/TOEFL Speaking Mock Exams", "Verified Speaking Badge"]')
-      `);
-    }
+    // 📦 Cek & Semai Paket Langganan Biar User Bisa Belanja
+    console.log('Nyiapin paket-paket langganan ketche dlu gais...');
+    await query(`DELETE FROM packages`);
+    await query(`
+      INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
+      VALUES 
+      (1, 'Kelas Reguler', 350000, 'monthly', 30, 2, 'Reguler', '["Akses Kelas Reguler", "30 Percakapan AI / hari", "Leaderboard Komunitas", "Umpan Balik AI Coach"]'),
+      (2, 'Intermediate', 500000, 'monthly', 100, 4, 'Intermediate', '["Akses Kelas Intermediate", "100 Percakapan AI / hari", "4 Kelas Tatap Muka / bulan", "Analisis Pengucapan Detail"]'),
+      (3, 'Advanced', 750000, 'monthly', -1, 8, 'Advanced', '["Akses Kelas Advanced", "AI Chat & Suara Tanpa Batas", "8 Kelas Tatap Muka / bulan", "Simulasi Ujian IELTS/TOEFL"]'),
+      (4, 'Cash Promo (3 Bulan)', 750000, '3 months', -1, 12, 'Best Deal', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "12 Kelas Tatap Muka / 3 bulan", "Sertifikat Kelulusan", "Badge Spesial Best Deal"]'),
+      (5, 'Harga Normal (3 Bulan)', 1500000, '3 months', -1, 24, 'Premium Pro', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "24 Kelas Tatap Muka / 3 bulan", "Bimbingan Intensif IELTS/TOEFL"]')
+    `);
 
     // 👑 Cek & Semai User Awal Termasuk Juara Leaderboard Aci, Fariha, Ira, Pipit
     const usersCount = await query(`SELECT COUNT(*) as count FROM users`);

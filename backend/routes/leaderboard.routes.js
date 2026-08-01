@@ -6,10 +6,10 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const leaderboard = await query(`
-      SELECT u.id, u.full_name, u.username, u.xp, u.points, u.streak, u.avatar, u.role, u.has_completed_quiz, p.badge as package_badge, p.name as package_name
+      SELECT u.id, u.full_name, u.username, u.xp, u.points, u.streak, u.avatar, u.role, p.badge as package_badge, p.name as package_name
       FROM users u
       LEFT JOIN packages p ON u.package_id = p.id
-      WHERE (u.has_completed_quiz = true OR u.xp > 0)
+      WHERE u.xp > 0
       ORDER BY u.xp DESC, u.points DESC
       LIMIT 50
     `);
@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
       rankings: ranked
     });
   } catch (err) {
+    console.error('Leaderboard error:', err);
     return res.status(500).json({ success: false, message: 'Failed to fetch leaderboard.' });
   }
 });

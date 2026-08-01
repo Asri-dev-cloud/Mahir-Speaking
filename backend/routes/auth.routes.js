@@ -12,18 +12,20 @@ router.post('/register', async (req, res) => {
   try {
     const { full_name, username, email, whatsapp, password, role } = req.body;
 
-    if (!full_name || !username || !email || !password) {
+    if (!full_name || !email || !password) {
       return res.status(400).json({ success: false, message: 'All required fields must be filled.' });
     }
 
+    // Generate username dari email jika tidak dikirim dari frontend
+    const userUsername = username || email.split('@')[0];
     const hashedPassword = await bcrypt.hash(password, 10);
     const userRole = role && ['student', 'tutor', 'admin'].includes(role) ? role : 'student';
-    const avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
+    const avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${userUsername}`;
 
     // Jalankan Stored Procedure / Transaksi Aman pendaftaran user
     const regResult = await dbRegisterUser(
       full_name,
-      username,
+      userUsername,
       email,
       whatsapp,
       hashedPassword,
@@ -41,7 +43,7 @@ router.post('/register', async (req, res) => {
     const newUser = {
       id: regResult.user_id,
       full_name,
-      username: username.toLowerCase(),
+      username: userUsername.toLowerCase(),
       email: email.toLowerCase(),
       whatsapp: whatsapp || '',
       role: userRole,

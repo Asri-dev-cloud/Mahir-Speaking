@@ -1,9 +1,9 @@
 -- ============================================================
--- Mahir Speaking Database Schema (PostgreSQL)
--- Optimized for Vercel Postgres / Neon Serverless Databases
+-- Skema Database Mahir Speaking (PostgreSQL)
+-- Dirancang supaya Aman Sentosa
 -- ============================================================
 
--- 1. Create Tables
+-- 1. Bikin Tabel-Tabel dulu
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   full_name VARCHAR(100) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS packages (
   name VARCHAR(50) NOT NULL,
   price INT NOT NULL,
   period VARCHAR(20) DEFAULT 'monthly',
-  ai_daily_limit INT NOT NULL, -- -1 for unlimited
+  ai_daily_limit INT NOT NULL, -- -1 artinya unlimited gais
   tutor_sessions INT NOT NULL,
   badge VARCHAR(50),
   features TEXT NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS quizzes (
   id SERIAL PRIMARY KEY,
   lesson_id INT NOT NULL,
   question TEXT NOT NULL,
-  options TEXT NOT NULL, -- JSON string of options
+  options TEXT NOT NULL, -- JSON string berisi pilihan jawaban
   correct_answer INT NOT NULL,
   xp_reward INT DEFAULT 20,
   FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS purchases (
 CREATE TABLE IF NOT EXISTS ai_chats (
   id SERIAL PRIMARY KEY,
   user_id INT NOT NULL,
-  role VARCHAR(20) NOT NULL, -- 'user' or 'assistant'
+  role VARCHAR(20) NOT NULL, -- 'user' atau 'assistant'
   mode VARCHAR(50) DEFAULT 'general', -- 'grammar', 'speaking', 'vocab', 'translator'
   content TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS exercises (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Indexes for Optimization
+-- 2. Bikin Indeks Biar Pencarian Data Makin Sat-Set 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_progress_user_lesson ON user_progress(user_id, lesson_id);
@@ -119,10 +119,10 @@ CREATE INDEX IF NOT EXISTS idx_purchases_user ON purchases(user_id);
 CREATE INDEX IF NOT EXISTS idx_ai_chats_user ON ai_chats(user_id);
 
 -- ============================================================
--- 🔐 STORED PROCEDURES / FUNCTIONS (PL/pgSQL) FOR SECURE LOGIC
+--  KUMPULAN STORED FUNCTIONS (PL/pgSQL) BIAR LOGIKA DATA AMAN BINTANG LIMA 
 -- ============================================================
 
--- Function 1: Register User Securely (Atomic Registration + Validation)
+-- Fungsi 1: Pendaftaran User Baru dengan Validasi Ganda (Biar Ga Ada Akun Kembar)
 CREATE OR REPLACE FUNCTION register_user_secure(
     p_full_name VARCHAR,
     p_username VARCHAR,
@@ -142,19 +142,19 @@ AS $$
 DECLARE
     new_id INT;
 BEGIN
-    -- Check if email already registered
+    -- Cek dulu apakah emailnya udah pernah didaftarin atau belum ya bestie~
     IF EXISTS (SELECT 1 FROM users WHERE email = LOWER(p_email)) THEN
         RETURN QUERY SELECT 0, 'EMAIL_EXISTS'::VARCHAR, 'Email is already registered.'::VARCHAR;
         RETURN;
     END IF;
 
-    -- Check if username already registered
+    -- Cek juga apakah usernamenya udah ada yang punya, biar ga tertukar~
     IF EXISTS (SELECT 1 FROM users WHERE username = LOWER(p_username)) THEN
         RETURN QUERY SELECT 0, 'USERNAME_EXISTS'::VARCHAR, 'Username is already registered.'::VARCHAR;
         RETURN;
     END IF;
 
-    -- Secure insert with default packages (ID 1: Basic), XP, points, etc.
+    -- Masukkan data user baru dengan paket default (Basic) beserta bonus XP & Point biar happy!
     INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
     VALUES (
         p_full_name, 
@@ -173,7 +173,7 @@ END;
 $$;
 
 
--- Function 2: Secure Purchase Package (Atomic Insert + Update Role)
+-- Fungsi 2: Transaksi Pembelian Paket Langganan (Biar Uang Keluar & Paket Aktif Terjadi Bersamaan, No Drama!)
 CREATE OR REPLACE FUNCTION secure_purchase_package(
     p_user_id INT,
     p_package_id INT,
@@ -190,24 +190,24 @@ AS $$
 DECLARE
     new_purchase_id INT;
 BEGIN
-    -- Verify User Exists
+    -- Pastikan usernya emang beneran ada di database kita ya~
     IF NOT EXISTS (SELECT 1 FROM users WHERE id = p_user_id) THEN
         RETURN QUERY SELECT 0, 'USER_NOT_FOUND'::VARCHAR, 'User not found.'::VARCHAR;
         RETURN;
     END IF;
 
-    -- Verify Package Exists
+    -- Pastikan paket yang mau dibeli emang terdaftar, jangan sampai fiktif~
     IF NOT EXISTS (SELECT 1 FROM packages WHERE id = p_package_id) THEN
         RETURN QUERY SELECT 0, 'PACKAGE_NOT_FOUND'::VARCHAR, 'Package not found.'::VARCHAR;
         RETURN;
     END IF;
 
-    -- Record purchase (Status set automatically to success for payment simulation)
+    -- Catat riwayat pembelian dengan status sukses (simulasi QRIS sat-set)
     INSERT INTO purchases (user_id, package_id, amount, payment_method, status)
     VALUES (p_user_id, p_package_id, p_amount, COALESCE(p_payment_method, 'QRIS'), 'success')
     RETURNING id INTO new_purchase_id;
 
-    -- Upgrade User's Active Package
+    -- Langsung upgrade paket aktif user biar langsung bisa menikmati fitur pro!
     UPDATE users 
     SET package_id = p_package_id 
     WHERE id = p_user_id;
@@ -217,7 +217,7 @@ END;
 $$;
 
 
--- Function 3: Complete Lesson Securely (Atomic Progress + XP + Streak)
+-- Fungsi 3: Selesaikan Materi & Kuis (Update progress secara otomatis & tambah XP + streak biar makin rajin)
 CREATE OR REPLACE FUNCTION complete_lesson_secure(
     p_user_id INT,
     p_lesson_id INT,
@@ -239,12 +239,12 @@ DECLARE
     v_completed INT;
     v_old_score INT;
 BEGIN
-    -- Get current user progress details
+    -- Intip dulu apakah materi ini udah pernah dikerjakan sebelumnya atau belum~
     SELECT completed, score INTO v_completed, v_old_score
     FROM user_progress 
     WHERE user_id = p_user_id AND lesson_id = p_lesson_id;
 
-    -- If already completed, just update score if it's higher (no new XP rewards to avoid double farming)
+    -- Kalau udah pernah selesai, kita cuma update nilai tertinggi aja gais (no double XP biar ga dieksploitasi bot!)
     IF v_completed = 1 THEN
         UPDATE user_progress 
         SET score = GREATEST(v_old_score, p_score) 
@@ -256,20 +256,20 @@ BEGIN
         RETURN;
     END IF;
 
-    -- If not exists, insert new progress
+    -- Kalau baru pertama kali dikerjakan, mari kita catat progress barunya~
     IF v_completed IS NULL THEN
         INSERT INTO user_progress (user_id, lesson_id, completed, score)
         VALUES (p_user_id, p_lesson_id, 1, p_score)
         RETURNING id INTO new_progress_id;
     ELSE
-        -- Update incomplete progress
+        -- Kalau sebelumnya baru dibuka tapi belum selesai, sekarang kita set selesai!
         UPDATE user_progress 
         SET completed = 1, score = p_score, completed_at = CURRENT_TIMESTAMP
         WHERE user_id = p_user_id AND lesson_id = p_lesson_id
         RETURNING id INTO new_progress_id;
     END IF;
 
-    -- Award XP and Points, increment active streak
+    -- Kasih hadiah XP, Point, dan tambah streak biar hari-harinya makin produktif belajar English!
     UPDATE users 
     SET xp = xp + p_xp_reward,
         points = points + (p_xp_reward / 2),
@@ -282,20 +282,22 @@ END;
 $$;
 
 -- ============================================================
--- 🌱 SEED DATA (IF NOT YET SEEDED)
+-- PENYEMAIAN DATA AWAL (BIAR DATABASE GAK KOSONG)
 -- ============================================================
 
--- Packages
+-- Paket-paket langganan yang bikin user terpikat buat belajar
+DELETE FROM packages;
 INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
 VALUES 
-(1, 'Basic', 99000, 'monthly', 10, 0, 'Starter', '["Access to Foundation Courses", "10 Daily AI Chat Messages", "Community Leaderboard", "Vocabulary Flashcards"]'),
-(2, 'Standard', 199000, 'monthly', 50, 2, 'Pro Speaker', '["All Foundation & Intermediate Courses", "50 Daily AI Chat Messages", "AI Speaking Coach Feedback", "2 Live Tutor Practice Sessions/mo", "Certificate of Completion"]'),
-(3, 'Premium', 349000, 'monthly', -1, 8, 'VIP Master', '["Unlimited Access to All Courses", "UNLIMITED AI Chat & Voice Assistant", "8 Live 1-on-1 Tutor Sessions/mo", "Priority Pronunciation Doctor", "IELTS/TOEFL Speaking Mock Exams", "Verified Speaking Badge"]')
-ON CONFLICT (id) DO NOTHING;
+(1, 'Kelas Reguler', 350000, 'monthly', 30, 2, 'Reguler', '["Akses Kelas Reguler", "30 Percakapan AI / hari", "Leaderboard Komunitas", "Umpan Balik AI Coach"]'),
+(2, 'Intermediate', 500000, 'monthly', 100, 4, 'Intermediate', '["Akses Kelas Intermediate", "100 Percakapan AI / hari", "4 Kelas Tatap Muka / bulan", "Analisis Pengucapan Detail"]'),
+(3, 'Advanced', 750000, 'monthly', -1, 8, 'Advanced', '["Akses Kelas Advanced", "AI Chat & Suara Tanpa Batas", "8 Kelas Tatap Muka / bulan", "Simulasi Ujian IELTS/TOEFL"]'),
+(4, 'Cash Promo (3 Bulan)', 750000, '3 months', -1, 12, 'Best Deal', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "12 Kelas Tatap Muka / 3 bulan", "Sertifikat Kelulusan", "Badge Spesial Best Deal"]'),
+(5, 'Harga Normal (3 Bulan)', 1500000, '3 months', -1, 24, 'Premium Pro', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "24 Kelas Tatap Muka / 3 bulan", "Bimbingan Intensif IELTS/TOEFL"]');
 
 SELECT setval(pg_get_serial_sequence('packages', 'id'), COALESCE(MAX(id), 1)) FROM packages;
 
--- Initial Exercises
+-- Latihan percakapan awal untuk menyambut pejuang English!
 INSERT INTO exercises (level, title, instruction, "referenceText", translation)
 VALUES 
 ('A1', 'Introduce Yourself', 'Dengarkan lalu ulangi kalimat berikut.', 'Hello, my name is Dhalfa and I am learning English.', 'Halo, nama saya Dhalfa dan saya sedang belajar bahasa Inggris.'),
