@@ -13,25 +13,19 @@ export async function initSeedData() {
     const isPostgres = !!(process.env.DATABASE_URL || process.env.POSTGRES_URL);
 
     if (isPostgres) {
-      // Cek apakah tabel users sudah ada
-      const tableCheck = await query(`
-        SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_name = 'users'
-        )
-      `);
-      if (tableCheck[0].exists) {
-        console.log('📊 [Database] Tabel PostgreSQL sudah ada. Melewati inisialisasi skema.');
-        return;
-      }
-
-      console.log('🏗️ [Database] Menginisialisasi skema & Stored Procedures PostgreSQL...');
+      console.log('🏗️ [Database] Menginisialisasi/memperbarui skema & Stored Procedures PostgreSQL...');
       const schemaPath = path.join(__dirname, 'schema_postgres.sql');
       const schemaSql = fs.readFileSync(schemaPath, 'utf8');
 
       // Jalankan seluruh skema SQL
       await query(schemaSql);
       console.log('✅ [Database] Skema & Stored Procedures PostgreSQL berhasil diinisialisasi!');
+
+      // 🌟 Tetep pastikan leaderboard di-sync cantik ke Aci, Fariha, Ira, Pipit di Postgres
+      await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 3450, points = 950, streak = 18 WHERE email = 'aci@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Fariha', username = 'fariha_speaking', avatar = '/mi.png', xp = 2890, points = 850, streak = 14 WHERE email = 'fariha@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Ira', username = 'ira_fluent', avatar = '/mo.png', xp = 2450, points = 720, streak = 11 WHERE email = 'ira@mahirspeaking.com'`);
+      await query(`UPDATE users SET full_name = 'Pipit', username = 'pipit_voice', avatar = '/ma.png', xp = 1980, points = 560, streak = 9 WHERE email = 'pipit@mahirspeaking.com'`);
       return;
     }
 
