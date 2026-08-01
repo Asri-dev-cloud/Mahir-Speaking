@@ -163,7 +163,7 @@ BEGIN
         p_whatsapp, 
         p_password, 
         COALESCE(p_role, 'student'), 
-        1, 100, 50, 1, 
+        1, 0, 0, 0, 
         COALESCE(p_avatar, '/ma.png')
     )
     RETURNING id INTO new_id;

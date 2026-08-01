@@ -48,9 +48,9 @@ router.post('/register', async (req, res) => {
       whatsapp: whatsapp || '',
       role: userRole,
       package_id: 1,
-      xp: 100,
-      points: 50,
-      streak: 1
+      xp: 0,
+      points: 0,
+      streak: 0
     };
 
     const token = jwt.sign(

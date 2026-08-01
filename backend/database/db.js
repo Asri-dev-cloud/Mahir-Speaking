@@ -130,7 +130,7 @@ export const dbRegisterUser = async (full_name, username, email, whatsapp, passw
           // Insert user
           const result = await query(
             `INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-             VALUES (?, ?, ?, ?, ?, ?, 1, 100, 50, 1, ?)`,
+             VALUES (?, ?, ?, ?, ?, ?, 1, 0, 0, 0, ?)`,
             [full_name, username.toLowerCase(), email.toLowerCase(), whatsapp || '', password, role || 'student', avatar || '/ma.png']
           );
 

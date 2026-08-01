@@ -130,11 +130,11 @@ export const authService = {
         role: 'student',
         admin_type: null,
         avatar: null,
-        xp: 100,
-        streak: 1,
-        points: 50,
+        xp: 0,
+        streak: 0,
+        points: 0,
         package_id: 1,
-        package_name: 'Standard Pro',
+        package_name: 'Kelas Reguler',
         is_trial: true
       };
 
