@@ -21,11 +21,8 @@ export async function initSeedData() {
       await query(schemaSql);
       console.log('✅ [Database] Skema & Stored Procedures PostgreSQL berhasil diinisialisasi!');
 
-      // 🌟 Tetep pastikan leaderboard di-sync cantik ke Aci, Fariha, Ira, Pipit di Postgres
-      await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 3450, points = 950, streak = 18 WHERE email = 'aci@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Fariha', username = 'fariha_speaking', avatar = '/mi.png', xp = 2890, points = 850, streak = 14 WHERE email = 'fariha@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Ira', username = 'ira_fluent', avatar = '/mo.png', xp = 2450, points = 720, streak = 11 WHERE email = 'ira@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Pipit', username = 'pipit_voice', avatar = '/ma.png', xp = 1980, points = 560, streak = 9 WHERE email = 'pipit@mahirspeaking.com'`);
+      // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari cloud Neon Postgres agar leaderboard bersih
+      await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'tutor@mahirspeaking.com', 'admin@mahirspeaking.com')`);
       return;
     }
 
@@ -160,47 +157,11 @@ export async function initSeedData() {
       (5, 'Harga Normal (3 Bulan)', 1500000, '3 months', -1, 24, 'Premium Pro', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "24 Kelas Tatap Muka / 3 bulan", "Bimbingan Intensif IELTS/TOEFL"]')
     `);
 
-    // 👑 Cek & Semai User Awal Termasuk Juara Leaderboard Aci, Fariha, Ira, Pipit
+    // 👑 Cek & Semai User Awal (Hanya Hartini Asri Senior Admin, Fauzi, dan Cintiani)
     const usersCount = await query(`SELECT COUNT(*) as count FROM users`);
     if (usersCount[0].count === 0) {
-      console.log('Nyiapin data user & juara leaderboard (Aci, Fariha, Ira, Pipit)...');
+      console.log('Nyiapin data user awal...');
       const hashedPassword = await bcrypt.hash('password123', 10);
-
-      // Student 1: Aci (#1 Champion)
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Aci', 'aci_master', 'aci@mahirspeaking.com', '081234567890', '${hashedPassword}', 'student', 3, 3450, 950, 18, '/ma.png')
-      `);
-
-      // Student 2: Fariha (#2 Silver)
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Fariha', 'fariha_speaking', 'fariha@mahirspeaking.com', '081234567891', '${hashedPassword}', 'student', 3, 2890, 850, 14, '/mi.png')
-      `);
-
-      // Student 3: Ira (#3 Bronze)
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Ira', 'ira_fluent', 'ira@mahirspeaking.com', '081234567892', '${hashedPassword}', 'student', 2, 2450, 720, 11, '/mo.png')
-      `);
-
-      // Student 4: Pipit (#4)
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Pipit', 'pipit_voice', 'pipit@mahirspeaking.com', '081234567893', '${hashedPassword}', 'student', 2, 1980, 560, 9, '/ma.png')
-      `);
-
-      // Tutor User
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Coach David Miller', 'david_tutor', 'tutor@mahirspeaking.com', '081299988877', '${hashedPassword}', 'tutor', 3, 5000, 1500, 30, 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=250')
-      `);
-
-      // Admin User
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '${hashedPassword}', 'admin', 3, 9999, 9999, 99, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250')
-      `);
 
       const hashedAdminPassword = await bcrypt.hash('20424014', 10);
       // Admin Senior (Hartini Asri)
@@ -221,11 +182,8 @@ export async function initSeedData() {
         VALUES ('Cintiani Ajah', 'cintiani', 'cintiani@mahirspeaking.com', '081234567895', '${hashedPassword}', 'student', 1, 0, 0, 0, '/mi.png')
       `);
     } else {
-      // 🌟 Tetep pastikan leaderboard di-sync cantik ke Aci, Fariha, Ira, Pipit
-      await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 3450, points = 950, streak = 18 WHERE email = 'student@mahirspeaking.com' OR email = 'aci@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Fariha', username = 'fariha_speaking', avatar = '/mi.png', xp = 2890, points = 850, streak = 14 WHERE email = 'rian@mahirspeaking.com' OR email = 'fariha@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Ira', username = 'ira_fluent', avatar = '/mo.png', xp = 2450, points = 720, streak = 11 WHERE email = 'nadia@mahirspeaking.com' OR email = 'ira@mahirspeaking.com'`);
-      await query(`UPDATE users SET full_name = 'Pipit', username = 'pipit_voice', avatar = '/ma.png', xp = 1980, points = 560, streak = 9 WHERE email = 'budi@mahirspeaking.com' OR email = 'pipit@mahirspeaking.com'`);
+      // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari local SQLite agar leaderboard bersih
+      await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'tutor@mahirspeaking.com', 'admin@mahirspeaking.com')`);
     }
 
     // 📚 Cek Kursus & Materi Pembelajaran
