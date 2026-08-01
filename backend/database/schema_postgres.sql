@@ -298,7 +298,7 @@ VALUES
 SELECT setval(pg_get_serial_sequence('packages', 'id'), COALESCE(MAX(id), 1)) FROM packages;
 
 -- Latihan percakapan awal untuk menyambut pejuang English!
-INSERT INTO exercises (level, title, instruction, "referenceText", translation)
+INSERT INTO exercises (level, title, instruction, referenceText, translation)
 VALUES 
 ('A1', 'Introduce Yourself', 'Dengarkan lalu ulangi kalimat berikut.', 'Hello, my name is Dhalfa and I am learning English.', 'Halo, nama saya Dhalfa dan saya sedang belajar bahasa Inggris.'),
 ('A1', 'Daily Routine', 'Dengarkan lalu ulangi dengan jelas.', 'I usually study English in the evening.', 'Saya biasanya belajar bahasa Inggris pada malam hari.'),
@@ -318,4 +318,15 @@ VALUES (
   5, 0, 0, 0, 
   '/ma.png'
 )
+ON CONFLICT (email) DO NOTHING;
+
+-- Semai User Awal & Juara Leaderboard Secara Default
+INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+VALUES 
+('Aci', 'aci_master', 'aci@mahirspeaking.com', '081234567890', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 3, 3450, 950, 18, '/ma.png'),
+('Fariha', 'fariha_speaking', 'fariha@mahirspeaking.com', '081234567891', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 3, 2890, 850, 14, '/mi.png'),
+('Ira', 'ira_fluent', 'ira@mahirspeaking.com', '081234567892', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 2, 2450, 720, 11, '/mo.png'),
+('Pipit', 'pipit_voice', 'pipit@mahirspeaking.com', '081234567893', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 2, 1980, 560, 9, '/ma.png'),
+('Coach David Miller', 'david_tutor', 'tutor@mahirspeaking.com', '081299988877', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'tutor', 3, 5000, 1500, 30, 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=250'),
+('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'admin', 3, 9999, 9999, 99, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250')
 ON CONFLICT (email) DO NOTHING;

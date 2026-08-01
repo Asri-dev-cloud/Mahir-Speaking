@@ -586,11 +586,11 @@ export default function LMSView() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-black text-[#FFFF00] bg-black/30 px-3 py-1.5 rounded-xl border border-[#FFFF00]/30 inline-flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 fill-[#FFFF00]" />
-                      <span>{user.xp || 2450} XP</span>
+                      <span>{user.xp ?? 0} XP</span>
                     </span>
                     <span className="text-xs font-black text-orange-300 bg-black/30 px-3 py-1.5 rounded-xl border border-orange-400/30 inline-flex items-center gap-1.5">
                       <Flame className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                      <span>{user.streak || 12} Hari Streak</span>
+                      <span>{user.streak ?? 0} Hari Streak</span>
                     </span>
                   </div>
                 </div>
