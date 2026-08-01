@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from '../database/db.js';
+import { query, dbCompleteLesson } from '../database/db.js';
 import { verifyToken, checkRole } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -62,41 +62,21 @@ router.post('/complete-lesson', verifyToken, async (req, res) => {
     const { lesson_id, score, xp_earned } = req.body;
     const userId = req.user.id;
 
-    // Check existing progress
-    const existing = await query(
-      `SELECT * FROM user_progress WHERE user_id = ? AND lesson_id = ?`,
-      [userId, lesson_id]
-    );
-
-    if (existing.length === 0) {
-      await query(
-        `INSERT INTO user_progress (user_id, lesson_id, completed, score) VALUES (?, ?, 1, ?)`,
-        [userId, lesson_id, score || 100]
-      );
-    } else {
-      await query(
-        `UPDATE user_progress SET completed = 1, score = MAX(score, ?) WHERE user_id = ? AND lesson_id = ?`,
-        [score || 100, userId, lesson_id]
-      );
-    }
-
-    // Award XP and points to user
     const addXp = xp_earned || 50;
-    const addPoints = Math.floor(addXp / 2);
-    await query(
-      `UPDATE users SET xp = xp + ?, points = points + ? WHERE id = ?`,
-      [addXp, addPoints, userId]
-    );
 
-    const updatedUser = await query(`SELECT xp, points, streak FROM users WHERE id = ?`, [userId]);
+    // Jalankan Stored Procedure / Transaksi Aman kelulusan materi & kuis
+    const result = await dbCompleteLesson(userId, lesson_id, score || 100, addXp);
 
     return res.json({
       success: true,
-      message: `Lesson completed! +${addXp} XP earned!`,
-      xp: updatedUser[0].xp,
-      points: updatedUser[0].points
+      message: result.status_code === 'ALREADY_COMPLETED' 
+        ? `Lesson score updated! Current highscore: ${score}%`
+        : `Lesson completed! +${addXp} XP earned! ✨`,
+      xp: result.new_xp,
+      points: result.new_points
     });
   } catch (err) {
+    console.error('Complete lesson error:', err);
     return res.status(500).json({ success: false, message: 'Failed to save lesson progress.' });
   }
 });

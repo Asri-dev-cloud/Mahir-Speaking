@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from '../database/db.js';
+import { query, dbPurchasePackage } from '../database/db.js';
 import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -31,14 +31,15 @@ router.post('/purchase', verifyToken, async (req, res) => {
 
     const selectedPkg = pkg[0];
 
-    // Record purchase
-    await query(
-      `INSERT INTO purchases (user_id, package_id, amount, payment_method, status) VALUES (?, ?, ?, ?, 'success')`,
-      [userId, package_id, selectedPkg.price, payment_method || 'QRIS']
-    );
+    // Jalankan Stored Procedure / Transaksi Aman pembelian paket
+    const result = await dbPurchasePackage(userId, package_id, selectedPkg.price, payment_method || 'QRIS');
 
-    // Upgrade user's package
-    await query(`UPDATE users SET package_id = ? WHERE id = ?`, [package_id, userId]);
+    if (result.status_code === 'USER_NOT_FOUND') {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    if (result.status_code === 'PACKAGE_NOT_FOUND') {
+      return res.status(404).json({ success: false, message: 'Package not found.' });
+    }
 
     return res.json({
       success: true,
@@ -46,6 +47,7 @@ router.post('/purchase', verifyToken, async (req, res) => {
       package: selectedPkg
     });
   } catch (err) {
+    console.error('Purchase error:', err);
     return res.status(500).json({ success: false, message: 'Failed to complete package purchase.' });
   }
 });

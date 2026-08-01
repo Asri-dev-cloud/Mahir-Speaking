@@ -1,0 +1,71 @@
+// ⏱️ Custom In-Memory Rate Limiter: Hemat Resource & Slay Bebas Bot Brute Force! ✨
+const rateLimitStore = new Map();
+
+// Pembersihan berkala memori dari entri kedaluwarsa biar gak memory leak ya bestie~
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, record] of rateLimitStore.entries()) {
+    if (now > record.resetTime) {
+      rateLimitStore.delete(key);
+    }
+  }
+}, 5 * 60 * 1000); // Bersihkan setiap 5 menit
+
+export const rateLimiter = (options = {}) => {
+  const {
+    windowMs = 15 * 60 * 1000, // Default 15 menit
+    max = 100,                 // Default maksimal 100 request
+    message = 'Too many requests, please try again later.',
+    statusCode = 429
+  } = options;
+
+  return (req, res, next) => {
+    // Ambil IP asli (bisa di belakang proxy Vercel/Cloudflare)
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown-ip';
+    const now = Date.now();
+    const key = `${req.baseUrl || ''}${req.path}_${ip}`;
+
+    if (!rateLimitStore.has(key)) {
+      rateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + windowMs
+      });
+      return next();
+    }
+
+    const record = rateLimitStore.get(key);
+
+    if (now > record.resetTime) {
+      // Reset window waktu pembatasan
+      record.count = 1;
+      record.resetTime = now + windowMs;
+      return next();
+    }
+
+    record.count++;
+
+    if (record.count > max) {
+      return res.status(statusCode).json({
+        success: false,
+        message,
+        retryAfterSeconds: Math.ceil((record.resetTime - now) / 1000)
+      });
+    }
+
+    next();
+  };
+};
+
+// Limiter Global (Semua route API): 150 request / 15 menit
+export const globalLimiter = rateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 150,
+  message: 'Waduh bestie, pelan-pelan ya! Kamu mengirim terlalu banyak request nih. Coba lagi dalam beberapa menit~ ✨'
+});
+
+// Limiter Khusus Auth (Register, Login, Lupa Password): 15 request / 15 menit (Anti Brute Force & Spam Bot!)
+export const authLimiter = rateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 15,
+  message: 'Keamanan utama! Terlalu banyak percobaan autentikasi dari perangkat ini. Silakan coba lagi 15 menit lagi ya bestie~ 🛡️'
+});

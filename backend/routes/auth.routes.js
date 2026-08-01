@@ -2,7 +2,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { query } from '../database/db.js';
+import { query, dbRegisterUser } from '../database/db.js';
 import { JWT_SECRET } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -16,35 +16,34 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, message: 'All required fields must be filled.' });
     }
 
-    // Check existing
-    const existing = await query('SELECT * FROM users WHERE email = ? OR username = ?', [email, username]);
-    if (existing.length > 0) {
-      return res.status(400).json({ success: false, message: 'Email or Username is already registered.' });
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const userRole = role && ['student', 'tutor', 'admin'].includes(role) ? role : 'student';
+    const avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
 
-    const result = await query(
-      `INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-       VALUES (?, ?, ?, ?, ?, ?, 1, 100, 50, 1, ?)`,
-      [
-        full_name,
-        username,
-        email,
-        whatsapp || '',
-        hashedPassword,
-        userRole,
-        `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`
-      ]
-    );
-
-    const newUser = {
-      id: result.lastID,
+    // Jalankan Stored Procedure / Transaksi Aman pendaftaran user
+    const regResult = await dbRegisterUser(
       full_name,
       username,
       email,
       whatsapp,
+      hashedPassword,
+      userRole,
+      avatar
+    );
+
+    if (regResult.status_code === 'EMAIL_EXISTS') {
+      return res.status(400).json({ success: false, message: 'Email or Username is already registered.' });
+    }
+    if (regResult.status_code === 'USERNAME_EXISTS') {
+      return res.status(400).json({ success: false, message: 'Email or Username is already registered.' });
+    }
+
+    const newUser = {
+      id: regResult.user_id,
+      full_name,
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
+      whatsapp: whatsapp || '',
       role: userRole,
       package_id: 1,
       xp: 100,

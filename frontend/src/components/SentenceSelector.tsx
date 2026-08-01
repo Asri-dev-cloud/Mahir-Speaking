@@ -40,6 +40,7 @@ interface SentenceSelectorProps {
   onPlaySample: () => void;
   onStopSample: () => void;
   onStartPracticeStep: () => void;
+  exercises?: PracticeItem[];
 }
 
 export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
@@ -48,14 +49,17 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
   isPlayingSample,
   onPlaySample,
   onStopSample,
-  onStartPracticeStep
+  onStartPracticeStep,
+  exercises
 }) => {
   const [selectedLevelFilter, setSelectedLevelFilter] = useState<string>('ALL');
 
+  const dataList = useMemo(() => exercises || INITIAL_PRACTICE_DATA, [exercises]);
+
   const filteredSentences = useMemo(() => {
-    if (selectedLevelFilter === 'ALL') return INITIAL_PRACTICE_DATA;
-    return INITIAL_PRACTICE_DATA.filter((item) => item.level === selectedLevelFilter);
-  }, [selectedLevelFilter]);
+    if (selectedLevelFilter === 'ALL') return dataList;
+    return dataList.filter((item) => item.level === selectedLevelFilter);
+  }, [selectedLevelFilter, dataList]);
 
   const currentIndex = useMemo(() => {
     const idx = filteredSentences.findIndex((item) => item.title === selectedSentence.title);
@@ -104,14 +108,14 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
             Filter Level:
           </label>
           <select
-            id="level-select"
+             id="level-select"
             value={selectedLevelFilter}
             onChange={(e) => {
               const val = e.target.value;
               setSelectedLevelFilter(val);
               const firstMatch = val === 'ALL'
-                ? INITIAL_PRACTICE_DATA[0]
-                : INITIAL_PRACTICE_DATA.find((i) => i.level === val) || INITIAL_PRACTICE_DATA[0];
+                ? dataList[0]
+                : dataList.find((i) => i.level === val) || dataList[0];
               onSelectSentence(firstMatch);
             }}
             className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1 text-xs text-[#0F172A] font-semibold focus:outline-hidden focus:ring-2 focus:ring-[#0F9F95] cursor-pointer"

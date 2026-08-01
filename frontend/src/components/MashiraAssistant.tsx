@@ -15,6 +15,7 @@ import { PracticeItem, HistoryItem, ScoringResult } from '../types/voice';
 import { Minus, X, RefreshCw, ChevronRight, Save, CheckCircle, History, GripHorizontal, Check, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { useMashiraChat } from '../hooks/useMashiraChat';
+import { exerciseService } from '../services/api';
 
 interface MashiraAssistantProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
   const [voiceStep, setVoiceStep] = useState<1 | 2 | 3>(1);
   const [slideDirection, setSlideDirection] = useState<'next' | 'prev'>('next');
   const [selectedSentence, setSelectedSentence] = useState<PracticeItem>(INITIAL_PRACTICE_DATA[0]);
+  const [exercises, setExercises] = useState<PracticeItem[]>([]);
   const [isCustomExercise, setIsCustomExercise] = useState<boolean>(false);
   const [isSavingVoice, setIsSavingVoice] = useState<boolean>(false);
   const [isAnalyzingVoice, setIsAnalyzingVoice] = useState<boolean>(false);
@@ -129,6 +131,30 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  // Fetch Dynamic Exercises from API on Open
+  useEffect(() => {
+    if (isOpen) {
+      const fetchExercises = async () => {
+        const res = await exerciseService.getExercises();
+        if (res.success && res.exercises) {
+          setExercises(res.exercises);
+          setSelectedSentence((prev) => {
+            const isDefault = prev.title === INITIAL_PRACTICE_DATA[0].title && prev.referenceText === INITIAL_PRACTICE_DATA[0].referenceText;
+            if (isDefault && res.exercises.length > 0) {
+              return res.exercises[0];
+            }
+            const exists = res.exercises.some((e) => e.title === prev.title);
+            if (!exists && res.exercises.length > 0) {
+              return res.exercises[0];
+            }
+            return prev;
+          });
+        }
+      };
+      fetchExercises();
+    }
+  }, [isOpen]);
 
   // Calculate Voice Scores
   const calculatedScore: ScoringResult | null = useMemo(() => {
@@ -212,9 +238,10 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
 
   const handleNextExerciseVoice = () => {
     setIsCustomExercise(false);
-    const currentIdx = INITIAL_PRACTICE_DATA.findIndex((i) => i.title === selectedSentence.title);
-    const nextIdx = currentIdx >= 0 && currentIdx < INITIAL_PRACTICE_DATA.length - 1 ? currentIdx + 1 : 0;
-    setSelectedSentence(INITIAL_PRACTICE_DATA[nextIdx]);
+    const currentList = exercises.length > 0 ? exercises : INITIAL_PRACTICE_DATA;
+    const currentIdx = currentList.findIndex((i) => i.title === selectedSentence.title);
+    const nextIdx = currentIdx >= 0 && currentIdx < currentList.length - 1 ? currentIdx + 1 : 0;
+    setSelectedSentence(currentList[nextIdx]);
     resetState();
     changeVoiceStep(1);
   };
@@ -336,10 +363,10 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
           dragConstraints={{ left: -window.innerWidth + 460, right: 20, top: -window.innerHeight + 500, bottom: 20 }}
           onDragEnd={handleDragEnd}
           style={{ x: desktopPos.x, y: desktopPos.y }}
-          className={`pointer-events-auto bg-[#F8FAFC] border border-[#E2E8F0] shadow-2xl overflow-hidden flex flex-col w-full sm:w-[440px] ${
+          className={`pointer-events-auto bg-[#F8FAFC] border border-[#E2E8F0] shadow-2xl overflow-hidden flex flex-col ${
             isMinimized
-              ? 'rounded-2xl h-[64px] sm:mr-5 sm:mb-5'
-              : 'rounded-t-[24px] sm:rounded-[24px] h-[92dvh] sm:h-[680px] sm:max-h-[calc(100dvh-32px)] sm:mr-5 sm:mb-5 pb-[env(safe-area-inset-bottom)]'
+              ? 'rounded-2xl h-[64px] w-[calc(100%-32px)] mb-[76px] sm:w-[440px] sm:mr-5 sm:mb-5'
+              : 'rounded-t-[24px] sm:rounded-[24px] w-full sm:w-[440px] h-[92dvh] sm:h-[680px] sm:max-h-[calc(100dvh-32px)] sm:mr-5 sm:mb-5 pb-[calc(env(safe-area-inset-bottom)+76px)] sm:pb-[env(safe-area-inset-bottom)]'
           }`}
         >
           {/* Mobile Handle Bar */}
@@ -588,7 +615,7 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
                           type="button"
                           onClick={() => {
                             setIsCustomExercise(false);
-                            setSelectedSentence(INITIAL_PRACTICE_DATA[0]);
+                            setSelectedSentence(exercises[0] || INITIAL_PRACTICE_DATA[0]);
                             resetState();
                           }}
                           className="text-slate-400 hover:text-slate-600 font-normal underline cursor-pointer"
@@ -632,6 +659,7 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
                               onPlaySample={() => speak(selectedSentence.referenceText)}
                               onStopSample={stopTTS}
                               onStartPracticeStep={() => changeVoiceStep(2)}
+                              exercises={exercises}
                             />
                           )}
 

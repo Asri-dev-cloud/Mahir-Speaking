@@ -125,7 +125,7 @@ export default function Navbar() {
                   </>
                 )}
 
-                {user.role === 'admin' && (
+                {(user.role === 'admin' || user.email?.toLowerCase() === 'hartiniasri32@gmail.com' || user.admin_type) && (
                   <button
                     onClick={() => setActiveTab('admin-portal')}
                     className={`px-4 py-2 rounded-full transition-all flex items-center gap-1.5 cursor-pointer ${
@@ -165,6 +165,21 @@ export default function Navbar() {
               </button>
             ) : (
               <div className="flex items-center gap-2">
+                {/* 🛡️ Tombol Admin Portal Khusus Mobile (di sebelah kiri profil) */}
+                {(user.role === 'admin' || user.email?.toLowerCase() === 'hartiniasri32@gmail.com' || user.admin_type) && (
+                  <button
+                    onClick={() => setActiveTab('admin-portal')}
+                    className={`lg:hidden p-2 rounded-xl transition-all flex items-center justify-center cursor-pointer border ${
+                      activeTab === 'admin-portal' || activeTab === 'admin'
+                        ? 'bg-emerald-500 text-white border-emerald-600 shadow-md'
+                        : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                    }`}
+                    title="Admin Portal"
+                  >
+                    <Shield className="w-4.5 h-4.5" />
+                  </button>
+                )}
+
                 <div
                   onClick={() => setActiveTab('profile')}
                   title="Lihat & Edit Profil Saya"

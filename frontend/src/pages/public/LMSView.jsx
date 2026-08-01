@@ -392,7 +392,20 @@ export default function LMSView() {
     setTimeout(() => {
       setDownloadNotice(`✅ ${item.title} berhasil diunduh ke perangkat Anda!`);
       if (item.fileUrl && item.fileUrl !== '#') {
-        window.open(item.fileUrl, '_blank');
+        if (item.fileUrl.startsWith('data:')) {
+          const link = document.createElement('a');
+          link.href = item.fileUrl;
+          let ext = 'pdf';
+          if (item.type?.includes('Word')) ext = 'docx';
+          else if (item.type?.includes('PowerPoint')) ext = 'pptx';
+          else if (item.type?.includes('Audio') || item.type?.includes('Pack')) ext = 'zip';
+          link.download = `${item.title}.${ext}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          window.open(item.fileUrl, '_blank');
+        }
       }
       setTimeout(() => setDownloadNotice(null), 4000);
     }, 1200);

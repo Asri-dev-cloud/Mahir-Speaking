@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { adminService } from '../../services/api';
+import { adminService, exerciseService } from '../../services/api';
 import {
   ShieldCheck, Lock, Unlock, Users, Clock, Calendar, MessageSquare,
   UserPlus, Search, RefreshCw, AlertCircle, CheckCircle2, ChevronRight,
@@ -69,6 +69,17 @@ export default function AdminPortal() {
     thumbnail: ''
   });
 
+  // 🤖 State Latihan Bot Mashira AI
+  const [exercisesList, setExercisesList] = useState([]);
+  const [selectedExerciseForEdit, setSelectedExerciseForEdit] = useState(null);
+  const [exerciseForm, setExerciseForm] = useState({
+    level: 'A1',
+    title: '',
+    instruction: 'Dengarkan lalu ulangi kalimat berikut.',
+    referenceText: '',
+    translation: ''
+  });
+
   // 🪟 State Modals
   const [selectedUserForExtend, setSelectedUserForExtend] = useState(null);
   const [extendDays, setExtendDays] = useState(30);
@@ -94,13 +105,14 @@ export default function AdminPortal() {
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const [uRes, aRes, lRes, qRes, mRes, vRes] = await Promise.all([
+      const [uRes, aRes, lRes, qRes, mRes, vRes, exRes] = await Promise.all([
         adminService.getUsers(),
         adminService.getAnalytics(),
         adminService.getLeads(),
         adminService.getQuizzes(),
         adminService.getModules(),
-        adminService.getRecordedVideos()
+        adminService.getRecordedVideos(),
+        exerciseService.getExercises()
       ]);
       if (uRes.success && Array.isArray(uRes.users)) {
         setUsers(uRes.users);
@@ -118,6 +130,7 @@ export default function AdminPortal() {
       if (qRes?.success) setQuizzesList(qRes.quizzes || []);
       if (mRes?.success) setModulesList(mRes.modules || []);
       if (vRes?.success) setRecordingsList(vRes.videos || []);
+      if (exRes?.success) setExercisesList(exRes.exercises || []);
     } catch (err) {
       console.error('Failed to load admin data:', err);
       setUsers([]);
@@ -262,6 +275,48 @@ export default function AdminPortal() {
     }
   };
 
+  const handleModuleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check size (warn if > 2MB because of localStorage limit)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran file melebihi 2 MB! Disarankan menggunakan file yang lebih kecil atau menggunakan link luar agar tidak melebihi kapasitas memori browser.');
+    }
+
+    const sizeInMB = file.size / (1024 * 1024);
+    const sizeText = sizeInMB < 0.1
+      ? `${(file.size / 1024).toFixed(1)} KB`
+      : `${sizeInMB.toFixed(1)} MB`;
+
+    let formatType = 'PDF Document';
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (ext === 'pdf') formatType = 'PDF Document';
+    else if (['doc', 'docx'].includes(ext)) formatType = 'Word Document';
+    else if (['ppt', 'pptx'].includes(ext)) formatType = 'PowerPoint Presentation';
+    else if (['zip', 'rar', 'mp3'].includes(ext)) formatType = 'PDF & Audio Pack';
+
+    setModuleForm((prev) => ({
+      ...prev,
+      title: prev.title || file.name.replace(/\.[^/.]+$/, ""),
+      size: sizeText,
+      type: formatType
+    }));
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setModuleForm((prev) => ({
+        ...prev,
+        fileUrl: event.target.result
+      }));
+      showToast(`File "${file.name}" siap dilampirkan! 💾`);
+    };
+    reader.onerror = () => {
+      alert('Gagal membaca file!');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSaveRecordedVideo = async (e) => {
     e.preventDefault();
     if (!videoForm.title || !videoForm.videoUrl) {
@@ -288,6 +343,83 @@ export default function AdminPortal() {
       await adminService.deleteRecordedVideo(id);
       showToast('Video rekaman berhasil dihapus.');
       loadAdminData();
+    }
+  };
+
+  // 🤖 Exercise Handlers
+  const handleSaveExercise = async (e) => {
+    e.preventDefault();
+    if (!exerciseForm.title || !exerciseForm.referenceText || !exerciseForm.translation) {
+      alert('Semua field (Judul, Teks Bahasa Inggris, Terjemahan) wajib diisi ya bestie!');
+      return;
+    }
+
+    if (selectedExerciseForEdit) {
+      // Update
+      const res = await exerciseService.updateExercise(selectedExerciseForEdit.id, exerciseForm);
+      if (res.success) {
+        showToast(`Latihan "${exerciseForm.title}" berhasil diperbarui!`);
+        setSelectedExerciseForEdit(null);
+        setExerciseForm({
+          level: 'A1',
+          title: '',
+          instruction: 'Dengarkan lalu ulangi kalimat berikut.',
+          referenceText: '',
+          translation: ''
+        });
+        loadAdminData();
+      }
+    } else {
+      // Create
+      const res = await exerciseService.createExercise(exerciseForm);
+      if (res.success) {
+        showToast(`Latihan "${exerciseForm.title}" berhasil ditambahkan!`);
+        setExerciseForm({
+          level: 'A1',
+          title: '',
+          instruction: 'Dengarkan lalu ulangi kalimat berikut.',
+          referenceText: '',
+          translation: ''
+        });
+        loadAdminData();
+      }
+    }
+  };
+
+  const handleEditExerciseClick = (ex) => {
+    setSelectedExerciseForEdit(ex);
+    setExerciseForm({
+      level: ex.level,
+      title: ex.title,
+      instruction: ex.instruction,
+      referenceText: ex.referenceText,
+      translation: ex.translation
+    });
+    // Scroll smoothly to form
+    const formElement = document.getElementById('exercise-form-section');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleCancelExerciseEdit = () => {
+    setSelectedExerciseForEdit(null);
+    setExerciseForm({
+      level: 'A1',
+      title: '',
+      instruction: 'Dengarkan lalu ulangi kalimat berikut.',
+      referenceText: '',
+      translation: ''
+    });
+  };
+
+  const handleDeleteExerciseItem = async (id) => {
+    if (confirm('Apakah Anda yakin ingin menghapus latihan ini?')) {
+      const res = await exerciseService.deleteExercise(id);
+      if (res.success) {
+        showToast('Latihan berhasil dihapus.');
+        loadAdminData();
+      }
     }
   };
 
@@ -491,7 +623,7 @@ export default function AdminPortal() {
   // 🟢 SCREEN 2: MAIN DASHBOARD PORTAL ADMIN MASTER
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-3.5 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 pb-24 lg:pb-8 font-sans">
+    <div className="admin-portal-wrapper min-h-screen bg-slate-950 text-slate-100 p-3.5 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 pb-24 lg:pb-8 font-sans">
 
       {/* 🔔 TOAST NOTIFICATION */}
       {toastMsg && (
@@ -673,6 +805,17 @@ export default function AdminPortal() {
           >
             <Video className="w-4 h-4" />
             <span>Video & Rekaman ({recordingsList.length})</span>
+          </button>
+
+          <button
+            onClick={() => setPortalTab('exercises')}
+            className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'exercises'
+                ? 'bg-emerald-500 text-slate-950 shadow-glow'
+                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              }`}
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Latihan Bot Mashira ({exercisesList.length})</span>
           </button>
 
           {isSeniorAdmin && (
@@ -1739,15 +1882,54 @@ export default function AdminPortal() {
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-slate-400 mb-1">Link File / URL Lampiran Modul</label>
-                  <input
-                    type="text"
-                    placeholder="https://drive.google.com/file/... atau link simpanan file"
-                    value={moduleForm.fileUrl}
-                    onChange={(e) => setModuleForm({ ...moduleForm, fileUrl: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-emerald-300 font-mono focus:outline-none focus:border-emerald-500"
-                  />
+                <div className="md:col-span-2 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-slate-400 mb-1">Link File / URL Lampiran Modul</label>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Atau Upload File Lokal</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      placeholder={moduleForm.fileUrl?.startsWith('data:') ? '✓ File Lokal Terpilih (Base64)' : 'https://drive.google.com/file/... atau isi link luar'}
+                      value={moduleForm.fileUrl?.startsWith('data:') ? '' : moduleForm.fileUrl}
+                      onChange={(e) => setModuleForm({ ...moduleForm, fileUrl: e.target.value })}
+                      disabled={moduleForm.fileUrl?.startsWith('data:')}
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-emerald-300 font-mono focus:outline-none focus:border-emerald-500"
+                    />
+
+                    <div className="relative flex items-center">
+                      <input
+                        type="file"
+                        id="module-file-upload"
+                        onChange={handleModuleFileUpload}
+                        className="hidden"
+                        accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar,.mp3"
+                      />
+                      <label
+                        htmlFor="module-file-upload"
+                        className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl border border-dashed border-slate-800 hover:border-emerald-500 hover:text-emerald-400 bg-slate-900 text-slate-400 cursor-pointer font-bold transition-all text-xs"
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span>
+                          {moduleForm.fileUrl?.startsWith('data:')
+                            ? '✓ File Lokal Terpilih'
+                            : 'Pilih File Lokal (PDF/DOC/PPT)'}
+                        </span>
+                      </label>
+
+                      {moduleForm.fileUrl?.startsWith('data:') && (
+                        <button
+                          type="button"
+                          onClick={() => setModuleForm({ ...moduleForm, fileUrl: '#' })}
+                          className="absolute right-3 bg-red-500 hover:bg-red-600 text-white font-extrabold text-[10px] px-2 py-1 rounded-md cursor-pointer transition-colors shadow-sm"
+                          title="Hapus File Lokal"
+                        >
+                          Reset
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="md:col-span-2 pt-2">
@@ -1787,15 +1969,26 @@ export default function AdminPortal() {
                       </div>
 
                       <div className="flex items-center justify-between pt-2 border-t border-slate-900">
-                        <a
-                          href={m.fileUrl || '#'}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs text-emerald-400 font-bold hover:underline flex items-center gap-1"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                          <span>Buka Link File</span>
-                        </a>
+                        {m.fileUrl && m.fileUrl.startsWith('data:') ? (
+                          <a
+                            href={m.fileUrl}
+                            download={`${m.title}.${m.type?.includes('Word') ? 'docx' : m.type?.includes('PowerPoint') ? 'pptx' : m.type?.includes('Audio') || m.type?.includes('Pack') ? 'zip' : 'pdf'}`}
+                            className="text-xs text-emerald-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            <span>Download File</span>
+                          </a>
+                        ) : (
+                          <a
+                            href={m.fileUrl || '#'}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs text-emerald-400 font-bold hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            <span>Buka Link File</span>
+                          </a>
+                        )}
 
                         <button
                           onClick={() => handleDeleteModuleItem(m.id)}
@@ -1985,7 +2178,204 @@ export default function AdminPortal() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
 
+      {/* -------------------------------------------------------------
+          TAB: MANAJEMEN LATIHAN BOT MASHIRA
+      ------------------------------------------------------------- */}
+      {portalTab === 'exercises' && (
+        <div className="space-y-6">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-lg font-black text-white flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-emerald-400" />
+                  <span>Manajemen Latihan Bot Mashira AI</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Tambah, edit, dan hapus latihan speaking di chatbot Mashira untuk dipraktikkan oleh siswa.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* KOLOM KIRI: FORM TAMBAH / UPDATE LATIHAN */}
+              <div id="exercise-form-section" className="lg:col-span-1 space-y-4">
+                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+                  <h3 className="font-extrabold text-sm text-white flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <span>{selectedExerciseForEdit ? 'Edit Latihan' : 'Tambah Latihan Baru'}</span>
+                  </h3>
+
+                  <form onSubmit={handleSaveExercise} className="space-y-4">
+                    {/* Level Select */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-bold text-slate-400">Level Kemampuan:</label>
+                      <select
+                        value={exerciseForm.level}
+                        onChange={(e) => setExerciseForm({ ...exerciseForm, level: e.target.value })}
+                        className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer font-bold"
+                      >
+                        <option value="A1">A1 - Beginner (Pemula)</option>
+                        <option value="A2">A2 - Elementary (Dasar)</option>
+                        <option value="B1">B1 - Intermediate (Menengah)</option>
+                        <option value="B2">B2 - Upper Intermediate (Menengah Atas)</option>
+                        <option value="C1">C1 - Advanced (Mahir)</option>
+                      </select>
+                    </div>
+
+                    {/* Judul Latihan */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-bold text-slate-400">Judul / Topik Latihan:</label>
+                      <input
+                        type="text"
+                        placeholder="Contoh: Introduce Yourself"
+                        value={exerciseForm.title}
+                        onChange={(e) => setExerciseForm({ ...exerciseForm, title: e.target.value })}
+                        className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                        required
+                      />
+                    </div>
+
+                    {/* Instruksi Latihan */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-bold text-slate-400">Instruksi Latihan:</label>
+                      <input
+                        type="text"
+                        placeholder="Contoh: Dengarkan lalu ulangi kalimat berikut."
+                        value={exerciseForm.instruction}
+                        onChange={(e) => setExerciseForm({ ...exerciseForm, instruction: e.target.value })}
+                        className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                        required
+                      />
+                    </div>
+
+                    {/* Teks Bahasa Inggris */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-bold text-slate-400">Teks Bahasa Inggris (Reference Text):</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Contoh: Hello, my name is Dhalfa and I am learning English."
+                        value={exerciseForm.referenceText}
+                        onChange={(e) => setExerciseForm({ ...exerciseForm, referenceText: e.target.value })}
+                        className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none font-mono"
+                        required
+                      />
+                    </div>
+
+                    {/* Terjemahan Indonesia */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-bold text-slate-400">Terjemahan Bahasa Indonesia:</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Contoh: Halo, nama saya Dhalfa dan saya sedang belajar bahasa Inggris."
+                        value={exerciseForm.translation}
+                        onChange={(e) => setExerciseForm({ ...exerciseForm, translation: e.target.value })}
+                        className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+                        required
+                      />
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        type="submit"
+                        className="flex-1 py-2 px-4 rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 font-extrabold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>{selectedExerciseForEdit ? 'Simpan Perubahan' : 'Tambah Latihan'}</span>
+                      </button>
+
+                      {selectedExerciseForEdit && (
+                        <button
+                          type="button"
+                          onClick={handleCancelExerciseEdit}
+                          className="py-2 px-3 rounded-xl text-slate-400 bg-slate-900 hover:bg-slate-800 border border-slate-850 font-bold text-xs transition-colors cursor-pointer"
+                        >
+                          Batal
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              {/* KOLOM KANAN: DAFTAR LATIHAN YANG ADA */}
+              <div className="lg:col-span-2 space-y-4">
+                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+                    <h3 className="font-extrabold text-sm text-white">
+                      Daftar Latihan Aktif ({exercisesList.length})
+                    </h3>
+                  </div>
+
+                  {loading ? (
+                    <div className="text-center py-8 text-slate-500 text-xs font-bold animate-pulse">
+                      Memuat data latihan...
+                    </div>
+                  ) : exercisesList.length === 0 ? (
+                    <div className="text-center py-8 text-slate-500 text-xs font-bold border border-dashed border-slate-900 rounded-xl">
+                      Belum ada latihan terdaftar. Silakan tambahkan lewat form di samping.
+                    </div>
+                  ) : (
+                    <div className="space-y-3.5 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+                      {exercisesList.map((ex) => (
+                        <div
+                          key={ex.id}
+                          className={`p-4 rounded-xl border transition-all ${
+                            selectedExerciseForEdit && selectedExerciseForEdit.id === ex.id
+                              ? 'bg-emerald-500/5 border-emerald-500/40 shadow-sm'
+                              : 'bg-slate-900/60 border-slate-900 hover:border-slate-800'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="space-y-1.5 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${
+                                  ex.level === 'A1' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                  ex.level === 'A2' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                  ex.level === 'B1' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
+                                  ex.level === 'B2' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+                                  'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                }`}>
+                                  {ex.level}
+                                </span>
+                                <h4 className="font-extrabold text-sm text-white">{ex.title}</h4>
+                              </div>
+                              <p className="text-[11px] text-slate-400 italic font-medium">{ex.instruction}</p>
+                              
+                              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-900 space-y-1">
+                                <div className="text-xs text-emerald-400 font-mono font-medium">{ex.referenceText}</div>
+                                <div className="text-[11px] text-slate-500 italic font-medium">{ex.translation}</div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <button
+                                onClick={() => handleEditExerciseClick(ex)}
+                                className="p-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg border border-slate-800 cursor-pointer transition-colors"
+                                title="Edit Latihan"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteExerciseItem(ex.id)}
+                                className="p-1.5 bg-red-500/10 hover:bg-red-500/25 text-red-400 rounded-lg border border-red-500/20 cursor-pointer transition-colors"
+                                title="Hapus Latihan"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

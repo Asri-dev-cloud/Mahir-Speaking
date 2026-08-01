@@ -239,6 +239,103 @@ export const leaderboardService = {
   },
 };
 
+// 🤖 Data Awal Latihan Chatbot Mashira AI
+const defaultExercises = [
+  {
+    id: 1,
+    level: "A1",
+    title: "Introduce Yourself",
+    instruction: "Dengarkan lalu ulangi kalimat berikut.",
+    referenceText: "Hello, my name is Dhalfa and I am learning English.",
+    translation: "Halo, nama saya Dhalfa dan saya sedang belajar bahasa Inggris."
+  },
+  {
+    id: 2,
+    level: "A1",
+    title: "Daily Routine",
+    instruction: "Dengarkan lalu ulangi dengan jelas.",
+    referenceText: "I usually study English in the evening.",
+    translation: "Saya biasanya belajar bahasa Inggris pada malam hari."
+  },
+  {
+    id: 3,
+    level: "A2",
+    title: "Speaking Goal",
+    instruction: "Ucapkan kalimat berikut dengan percaya diri.",
+    referenceText: "My goal is to speak English confidently.",
+    translation: "Tujuan saya adalah berbicara bahasa Inggris dengan percaya diri."
+  },
+  {
+    id: 4,
+    level: "A2",
+    title: "Weekend Story",
+    instruction: "Jawab pertanyaan berikut dalam bahasa Inggris.",
+    referenceText: "Tell me about your weekend.",
+    translation: "Ceritakan tentang akhir pekanmu."
+  }
+];
+
+export const exerciseService = {
+  getExercises: async () => {
+    const res = await apiFetch('/exercises');
+    if (!res.success || res.isOffline) {
+      const saved = localStorage.getItem('mahir_exercises');
+      if (saved) {
+        try { return { success: true, exercises: JSON.parse(saved) }; } catch (e) { }
+      }
+      localStorage.setItem('mahir_exercises', JSON.stringify(defaultExercises));
+      return { success: true, exercises: defaultExercises };
+    }
+    return res;
+  },
+
+  createExercise: async (data) => {
+    const res = await apiFetch('/exercises', { method: 'POST', body: JSON.stringify(data) });
+    if (!res.success || res.isOffline) {
+      const saved = localStorage.getItem('mahir_exercises') || JSON.stringify(defaultExercises);
+      let exercises = [];
+      try { exercises = JSON.parse(saved); } catch (e) { }
+      const newExercise = {
+        id: Date.now(),
+        ...data
+      };
+      exercises.push(newExercise);
+      localStorage.setItem('mahir_exercises', JSON.stringify(exercises));
+      return { success: true, exercise: newExercise, message: 'Latihan berhasil ditambahkan (Offline Mode)!' };
+    }
+    return res;
+  },
+
+  updateExercise: async (id, data) => {
+    const res = await apiFetch(`/exercises/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+    if (!res.success || res.isOffline) {
+      const saved = localStorage.getItem('mahir_exercises') || JSON.stringify(defaultExercises);
+      let exercises = [];
+      try { exercises = JSON.parse(saved); } catch (e) { }
+      const idx = exercises.findIndex(e => e.id === id);
+      if (idx !== -1) {
+        exercises[idx] = { ...exercises[idx], ...data };
+        localStorage.setItem('mahir_exercises', JSON.stringify(exercises));
+      }
+      return { success: true, message: 'Latihan berhasil diperbarui (Offline Mode)!' };
+    }
+    return res;
+  },
+
+  deleteExercise: async (id) => {
+    const res = await apiFetch(`/exercises/${id}`, { method: 'DELETE' });
+    if (!res.success || res.isOffline) {
+      const saved = localStorage.getItem('mahir_exercises') || JSON.stringify(defaultExercises);
+      let exercises = [];
+      try { exercises = JSON.parse(saved); } catch (e) { }
+      const filtered = exercises.filter(e => e.id !== id);
+      localStorage.setItem('mahir_exercises', JSON.stringify(filtered));
+      return { success: true, message: 'Latihan berhasil dihapus (Offline Mode)!' };
+    }
+    return res;
+  }
+};
+
 // Initial Mock Data for Admin Portal - PURGED DATABASE: HANYA ADMIN SENIOR
 const mockUsersList = [
   {

@@ -60,3 +60,234 @@
   animation: progress-timer-5s 5s linear forwards;
 }
 
+/* 👑 Premium, Stunning Light Theme overrides for Admin Portal Dashboard */
+.admin-portal-wrapper {
+  background-color: #F4FBFF !important;
+  color: #334155 !important;
+}
+
+/* Page Headers & Cards overrides */
+.admin-portal-wrapper .bg-slate-900,
+.admin-portal-wrapper .bg-slate-900\/60,
+.admin-portal-wrapper .bg-slate-900\/65,
+.admin-portal-wrapper .bg-slate-900\/80,
+.admin-portal-wrapper section.bg-slate-900\/65,
+.admin-portal-wrapper section.bg-slate-900\/60 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Sub-containers & Forms */
+.admin-portal-wrapper .bg-slate-950,
+.admin-portal-wrapper .bg-slate-950\/50,
+.admin-portal-wrapper form.bg-slate-950 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+/* Universal border override */
+.admin-portal-wrapper [class*="border-slate-"] {
+  border-color: #e2e8f0 !important;
+}
+
+/* Heading Text Colors */
+.admin-portal-wrapper h1,
+.admin-portal-wrapper h2,
+.admin-portal-wrapper h3,
+.admin-portal-wrapper h4,
+.admin-portal-wrapper .text-white,
+.admin-portal-wrapper .text-slate-100,
+.admin-portal-wrapper .text-slate-200 {
+  color: #0f172a !important; /* text-slate-900 */
+}
+
+/* Paragraph/Subtitle Text Colors */
+.admin-portal-wrapper p,
+.admin-portal-wrapper span,
+.admin-portal-wrapper .text-slate-400,
+.admin-portal-wrapper .text-slate-300 {
+  color: #475569 !important; /* text-slate-600 */
+}
+
+/* Accent Labels and Meta Info */
+.admin-portal-wrapper .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Greeting Banner at the Top of Overview Tab */
+.admin-portal-wrapper section.bg-gradient-to-br {
+  background: linear-gradient(135deg, #0f9f95 0%, #0362c0 100%) !important; /* gorgeous vibrant teal-to-blue gradient */
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 20px 40px -15px rgba(3, 98, 192, 0.3) !important;
+}
+
+.admin-portal-wrapper section.bg-gradient-to-br h2 {
+  color: #ffffff !important; /* crisp white text for banner header */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-portal-wrapper section.bg-gradient-to-br p,
+.admin-portal-wrapper section.bg-gradient-to-br span {
+  color: rgba(255, 255, 255, 0.9) !important; /* soft white text for paragraphs inside banner */
+}
+
+.admin-portal-wrapper section.bg-gradient-to-br .bg-slate-950\/50 {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.admin-portal-wrapper section.bg-gradient-to-br .bg-slate-950\/50 h3,
+.admin-portal-wrapper section.bg-gradient-to-br .bg-slate-950\/50 p,
+.admin-portal-wrapper section.bg-gradient-to-br .bg-slate-950\/50 .text-white {
+  color: #ffffff !important;
+}
+
+/* Inactive Navigation Buttons (White with Slate Text) */
+.admin-portal-wrapper button.bg-slate-900,
+.admin-portal-wrapper button[class*="bg-slate-900"] {
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+}
+
+.admin-portal-wrapper button.bg-slate-900:hover,
+.admin-portal-wrapper button[class*="bg-slate-900"]:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+/* Active Navigation Button (Signature Brand Color) */
+.admin-portal-wrapper button.bg-emerald-500,
+.admin-portal-wrapper button[class*="bg-emerald-500"] {
+  background-color: #0f9f95 !important;
+  color: #ffffff !important;
+  border-color: #0d8c83 !important;
+  box-shadow: 0 4px 14px rgba(15, 159, 149, 0.3) !important;
+}
+
+.admin-portal-wrapper button.bg-emerald-500:hover {
+  background-color: #0d8c83 !important;
+}
+
+/* Inputs, Selects, Textareas */
+.admin-portal-wrapper input,
+.admin-portal-wrapper select,
+.admin-portal-wrapper textarea {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.admin-portal-wrapper input:focus,
+.admin-portal-wrapper select:focus,
+.admin-portal-wrapper textarea:focus {
+  border-color: #0f9f95 !important;
+  outline: 2px solid rgba(15, 159, 149, 0.2) !important;
+}
+
+.admin-portal-wrapper input::placeholder,
+.admin-portal-wrapper textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Tables styling */
+.admin-portal-wrapper table {
+  background-color: #ffffff !important;
+}
+
+.admin-portal-wrapper th {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.admin-portal-wrapper td {
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #334155 !important;
+}
+
+.admin-portal-wrapper tr:hover td {
+  background-color: #f8fafc !important;
+}
+
+/* Task Priority Cards / Action buttons inside overview */
+.admin-portal-wrapper button .text-white,
+.admin-portal-wrapper a .text-white,
+.admin-portal-wrapper button p,
+.admin-portal-wrapper button span.text-white {
+  color: #0f172a !important;
+}
+
+.admin-portal-wrapper button:hover .text-white {
+  color: #000000 !important;
+}
+
+/* Workflow Step badges on Sidebar */
+.admin-portal-wrapper span.bg-slate-800 {
+  background-color: #f1f5f9 !important;
+  color: #0f9f95 !important;
+  border-color: #cbd5e1 !important;
+  ring: none !important;
+}
+
+/* Limit authority box green panel */
+.admin-portal-wrapper section.bg-emerald-500\/\[0\.06\] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+
+.admin-portal-wrapper section.bg-emerald-500\/\[0\.06\] h3 {
+  color: #064e3b !important;
+}
+
+.admin-portal-wrapper section.bg-emerald-500\/\[0\.06\] p {
+  color: #047857 !important;
+}
+
+/* Badges / Labels */
+.admin-portal-wrapper .bg-emerald-500\/10,
+.admin-portal-wrapper .bg-emerald-500\/20 {
+  background-color: #e6f7f6 !important;
+  color: #0f9f95 !important;
+  border-color: #b3e6e3 !important;
+}
+
+/* Custom scrollbar */
+.admin-portal-wrapper .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(15, 159, 149, 0.2);
+}
+
+.admin-portal-wrapper .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #0f9f95;
+}
+
+.admin-portal-wrapper .border-dashed {
+  border-color: #cbd5e1 !important;
+}
+
+.admin-portal-wrapper .border-dashed:hover {
+  border-color: #0f9f95 !important;
+}
+
+/* Danger buttons and items */
+.admin-portal-wrapper .bg-red-500\/10 {
+  background-color: #fef2f2 !important;
+  color: #ef4444 !important;
+  border-color: #fca5a5 !important;
+}
+
+.admin-portal-wrapper .bg-red-500\/10:hover {
+  background-color: #fee2e2 !important;
+}
+
+.admin-portal-wrapper .text-red-400 {
+  color: #dc2626 !important;
+}
+
+

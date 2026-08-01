@@ -1,9 +1,40 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import { query } from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 🪴 Fungsi Penyemaian Data Awal Database (Seed Data Bikin DB Slay)
 export async function initSeedData() {
   try {
+    const isPostgres = !!(process.env.DATABASE_URL || process.env.POSTGRES_URL);
+
+    if (isPostgres) {
+      // Cek apakah tabel users sudah ada
+      const tableCheck = await query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_name = 'users'
+        )
+      `);
+      if (tableCheck[0].exists) {
+        console.log('📊 [Database] Tabel PostgreSQL sudah ada. Melewati inisialisasi skema.');
+        return;
+      }
+
+      console.log('🏗️ [Database] Menginisialisasi skema & Stored Procedures PostgreSQL...');
+      const schemaPath = path.join(__dirname, 'schema_postgres.sql');
+      const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+
+      // Jalankan seluruh skema SQL
+      await query(schemaSql);
+      console.log('✅ [Database] Skema & Stored Procedures PostgreSQL berhasil diinisialisasi!');
+      return;
+    }
+
     // 🏗️ Bikin Tabel Database Kalo Belum Ada Gais~
     await query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -109,6 +140,19 @@ export async function initSeedData() {
       )
     `);
 
+    // 🤖 Tabel Latihan Bot Mashira AI
+    await query(`
+      CREATE TABLE IF NOT EXISTS exercises (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        level TEXT NOT NULL,
+        title TEXT NOT NULL,
+        instruction TEXT NOT NULL,
+        referenceText TEXT NOT NULL,
+        translation TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // 📦 Cek & Semai Paket Langganan Biar User BIsa Belanja
     const packagesCount = await query(`SELECT COUNT(*) as count FROM packages`);
     if (packagesCount[0].count === 0) {
@@ -185,6 +229,20 @@ export async function initSeedData() {
         ('Business English Speaking & Pitching', 'B1 - Intermediate', 'Master professional workplace communication, meeting contributions, job interview answers, and elevator pitches.', ${tutorId}, 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=600', 3),
         ('IELTS Speaking 7.0+ Intensive', 'B2 - Upper Intermediate', 'Advanced strategies for IELTS Speaking Parts 1, 2, and 3 with real examiner criteria and fluency drills.', ${tutorId}, 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600', 3),
         ('Confident Public Speaking & Debating', 'C1 - Advanced', 'Hone persuasion skills, rhetorical devices, voice modulation, and spontaneous speech formulation.', ${tutorId}, 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=600', 2)
+      `);
+    }
+
+    // 🤖 Semai data latihan bot Mashira AI
+    const exercisesCount = await query(`SELECT COUNT(*) as count FROM exercises`);
+    if (exercisesCount[0].count === 0) {
+      console.log('Nyiapin data latihan chatbot awal gais...');
+      await query(`
+        INSERT INTO exercises (level, title, instruction, referenceText, translation)
+        VALUES 
+        ('A1', 'Introduce Yourself', 'Dengarkan lalu ulangi kalimat berikut.', 'Hello, my name is Dhalfa and I am learning English.', 'Halo, nama saya Dhalfa dan saya sedang belajar bahasa Inggris.'),
+        ('A1', 'Daily Routine', 'Dengarkan lalu ulangi dengan jelas.', 'I usually study English in the evening.', 'Saya biasanya belajar bahasa Inggris pada malam hari.'),
+        ('A2', 'Speaking Goal', 'Ucapkan kalimat berikut dengan percaya diri.', 'My goal is to speak English confidently.', 'Tujuan saya adalah berbicara bahasa Inggris dengan percaya diri.'),
+        ('A2', 'Weekend Story', 'Jawab pertanyaan berikut dalam bahasa Inggris.', 'Tell me about your weekend.', 'Ceritakan tentang akhir pekanmu.')
       `);
     }
 
