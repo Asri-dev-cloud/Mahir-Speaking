@@ -46,9 +46,9 @@ const defaultRegisteredUsers = [
     role: 'admin',
     admin_type: 'Senior Admin',
     avatar: null,
-    xp: 99999,
-    streak: 120,
-    points: 8888
+    xp: 0,
+    streak: 0,
+    points: 0
   }
 ];
 
@@ -370,9 +370,9 @@ const mockUsersList = [
     is_trial: false,
     trial_expires: null,
     package_expires: '2099-12-31',
-    xp: 99999,
-    points: 8888,
-    streak: 120,
+    xp: 0,
+    points: 0,
+    streak: 0,
     last_active: 'Aktif Sekarang',
     activities: [
       { action: 'Clean Database Purge (Drop All Except Admin Senior)', time: 'Baru saja' },

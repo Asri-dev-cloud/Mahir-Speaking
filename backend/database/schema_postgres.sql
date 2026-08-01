@@ -315,7 +315,7 @@ VALUES (
   '6285156916211', 
   '$2a$10$5L/tyCeKdIEkJiSoyCkaL.Umg9ssvcPVN6ja7ZHq5gFsvD7BTVqhG', 
   'admin', 
-  5, 99999, 8888, 120, 
+  5, 0, 0, 0, 
   '/ma.png'
 )
 ON CONFLICT (email) DO NOTHING;
