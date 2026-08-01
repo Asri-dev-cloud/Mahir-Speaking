@@ -328,5 +328,8 @@ VALUES
 ('Ira', 'ira_fluent', 'ira@mahirspeaking.com', '081234567892', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 2, 2450, 720, 11, '/mo.png'),
 ('Pipit', 'pipit_voice', 'pipit@mahirspeaking.com', '081234567893', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 2, 1980, 560, 9, '/ma.png'),
 ('Coach David Miller', 'david_tutor', 'tutor@mahirspeaking.com', '081299988877', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'tutor', 3, 5000, 1500, 30, 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=250'),
-('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'admin', 3, 9999, 9999, 99, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250')
+('Mahir Admin', 'admin_mahir', 'admin@mahirspeaking.com', '081200001111', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'admin', 3, 9999, 9999, 99, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250'),
+('Fauzi', 'fauzi', 'fauzi@mahirspeaking.com', '081234567894', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 1, 0, 0, 0, '/ma.png'),
+('Cintiani Ajah', 'cintiani', 'cintiani@mahirspeaking.com', '081234567895', '$2a$10$uN8RXpepn2yimW.3NCwvMOVDphJQOcfGbVoBbg5WnoPLf0n1YrX/2', 'student', 1, 0, 0, 0, '/mi.png')
 ON CONFLICT (email) DO NOTHING;
+

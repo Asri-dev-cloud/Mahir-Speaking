@@ -214,6 +214,18 @@ export async function initSeedData() {
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
         VALUES ('Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6285156916211', '${hashedAdminPassword}', 'admin', 5, 0, 0, 0, '/ma.png')
       `);
+
+      // Student 5: Fauzi
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Fauzi', 'fauzi', 'fauzi@mahirspeaking.com', '081234567894', '${hashedPassword}', 'student', 1, 0, 0, 0, '/ma.png')
+      `);
+
+      // Student 6: Cintiani Ajah
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Cintiani Ajah', 'cintiani', 'cintiani@mahirspeaking.com', '081234567895', '${hashedPassword}', 'student', 1, 0, 0, 0, '/mi.png')
+      `);
     } else {
       // 🌟 Tetep pastikan leaderboard di-sync cantik ke Aci, Fariha, Ira, Pipit
       await query(`UPDATE users SET full_name = 'Aci', username = 'aci_master', avatar = '/ma.png', xp = 0, points = 0, streak = 0 WHERE email = 'student@mahirspeaking.com' OR email = 'aci@mahirspeaking.com'`);
