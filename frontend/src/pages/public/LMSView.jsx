@@ -541,20 +541,27 @@ export default function LMSView() {
 
       // Save to backend database
       try {
+        console.log('⚡ [LMS debug] Mengirim penyelesaian kuis ke backend:', {
+          lesson_id: selectedLesson.id,
+          score: score,
+          xp_earned: addedXp
+        });
         const res = await courseService.completeLesson({
           lesson_id: selectedLesson.id,
           score: score,
           xp_earned: addedXp
         });
+        console.log('⚡ [LMS debug] Respon completeLesson:', res);
         if (res.success) {
           // Fetch updated profile to sync latest XP, points, and streak
           const profileRes = await userService.getProfile();
+          console.log('⚡ [LMS debug] Respon getProfile:', profileRes);
           if (profileRes.success && profileRes.user) {
             updateUserProfile(profileRes.user);
           }
         }
       } catch (err) {
-        console.error('Failed to save progress to database:', err);
+        console.error('⚡ [LMS debug] Gagal menyimpan progres ke database:', err);
       }
     }
 
