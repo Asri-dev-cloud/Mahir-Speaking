@@ -535,113 +535,60 @@ export const adminService = {
 
   // 📝 Quizzes Management (Upload CSV / XLSX & Manual)
   getQuizzes: async () => {
-    const saved = localStorage.getItem('mahir_custom_quizzes');
-    let quizzes = [];
-    if (saved) {
-      try { quizzes = JSON.parse(saved); } catch (e) { }
-    }
-    return { success: true, quizzes: Array.isArray(quizzes) ? quizzes : [] };
+    const res = await apiFetch('/admin/quizzes');
+    return { ...res, quizzes: Array.isArray(res.quizzes) ? res.quizzes : [] };
   },
 
   saveQuizzes: async (newQuizzes) => {
-    const saved = localStorage.getItem('mahir_custom_quizzes');
-    let quizzes = [];
-    if (saved) {
-      try { quizzes = JSON.parse(saved); } catch (e) { }
-    }
-    const updated = [...quizzes, ...newQuizzes];
-    localStorage.setItem('mahir_custom_quizzes', JSON.stringify(updated));
-    return { success: true, count: newQuizzes.length, message: `${newQuizzes.length} kuis berhasil ditambahkan!` };
+    return apiFetch('/admin/quizzes', {
+      method: 'POST',
+      body: JSON.stringify({ quizzes: newQuizzes })
+    });
   },
 
   deleteQuiz: async (id) => {
-    const saved = localStorage.getItem('mahir_custom_quizzes');
-    let quizzes = [];
-    if (saved) {
-      try { quizzes = JSON.parse(saved); } catch (e) { }
-    }
-    const filtered = quizzes.filter(q => q.id !== id);
-    localStorage.setItem('mahir_custom_quizzes', JSON.stringify(filtered));
-    return { success: true, message: 'Kuis berhasil dihapus.' };
+    return apiFetch(`/admin/quizzes/${id}`, { method: 'DELETE' });
   },
 
   // 📦 Modules Management (PDF, DOC, PPT)
   getModules: async () => {
-    const saved = localStorage.getItem('mahir_custom_modules');
-    let modules = [];
-    if (saved) {
-      try { modules = JSON.parse(saved); } catch (e) { }
-    }
-    return { success: true, modules: Array.isArray(modules) ? modules : [] };
+    const res = await apiFetch('/admin/modules');
+    return { ...res, modules: Array.isArray(res.modules) ? res.modules : [] };
   },
 
   saveModule: async (moduleData) => {
-    const saved = localStorage.getItem('mahir_custom_modules');
-    let modules = [];
-    if (saved) {
-      try { modules = JSON.parse(saved); } catch (e) { }
-    }
-    const newModule = {
-      id: Date.now(),
-      created_at: new Date().toISOString(),
-      ...moduleData
-    };
-    modules.unshift(newModule);
-    localStorage.setItem('mahir_custom_modules', JSON.stringify(modules));
-    return { success: true, module: newModule, message: 'Modul baru berhasil ditambahkan!' };
+    return apiFetch('/admin/modules', {
+      method: 'POST',
+      body: JSON.stringify(moduleData)
+    });
   },
 
   deleteModule: async (id) => {
-    const saved = localStorage.getItem('mahir_custom_modules');
-    let modules = [];
-    if (saved) {
-      try { modules = JSON.parse(saved); } catch (e) { }
-    }
-    const filtered = modules.filter(m => m.id !== id);
-    localStorage.setItem('mahir_custom_modules', JSON.stringify(filtered));
-    return { success: true, message: 'Modul berhasil dihapus.' };
+    return apiFetch(`/admin/modules/${id}`, { method: 'DELETE' });
   },
 
   // 📹 Recorded Class Video Management (YouTube & Google Drive)
   getRecordedVideos: async () => {
-    const saved = localStorage.getItem('mahir_custom_recordings');
-    let videos = [];
-    if (saved) {
-      try { videos = JSON.parse(saved); } catch (e) { }
-    }
-    return { success: true, videos: Array.isArray(videos) ? videos : [] };
+    const res = await apiFetch('/admin/recorded-videos');
+    return { ...res, videos: Array.isArray(res.videos) ? res.videos : [] };
   },
 
   saveRecordedVideo: async (videoData) => {
-    const saved = localStorage.getItem('mahir_custom_recordings');
-    let videos = [];
-    if (saved) {
-      try { videos = JSON.parse(saved); } catch (e) { }
-    }
     const { embedUrl, thumbnailUrl, provider } = parseVideoUrl(videoData.videoUrl, videoData.thumbnail);
-    const newVideo = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-      ...videoData,
-      videoUrl: embedUrl,
-      rawUrl: videoData.videoUrl,
-      thumbnail: thumbnailUrl,
-      provider: provider
-    };
-    videos.unshift(newVideo);
-    localStorage.setItem('mahir_custom_recordings', JSON.stringify(videos));
-    return { success: true, video: newVideo, message: 'Rekaman video berhasil ditambahkan!' };
+    return apiFetch('/admin/recorded-videos', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...videoData,
+        videoUrl: embedUrl,
+        rawUrl: videoData.videoUrl,
+        thumbnail: thumbnailUrl,
+        provider: provider
+      })
+    });
   },
 
   deleteRecordedVideo: async (id) => {
-    const saved = localStorage.getItem('mahir_custom_recordings');
-    let videos = [];
-    if (saved) {
-      try { videos = JSON.parse(saved); } catch (e) { }
-    }
-    const filtered = videos.filter(v => v.id !== id);
-    localStorage.setItem('mahir_custom_recordings', JSON.stringify(filtered));
-    return { success: true, message: 'Rekaman video berhasil dihapus.' };
+    return apiFetch(`/admin/recorded-videos/${id}`, { method: 'DELETE' });
   }
 };
 
@@ -683,4 +630,3 @@ export const parseVideoUrl = (url, customThumb = '') => {
 
   return { embedUrl, thumbnailUrl, provider };
 };
-

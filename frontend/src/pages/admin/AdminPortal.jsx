@@ -105,7 +105,7 @@ export default function AdminPortal() {
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const [uRes, aRes, lRes, qRes, mRes, vRes, exRes] = await Promise.all([
+      const results = await Promise.allSettled([
         adminService.getUsers(),
         adminService.getAnalytics(),
         adminService.getLeads(),
@@ -114,6 +114,13 @@ export default function AdminPortal() {
         adminService.getRecordedVideos(),
         exerciseService.getExercises()
       ]);
+      const valueOf = (result, fallback = {}) =>
+        result.status === 'fulfilled' ? result.value : fallback;
+      const [uRes, aRes, lRes, qRes, mRes, vRes, exRes] = [
+        valueOf(results[0]), valueOf(results[1]), valueOf(results[2]),
+        valueOf(results[3]), valueOf(results[4]), valueOf(results[5]),
+        valueOf(results[6])
+      ];
       if (uRes.success && Array.isArray(uRes.users)) {
         setUsers(uRes.users);
       } else {
@@ -744,8 +751,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('overview')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'overview'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <LayoutDashboard className="w-4 h-4" />
@@ -755,8 +762,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('users')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'users'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <Users className="w-4 h-4" />
@@ -766,8 +773,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('leads')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'leads'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <FileText className="w-4 h-4" />
@@ -777,8 +784,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('quizzes')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'quizzes'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <FileSpreadsheet className="w-4 h-4" />
@@ -788,8 +795,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('modules')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'modules'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <BookOpen className="w-4 h-4" />
@@ -799,8 +806,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('recordings')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'recordings'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <Video className="w-4 h-4" />
@@ -810,8 +817,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('exercises')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'exercises'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <MessageSquare className="w-4 h-4" />
@@ -822,8 +829,8 @@ export default function AdminPortal() {
             <button
               onClick={() => setPortalTab('assistants')}
               className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'assistants'
-                  ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                  : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                ? 'bg-emerald-500 text-slate-950 shadow-glow'
+                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
                 }`}
             >
               <UserPlus className="w-4 h-4" />
@@ -834,8 +841,8 @@ export default function AdminPortal() {
           <button
             onClick={() => setPortalTab('analytics')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${portalTab === 'analytics'
-                ? 'bg-emerald-500 text-slate-950 shadow-glow'
-                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-emerald-500 text-slate-950 shadow-glow'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
           >
             <Activity className="w-4 h-4" />
@@ -1445,12 +1452,12 @@ export default function AdminPortal() {
                             value={l.status || 'Belum Dihubungi'}
                             onChange={(e) => handleUpdateLeadStatus(l.id, e.target.value)}
                             className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold border cursor-pointer focus:outline-none ${l.status === 'Joined Member'
-                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                                : l.status === 'Siap Trial Class'
-                                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                                  : l.status === 'Sudah Dihubungi'
-                                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/40'
-                                    : 'bg-slate-800 text-slate-300 border-slate-700'
+                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                              : l.status === 'Siap Trial Class'
+                                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                                : l.status === 'Sudah Dihubungi'
+                                  ? 'bg-blue-500/20 text-blue-300 border-blue-500/40'
+                                  : 'bg-slate-800 text-slate-300 border-slate-700'
                               }`}
                           >
                             <option value="Belum Dihubungi">Belum Dihubungi</option>
@@ -2324,28 +2331,26 @@ export default function AdminPortal() {
                       {exercisesList.map((ex) => (
                         <div
                           key={ex.id}
-                          className={`p-4 rounded-xl border transition-all ${
-                            selectedExerciseForEdit && selectedExerciseForEdit.id === ex.id
+                          className={`p-4 rounded-xl border transition-all ${selectedExerciseForEdit && selectedExerciseForEdit.id === ex.id
                               ? 'bg-emerald-500/5 border-emerald-500/40 shadow-sm'
                               : 'bg-slate-900/60 border-slate-900 hover:border-slate-800'
-                          }`}
+                            }`}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="space-y-1.5 flex-1">
                               <div className="flex items-center gap-2">
-                                <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${
-                                  ex.level === 'A1' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                  ex.level === 'A2' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                  ex.level === 'B1' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                                  ex.level === 'B2' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                                  'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                }`}>
+                                <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${ex.level === 'A1' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                    ex.level === 'A2' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                      ex.level === 'B1' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
+                                        ex.level === 'B2' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
+                                          'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                  }`}>
                                   {ex.level}
                                 </span>
                                 <h4 className="font-extrabold text-sm text-white">{ex.title}</h4>
                               </div>
                               <p className="text-[11px] text-slate-400 italic font-medium">{ex.instruction}</p>
-                              
+
                               <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-900 space-y-1">
                                 <div className="text-xs text-emerald-400 font-mono font-medium">{ex.referenceText}</div>
                                 <div className="text-[11px] text-slate-500 italic font-medium">{ex.translation}</div>

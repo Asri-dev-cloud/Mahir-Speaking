@@ -15,6 +15,9 @@ router.get('/analytics', async (req, res) => {
     const totalTutors = await query(`SELECT COUNT(*) as count FROM users WHERE role = 'tutor'`);
     const totalCourses = await query(`SELECT COUNT(*) as count FROM courses`);
     const totalLessons = await query(`SELECT COUNT(*) as count FROM lessons`);
+    const activeTrials = await query(`SELECT COUNT(*) as count FROM users WHERE is_trial = true`);
+    const totalLeads = await query(`SELECT COUNT(*) as count FROM placement_test_leads`);
+    const expiringSoon = await query(`SELECT COUNT(*) as count FROM users WHERE package_expires BETWEEN NOW() AND NOW() + INTERVAL '7 days'`);
     const totalRevenue = await query(`SELECT SUM(amount) as sum FROM purchases WHERE status = 'success'`);
     const recentPurchases = await query(`
       SELECT p.*, u.full_name, u.email, pkg.name as package_name 
@@ -33,7 +36,10 @@ router.get('/analytics', async (req, res) => {
         totalTutors: totalTutors[0]?.count || 0,
         totalCourses: totalCourses[0]?.count || 0,
         totalLessons: totalLessons[0]?.count || 0,
-        totalRevenue: totalRevenue[0]?.sum || 0
+        activeTrials: Number(activeTrials[0]?.count || 0),
+        totalLeads: Number(totalLeads[0]?.count || 0),
+        expiringSoon: Number(expiringSoon[0]?.count || 0),
+        totalRevenue: Number(totalRevenue[0]?.sum || 0)
       },
       recentPurchases
     });
@@ -84,6 +90,123 @@ router.put('/packages/:id', async (req, res) => {
     return res.json({ success: true, message: 'Package updated successfully!' });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Failed to update package.' });
+  }
+});
+
+router.get('/leads', async (req, res) => {
+  try {
+    const leads = await query(`SELECT id, nama, no_wa AS "noWa", email, level_target AS "levelTarget", recommended_level AS "recommendedLevel", jadwal_trial AS "jadwalTrial", catatan, status, created_at FROM placement_test_leads ORDER BY created_at DESC`);
+    res.json({ success: true, leads });
+  } catch (err) {
+    console.error('Admin leads error:', err);
+    res.status(500).json({ success: false, message: 'Gagal mengambil data leads.' });
+  }
+});
+
+router.put('/leads/:id/status', async (req, res) => {
+  try {
+    await query(`UPDATE placement_test_leads SET status = ?, updated_at = NOW() WHERE id = ?`, [req.body.status, req.params.id]);
+    res.json({ success: true, message: 'Status lead diperbarui.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal memperbarui lead.' });
+  }
+});
+
+router.delete('/leads/:id', async (req, res) => {
+  try {
+    await query(`DELETE FROM placement_test_leads WHERE id = ?`, [req.params.id]);
+    res.json({ success: true, message: 'Lead dihapus.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal menghapus lead.' });
+  }
+});
+
+router.get('/quizzes', async (req, res) => {
+  try {
+    const quizzes = await query(`SELECT id, lesson_id, question, options, correct_answer, xp_reward, created_at FROM quizzes ORDER BY id DESC`);
+    res.json({ success: true, quizzes });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal mengambil kuis.' });
+  }
+});
+
+router.post('/quizzes', async (req, res) => {
+  const quizzes = Array.isArray(req.body.quizzes) ? req.body.quizzes : [];
+  try {
+    for (const item of quizzes) {
+      await query(`INSERT INTO quizzes (lesson_id, question, options, correct_answer, xp_reward, created_by) VALUES (?, ?, ?::jsonb, ?, ?, ?)`, [item.lesson_id, item.question, JSON.stringify(item.options || []), item.correct_answer, item.xp_reward || 20, req.user.id]);
+    }
+    res.status(201).json({ success: true, count: quizzes.length, message: `${quizzes.length} kuis berhasil ditambahkan.` });
+  } catch (err) {
+    console.error('Save quizzes error:', err);
+    res.status(500).json({ success: false, message: 'Gagal menyimpan kuis.' });
+  }
+});
+
+router.delete('/quizzes/:id', async (req, res) => {
+  try {
+    await query(`DELETE FROM quizzes WHERE id = ?`, [req.params.id]);
+    res.json({ success: true, message: 'Kuis dihapus.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal menghapus kuis.' });
+  }
+});
+
+router.get('/modules', async (req, res) => {
+  try {
+    const modules = await query(`SELECT id, title, type, file_size AS size, badge, description AS "desc", file_url AS "fileUrl", created_at FROM modules ORDER BY created_at DESC`);
+    res.json({ success: true, modules });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal mengambil modul.' });
+  }
+});
+
+router.post('/modules', async (req, res) => {
+  const { title, type, size, badge, desc, fileUrl } = req.body;
+  try {
+    const rows = await query(`INSERT INTO modules (title, type, file_size, badge, description, file_url, created_by) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id, title, type, file_size AS size, badge, description AS "desc", file_url AS "fileUrl", created_at`, [title, type || 'PDF Document', size || null, badge || 'Official Modul', desc || null, fileUrl, req.user.id]);
+    res.status(201).json({ success: true, module: rows[0], message: 'Modul berhasil ditambahkan.' });
+  } catch (err) {
+    console.error('Save module error:', err);
+    res.status(500).json({ success: false, message: 'Gagal menyimpan modul.' });
+  }
+});
+
+router.delete('/modules/:id', async (req, res) => {
+  try {
+    await query(`DELETE FROM modules WHERE id = ?`, [req.params.id]);
+    res.json({ success: true, message: 'Modul dihapus.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal menghapus modul.' });
+  }
+});
+
+router.get('/recorded-videos', async (req, res) => {
+  try {
+    const videos = await query(`SELECT id, title, tutor, duration, level, video_url AS "videoUrl", thumbnail, created_at FROM recorded_videos ORDER BY created_at DESC`);
+    res.json({ success: true, videos });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal mengambil video.' });
+  }
+});
+
+router.post('/recorded-videos', async (req, res) => {
+  const { title, tutor, duration, level, videoUrl, thumbnail } = req.body;
+  try {
+    const rows = await query(`INSERT INTO recorded_videos (title, tutor, duration, level, video_url, thumbnail, created_by) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id, title, tutor, duration, level, video_url AS "videoUrl", thumbnail, created_at`, [title, tutor || null, duration || null, level || 'All Levels', videoUrl, thumbnail || null, req.user.id]);
+    res.status(201).json({ success: true, video: rows[0], message: 'Video berhasil ditambahkan.' });
+  } catch (err) {
+    console.error('Save video error:', err);
+    res.status(500).json({ success: false, message: 'Gagal menyimpan video.' });
+  }
+});
+
+router.delete('/recorded-videos/:id', async (req, res) => {
+  try {
+    await query(`DELETE FROM recorded_videos WHERE id = ?`, [req.params.id]);
+    res.json({ success: true, message: 'Video dihapus.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal menghapus video.' });
   }
 });
 
