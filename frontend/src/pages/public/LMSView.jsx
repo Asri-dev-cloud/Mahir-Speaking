@@ -41,6 +41,7 @@ import {
   Calendar
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { courseService, userService } from "../../services/api";
 
 const lessons = [
   {
@@ -502,7 +503,7 @@ export default function LMSView() {
     recognition.start();
   };
 
-  const finishLesson = (customXp) => {
+  const finishLesson = async (customXp, quizScore) => {
     if (!selectedLesson) return;
 
     const nextCompleted = Array.from(new Set([...completedIds, selectedLesson.id]));
@@ -511,6 +512,8 @@ export default function LMSView() {
     // Tandai user telah mengerjakan quiz & kumpulkan XP
     if (user) {
       const addedXp = customXp !== undefined ? customXp : (selectedLesson.xp || 100);
+      const score = quizScore !== undefined ? quizScore : 100;
+      
       const updatedUser = {
         ...user,
         xp: (user.xp || 0) + addedXp,
@@ -535,6 +538,24 @@ export default function LMSView() {
         }
         localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
       } catch (e) {}
+
+      // Save to backend database
+      try {
+        const res = await courseService.completeLesson({
+          lesson_id: selectedLesson.id,
+          score: score,
+          xp_earned: addedXp
+        });
+        if (res.success) {
+          // Fetch updated profile to sync latest XP, points, and streak
+          const profileRes = await userService.getProfile();
+          if (profileRes.success && profileRes.user) {
+            updateUserProfile(profileRes.user);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to save progress to database:', err);
+      }
     }
 
     confetti({
@@ -1006,7 +1027,7 @@ export default function LMSView() {
 
         const handleSubmitQuiz = () => {
           setQuizSubmitted(true);
-          finishLesson(earnedXp);
+          finishLesson(earnedXp, calculatedScore);
         };
 
         return (

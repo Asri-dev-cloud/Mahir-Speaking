@@ -101,13 +101,13 @@ export default function Profile() {
           
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-3">
             <span className="text-xs font-black text-lime bg-slate-900/90 border border-lime/30 px-3.5 py-1.5 rounded-xl">
-              ⚡ {user?.xp || 1450} XP
+              ⚡ {user?.xp ?? 0} XP
             </span>
             <span className="text-xs font-black text-orange-400 bg-slate-900/90 border border-orange-500/30 px-3.5 py-1.5 rounded-xl">
-              🔥 {user?.streak || 7} Days Streak
+              🔥 {user?.streak ?? 0} Days Streak
             </span>
             <span className="text-xs font-black text-emerald-400 bg-slate-900/90 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl">
-              🏆 {user?.points || 420} Points
+              🏆 {user?.points ?? 0} Points
             </span>
           </div>
         </div>
