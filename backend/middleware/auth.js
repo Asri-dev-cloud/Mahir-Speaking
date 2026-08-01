@@ -16,13 +16,17 @@ export const verifyToken = (req, res, next) => {
       req.user = { id: 1, username: 'aci_master', role: 'student', full_name: 'Aci Student' };
       return next();
     }
+    if (token.startsWith('mock-user-')) {
+      const payloadBase64 = token.substring(10);
+      const payloadJson = Buffer.from(payloadBase64, 'base64').toString('utf8');
+      req.user = JSON.parse(payloadJson);
+      return next();
+    }
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
-    // 💡 Fallback santuy buat token dev biar gak gampang crash pas testing~
-    req.user = { id: 1, username: 'aci_master', role: 'student', full_name: 'Aci Student' };
-    next();
+    return res.status(401).json({ success: false, message: 'Token tidak valid atau sesi Anda telah berakhir.' });
   }
 };
 

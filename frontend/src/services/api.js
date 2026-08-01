@@ -20,17 +20,24 @@ export const apiFetch = async (endpoint, options = {}) => {
       headers
     });
 
-    if (!response.ok) {
-      throw new Error(`Server status ${response.status}`);
+    const contentType = response.headers.get('content-type');
+    let data = {};
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
     }
 
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      return await response.json();
+    if (!response.ok) {
+      return {
+        success: false,
+        status: response.status,
+        message: data.message || `Server status ${response.status}`,
+        isOffline: false
+      };
     }
-    return { success: true };
+
+    return { success: true, ...data };
   } catch (err) {
-    // Silent fallback handler to prevent console cluttering when offline
+    // Silent fallback handler to prevent console cluttering when offline (actual network failure)
     return { success: false, isOffline: true, message: err.message };
   }
 };
@@ -106,9 +113,17 @@ export const authService = {
         };
       }
 
+      const mockToken = 'mock-user-' + btoa(JSON.stringify({
+        id: foundUser.id,
+        email: foundUser.email,
+        role: foundUser.role || 'student',
+        username: foundUser.username || foundUser.email.split('@')[0],
+        full_name: foundUser.full_name
+      }));
+
       return {
         success: true,
-        token: 'mock-jwt-token',
+        token: mockToken,
         user: foundUser
       };
     }
@@ -122,7 +137,11 @@ export const authService = {
 
   register: async (userData) => {
     const res = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify(userData) });
-    if (!res.success || res.isOffline || !res.user) {
+    if (res.success && res.token && res.user) {
+      return res;
+    }
+
+    if (res.isOffline) {
       const registered = getRegisteredUsers();
       const emailLower = (userData.email || '').toLowerCase().trim();
 
@@ -160,13 +179,26 @@ export const authService = {
       registered.push(newUser);
       localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
 
+      const mockToken = 'mock-user-' + btoa(JSON.stringify({
+        id: newUser.id,
+        email: newUser.email,
+        role: newUser.role,
+        username: newUser.email.split('@')[0],
+        full_name: newUser.full_name
+      }));
+
       return {
         success: true,
-        token: 'mock-jwt-token',
+        token: mockToken,
         user: newUser,
         message: 'Pendaftaran akun berhasil!'
       };
     }
+
+    return {
+      success: false,
+      error: res.message || 'Pendaftaran gagal.'
+    };
     return res;
   },
 
@@ -297,7 +329,7 @@ const defaultExercises = [
 export const exerciseService = {
   getExercises: async () => {
     const res = await apiFetch('/exercises');
-    if (!res.success || res.isOffline) {
+    if (!res.success && res.isOffline) {
       const saved = localStorage.getItem('mahir_exercises');
       if (saved) {
         try { return { success: true, exercises: JSON.parse(saved) }; } catch (e) { }
@@ -310,7 +342,7 @@ export const exerciseService = {
 
   createExercise: async (data) => {
     const res = await apiFetch('/exercises', { method: 'POST', body: JSON.stringify(data) });
-    if (!res.success || res.isOffline) {
+    if (!res.success && res.isOffline) {
       const saved = localStorage.getItem('mahir_exercises') || JSON.stringify(defaultExercises);
       let exercises = [];
       try { exercises = JSON.parse(saved); } catch (e) { }
@@ -327,7 +359,7 @@ export const exerciseService = {
 
   updateExercise: async (id, data) => {
     const res = await apiFetch(`/exercises/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    if (!res.success || res.isOffline) {
+    if (!res.success && res.isOffline) {
       const saved = localStorage.getItem('mahir_exercises') || JSON.stringify(defaultExercises);
       let exercises = [];
       try { exercises = JSON.parse(saved); } catch (e) { }
@@ -343,7 +375,7 @@ export const exerciseService = {
 
   deleteExercise: async (id) => {
     const res = await apiFetch(`/exercises/${id}`, { method: 'DELETE' });
-    if (!res.success || res.isOffline) {
+    if (!res.success && res.isOffline) {
       const saved = localStorage.getItem('mahir_exercises') || JSON.stringify(defaultExercises);
       let exercises = [];
       try { exercises = JSON.parse(saved); } catch (e) { }
@@ -386,7 +418,7 @@ const mockLeadsList = [];
 export const adminService = {
   getAnalytics: async () => {
     const res = await apiFetch('/admin/analytics');
-    if (!res.success) {
+    if (!res.success && res.isOffline) {
       const savedLeads = JSON.parse(localStorage.getItem('mahir_leads') || JSON.stringify(mockLeadsList));
       return {
         success: true,
@@ -406,7 +438,7 @@ export const adminService = {
 
   getUsers: async () => {
     const res = await apiFetch('/admin/users');
-    if (!res.success) {
+    if (!res.success && res.isOffline) {
       const saved = localStorage.getItem('mahir_mock_admin_users');
       if (saved) {
         try { return { success: true, users: JSON.parse(saved) }; } catch (e) { }
@@ -419,7 +451,7 @@ export const adminService = {
 
   updateUser: async (id, data) => {
     const res = await apiFetch(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) });
-    if (!res.success) {
+    if (!res.success && res.isOffline) {
       const currentUsers = JSON.parse(localStorage.getItem('mahir_mock_admin_users') || JSON.stringify(mockUsersList));
       const idx = currentUsers.findIndex(u => u.id === id);
       if (idx !== -1) {
@@ -433,7 +465,7 @@ export const adminService = {
 
   addAssistantAdmin: async (assistantData) => {
     const res = await apiFetch('/admin/assistants', { method: 'POST', body: JSON.stringify(assistantData) });
-    if (!res.success) {
+    if (!res.success && res.isOffline) {
       const currentUsers = JSON.parse(localStorage.getItem('mahir_mock_admin_users') || JSON.stringify(mockUsersList));
       const newAssistant = {
         id: Date.now(),
@@ -462,7 +494,7 @@ export const adminService = {
 
   getLeads: async () => {
     const res = await apiFetch('/admin/leads');
-    if (!res.success) {
+    if (!res.success && res.isOffline) {
       const saved = localStorage.getItem('mahir_leads');
       if (saved) {
         try {
@@ -478,7 +510,7 @@ export const adminService = {
 
   updateLeadStatus: async (id, status) => {
     const res = await apiFetch(`/admin/leads/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
-    if (!res.success) {
+    if (!res.success && res.isOffline) {
       const currentLeads = JSON.parse(localStorage.getItem('mahir_leads') || JSON.stringify(mockLeadsList));
       const idx = currentLeads.findIndex(l => l.id === id);
       if (idx !== -1) {

@@ -201,9 +201,17 @@ export const AuthProvider = ({ children }) => {
 
     const targetTab = googleUser.role === 'admin' ? 'admin-portal' : googleUser.role === 'tutor' ? 'tutor-dashboard' : 'lms';
 
-    setToken('mock_google_oauth_token');
+    const mockToken = 'mock-user-' + btoa(JSON.stringify({
+      id: googleUser.id,
+      email: googleUser.email,
+      role: googleUser.role || 'student',
+      username: googleUser.username || googleUser.email.split('@')[0],
+      full_name: googleUser.full_name
+    }));
+
+    setToken(mockToken);
     setUser(googleUser);
-    localStorage.setItem('mahir_token', 'mock_google_oauth_token');
+    localStorage.setItem('mahir_token', mockToken);
     localStorage.setItem('mahir_user', JSON.stringify(googleUser));
     localStorage.setItem('mahir_active_tab', targetTab);
     setActiveTabState(targetTab);

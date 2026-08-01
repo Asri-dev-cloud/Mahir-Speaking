@@ -117,8 +117,16 @@ export default function AuthPage() {
         points: 620
       };
 
+      const mockToken = 'mock-user-' + btoa(JSON.stringify({
+        id: gUser.id,
+        email: gUser.email,
+        role: gUser.role || 'student',
+        username: gUser.username || gUser.email.split('@')[0],
+        full_name: gUser.full_name
+      }));
+
       const targetTab = gUser.role === 'admin' ? 'admin-portal' : gUser.role === 'tutor' ? 'tutor-dashboard' : 'lms';
-      localStorage.setItem('mahir_token', 'mock-google-token');
+      localStorage.setItem('mahir_token', mockToken);
       localStorage.setItem('mahir_user', JSON.stringify(gUser));
       localStorage.setItem('mahir_active_tab', targetTab);
 
