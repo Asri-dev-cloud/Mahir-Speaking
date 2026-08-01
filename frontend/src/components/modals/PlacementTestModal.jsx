@@ -391,7 +391,7 @@ export default function PlacementTestModal({ isOpen, onClose }) {
                   <strong className="text-slate-900">Langkah selanjutnya:</strong> Tutor akan memvalidasi kemampuan speaking saat Trial Class <strong>{leadFormData.jadwalTrial}</strong> agar program belajar lebih tepat.
                 </div>
 
-                <a href={`https://wa.me/6285861171129?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ${leadFormData.nama} telah menyelesaikan English Placement Test dengan skor ${score}/100 dan rekomendasi ${result.level} (${result.cefr}). Saya ingin konfirmasi Trial Class ${leadFormData.jadwalTrial}.`)}`} target="_blank" rel="noreferrer" className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-emerald-700 bg-emerald-500 py-4 text-xs font-black text-white shadow-lg transition hover:bg-emerald-600 sm:text-sm">
+                <a href={`https://wa.me/6285156916211?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ${leadFormData.nama} telah menyelesaikan English Placement Test dengan skor ${score}/100 dan rekomendasi ${result.level} (${result.cefr}). Saya ingin konfirmasi Trial Class ${leadFormData.jadwalTrial}.`)}`} target="_blank" rel="noreferrer" className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-emerald-700 bg-emerald-500 py-4 text-xs font-black text-white shadow-lg transition hover:bg-emerald-600 sm:text-sm">
                   <MessageCircle className="h-5 w-5" /> Konfirmasi Hasil via WhatsApp
                 </a>
                 <button type="button" onClick={handleResetAndClose} className="w-full rounded-2xl bg-slate-100 py-3 text-xs font-bold text-slate-600 transition hover:bg-slate-200">Selesai & Tutup</button>

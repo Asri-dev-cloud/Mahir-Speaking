@@ -108,7 +108,7 @@ export default function AuthPage() {
         id: Date.now(),
         full_name: acc.full_name,
         email: acc.email,
-        whatsapp: '6285861171129',
+        whatsapp: '6285156916211',
         role: acc.role || 'student',
         admin_type: acc.admin_type || null,
         avatar: acc.avatar || null,

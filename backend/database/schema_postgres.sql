@@ -305,3 +305,17 @@ VALUES
 ('A2', 'Speaking Goal', 'Ucapkan kalimat berikut dengan percaya diri.', 'My goal is to speak English confidently.', 'Tujuan saya adalah berbicara bahasa Inggris dengan percaya diri.'),
 ('A2', 'Weekend Story', 'Jawab pertanyaan berikut dalam bahasa Inggris.', 'Tell me about your weekend.', 'Ceritakan tentang akhir pekanmu.')
 ON CONFLICT DO NOTHING;
+
+-- Semai Admin Senior (Hartini Asri) secara default
+INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+VALUES (
+  'Hartini Asri (Admin Senior)', 
+  'hartini_senior', 
+  'hartiniasri32@gmail.com', 
+  '6285156916211', 
+  '$2a$10$5L/tyCeKdIEkJiSoyCkaL.Umg9ssvcPVN6ja7ZHq5gFsvD7BTVqhG', 
+  'admin', 
+  5, 99999, 8888, 120, 
+  '/ma.png'
+)
+ON CONFLICT (email) DO NOTHING;

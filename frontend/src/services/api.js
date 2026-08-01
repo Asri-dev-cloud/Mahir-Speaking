@@ -41,7 +41,7 @@ const defaultRegisteredUsers = [
     id: 1,
     full_name: 'Hartini Asri (Admin Senior)',
     email: 'hartiniasri32@gmail.com',
-    whatsapp: '6285861171129',
+    whatsapp: '6285156916211',
     password: '20424014',
     role: 'admin',
     admin_type: 'Senior Admin',
@@ -76,28 +76,47 @@ export const authService = {
   login: async (credentials) => {
     const emailLower = (credentials.email || credentials.username || '').toLowerCase().trim();
     const password = String(credentials.password || '').trim();
-    const registered = getRegisteredUsers();
 
-    const foundUser = registered.find(u => u.email.toLowerCase() === emailLower);
+    // Coba panggil API backend resmi terlebih dahulu
+    const res = await apiFetch('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email: emailLower, password })
+    });
 
-    if (!foundUser) {
+    if (res.success && res.token && res.user) {
+      return res; // Login berhasil via database cloud!
+    }
+
+    // Jika server offline atau koneksi gagal, baru pakai fallback LocalStorage
+    if (res.isOffline) {
+      const registered = getRegisteredUsers();
+      const foundUser = registered.find(u => u.email.toLowerCase() === emailLower);
+
+      if (!foundUser) {
+        return {
+          success: false,
+          error: `Akun dengan email "${emailLower}" tidak ditemukan! Silakan klik tab "Daftar Baru" terlebih dahulu.`
+        };
+      }
+
+      if (foundUser.password && String(foundUser.password).trim() !== password) {
+        return {
+          success: false,
+          error: `Kata sandi yang Anda masukkan untuk "${emailLower}" tidak cocok! Silakan periksa kembali atau gunakan fitur "Forgot password?".`
+        };
+      }
+
       return {
-        success: false,
-        error: `Akun dengan email "${emailLower}" tidak ditemukan! Silakan klik tab "Daftar Baru" terlebih dahulu.`
+        success: true,
+        token: 'mock-jwt-token',
+        user: foundUser
       };
     }
 
-    if (foundUser.password && String(foundUser.password).trim() !== password) {
-      return {
-        success: false,
-        error: `Kata sandi yang Anda masukkan untuk "${emailLower}" tidak cocok! Silakan periksa kembali atau gunakan fitur "Forgot password?".`
-      };
-    }
-
+    // Jika gagal dari server karena password/email salah, kembalikan pesan error server asli
     return {
-      success: true,
-      token: 'mock-jwt-token',
-      user: foundUser
+      success: false,
+      error: res.message || 'Email atau kata sandi tidak cocok.'
     };
   },
 
@@ -343,7 +362,7 @@ const mockUsersList = [
     full_name: 'Hartini Asri (Admin Senior)',
     username: 'hartiniasri',
     email: 'hartiniasri32@gmail.com',
-    whatsapp: '6285861171129',
+    whatsapp: '6285156916211',
     role: 'admin',
     admin_type: 'Senior Admin',
     package_id: 3,

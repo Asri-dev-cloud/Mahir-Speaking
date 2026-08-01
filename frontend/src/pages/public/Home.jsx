@@ -241,7 +241,7 @@ export default function Home() {
 
                 {/* CTA 2: KONSULTASI WHATSAPP */}
                 <a
-                  href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20untuk%20konsultasi%20dan%20daftar%20Trial%20Class%20Gratis."
+                  href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20untuk%20konsultasi%20dan%20daftar%20Trial%20Class%20Gratis."
                   target="_blank"
                   rel="noreferrer"
                   className="px-6 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 font-black text-xs sm:text-sm border-2 border-slate-300 hover:scale-105 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"

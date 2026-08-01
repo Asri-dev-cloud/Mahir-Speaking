@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS ai_chats (
 DELETE FROM users WHERE email != 'hartiniasri32@gmail.com';
 
 INSERT INTO users (id, full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-VALUES (1, 'Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6285861171129', '20424014', 'admin', 3, 99999, 8888, 120, NULL)
+VALUES (1, 'Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6285156916211', '20424014', 'admin', 3, 99999, 8888, 120, NULL)
 ON DUPLICATE KEY UPDATE 
   full_name='Hartini Asri (Admin Senior)',
   password='20424014',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { userService } from '../../services/api';
-import { User, Phone, Mail, Award, Flame, Save, Mic, CheckCircle, Volume2 } from 'lucide-react';
+import { User, Phone, Mail, Award, Flame, Save, Mic, CheckCircle } from 'lucide-react';
 
 export default function Profile() {
   const { user, updateUserProfile } = useAuth();
@@ -71,15 +71,7 @@ export default function Profile() {
     }
   };
 
-  const playPortfolioSample = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.95;
-      window.speechSynthesis.speak(utterance);
-    }
-  };
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -240,34 +232,7 @@ export default function Profile() {
         </form>
       </div>
 
-      {/* Voice Portfolio Samples */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white shadow-glass space-y-4">
-        <h2 className="font-stinger font-extrabold text-xl text-brand">My Recorded Voice Portfolio</h2>
 
-        <div className="space-y-3">
-          {[
-            { title: "Self Introduction Drill", date: "2026-07-28", text: "Hello! My name is Sarah and I am excited to practice my English speaking today.", score: "95/100" },
-            { title: "Cafe Ordering Practice", date: "2026-07-25", text: "Hi, could I please get an iced oat milk latte with extra shot of espresso?", score: "90/100" }
-          ].map((sample, i) => (
-            <div key={i} className="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-xs sm:text-sm text-slate-900">{sample.title}</h4>
-                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded">{sample.score}</span>
-                </div>
-                <p className="text-xs text-slate-500 italic">"{sample.text}"</p>
-              </div>
-
-              <button
-                onClick={() => playPortfolioSample(sample.text)}
-                className="px-3 py-2 rounded-xl bg-brand/10 text-brand font-bold text-xs hover:bg-brand hover:text-white transition-colors flex items-center gap-1.5 flex-shrink-0"
-              >
-                <Volume2 className="w-4 h-4" /> Play Audio
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
 
     </div>
   );

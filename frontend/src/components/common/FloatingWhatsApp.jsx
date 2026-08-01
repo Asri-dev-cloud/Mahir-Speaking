@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageCircle } from 'lucide-react';
 
 export default function FloatingWhatsApp() {
-  const phoneNumber = '6285861171129';
+  const phoneNumber = '6285156916211';
   const defaultMessage = encodeURIComponent('Halo Mahir Speaking! Saya berminat untuk informasi pendaftaran dan konsultasi program English Speaking.');
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
@@ -16,7 +16,7 @@ export default function FloatingWhatsApp() {
         className="hidden sm:flex items-center gap-2 bg-slate-900 text-white text-xs font-bold px-3.5 py-2 rounded-full border border-slate-700 shadow-xl hover:bg-slate-800 transition-all group"
       >
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Tanya Konsultasi WA (0858-6117-1129)</span>
+        <span>Tanya Konsultasi WA (0851-5691-6211)</span>
       </a>
 
       {/* Floating Button */}
@@ -24,7 +24,7 @@ export default function FloatingWhatsApp() {
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Contact WhatsApp 085861171129"
+        aria-label="Contact WhatsApp 085156916211"
         className="relative p-3.5 bg-emerald-500 text-white rounded-full shadow-[0_8px_25px_rgba(16,185,129,0.45)] hover:scale-110 hover:bg-emerald-600 transition-all duration-300 flex items-center justify-center border-2 border-white group"
       >
         <span className="absolute -inset-1 rounded-full bg-emerald-400/40 animate-ping pointer-events-none"></span>

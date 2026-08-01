@@ -459,7 +459,7 @@ export default function Branding() {
                 </div>
 
                 <a
-                  href={`https://wa.me/6285861171129?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ingin konsultasi jadwal belajar bersama ${mentor.name}.`)}`}
+                  href={`https://wa.me/6285156916211?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ingin konsultasi jadwal belajar bersama ${mentor.name}.`)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="w-full py-2.5 rounded-xl bg-slate-100 text-slate-900 font-black text-xs text-center block hover:bg-[#0362C0] hover:text-white transition-all border border-slate-200"
@@ -491,7 +491,7 @@ export default function Branding() {
             </div>
 
             <a
-              href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengikuti%20Sesi%20Native%20Speaker%20Meeting."
+              href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengikuti%20Sesi%20Native%20Speaker%20Meeting."
               target="_blank"
               rel="noreferrer"
               className="px-6 py-4 rounded-2xl bg-cyan-400 text-slate-950 font-black text-xs hover:bg-white transition-all border-2 border-white flex-shrink-0 shadow-lg"

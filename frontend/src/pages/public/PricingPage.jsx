@@ -152,7 +152,7 @@ export default function PricingPage() {
             <div className="text-3xl font-stinger font-black text-dark">Rp 750.000 <span className="text-xs font-bold">(Nett Lunas)</span></div>
           </div>
           <a
-            href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengambil%20Promo%20Diskon%20Cash%20Lunas%20Rp%20750.000."
+            href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengambil%20Promo%20Diskon%20Cash%20Lunas%20Rp%20750.000."
             target="_blank"
             rel="noreferrer"
             className="w-full py-3 rounded-2xl bg-dark text-lime font-black text-xs text-center block hover:bg-brand hover:text-white transition-all border-2 border-dark"
@@ -175,7 +175,7 @@ export default function PricingPage() {
             <div>Angsuran 2 (15%): <strong className="text-emerald-400">Rp 225.000</strong> | Angsuran 3 (15%): <strong className="text-emerald-400">Rp 225.000</strong></div>
           </div>
           <a
-            href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20dengan%20Skema%20Cicilan%203x%20(DP%2070%25)."
+            href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20dengan%20Skema%20Cicilan%203x%20(DP%2070%25)."
             target="_blank"
             rel="noreferrer"
             className="w-full py-3 rounded-2xl bg-lime text-dark font-black text-xs text-center block hover:bg-emerald-400 transition-all border-2 border-dark"
@@ -279,7 +279,7 @@ export default function PricingPage() {
                 </div>
 
                 <a
-                  href={`https://wa.me/6285861171129?text=${encodeURIComponent(`Halo Mahir Speaking! Saya berminat untuk daftar ${pricingData[activeCategory].title} - ${lvl.name} (${lvl.price}).`)}`}
+                  href={`https://wa.me/6285156916211?text=${encodeURIComponent(`Halo Mahir Speaking! Saya berminat untuk daftar ${pricingData[activeCategory].title} - ${lvl.name} (${lvl.price}).`)}`}
                   target="_blank"
                   rel="noreferrer"
                   className={`w-full py-3.5 rounded-2xl font-black text-xs text-center block cursor-pointer transition-all border-2 ${
@@ -386,7 +386,7 @@ export default function PricingPage() {
             <p className="text-xs text-slate-300 font-semibold">Konsultasikan kebutuhan belajarmu secara gratis bersama Tim Mahir Speaking.</p>
           </div>
           <a
-            href="https://wa.me/6285861171129?text=Halo%20Mahir%20Speaking!%20Saya%20ingin%20konsultasi%20pemilihan%20paket%20dan%20level."
+            href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20ingin%20konsultasi%20pemilihan%20paket%20dan%20level."
             target="_blank"
             rel="noreferrer"
             className="px-6 py-3.5 rounded-2xl bg-lime text-dark font-black text-xs flex items-center gap-2 hover:bg-emerald-400 transition-all border-2 border-dark flex-shrink-0"
