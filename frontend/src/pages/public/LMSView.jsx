@@ -334,7 +334,6 @@ export default function LMSView() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingResult, setRecordingResult] = useState("");
-  const [showAllUnits, setShowAllUnits] = useState(false);
   const [activeRecordedVideo, setActiveRecordedVideo] = useState(null);
   const [downloadNotice, setDownloadNotice] = useState(null);
   const [customDownloads, setCustomDownloads] = useState([]);
@@ -402,17 +401,40 @@ export default function LMSView() {
   const displayStreak = liveUser ? (liveUser.streak || 0) : 0;
   const displayXp = liveUser ? (liveUser.xp || 0) : 0;
 
+  // Hak akses paket dibaca dari data akun terbaru.
+  const accountUser = liveUser || user;
+  const packageName = String(accountUser?.package_name || '').toLowerCase();
+  const packageExpiresAt = accountUser?.package_expires
+    ? new Date(accountUser.package_expires).getTime()
+    : null;
+  const packageStillActive = !packageExpiresAt || packageExpiresAt > Date.now();
+  const hasPaidAccess = Boolean(
+    accountUser && packageStillActive && (
+      accountUser.role === 'admin' ||
+      accountUser.role === 'tutor' ||
+      accountUser.is_paid === true ||
+      accountUser.subscription_status === 'active' ||
+      Number(accountUser.package_id || 0) > 1 ||
+      /pro|premium|intensive|enterprise|berbayar/.test(packageName)
+    )
+  );
+
   const currentLesson =
     lessons.find((lesson) => !completedIds.includes(lesson.id)) ||
     lessons[lessons.length - 1];
-  const visibleLessons = showAllUnits
-    ? filteredLessons
-    : filteredLessons.slice(0, 8);
+  const freeLessons = filteredLessons.filter((lesson) => lesson.id <= 2);
+  const paidLessons = filteredLessons.filter((lesson) => lesson.id > 2);
+  const freeVideos = allRecordings.slice(0, 2);
+  const paidVideos = allRecordings.slice(2);
 
   const handleDownload = (item) => {
     if (!user) {
       setDownloadNotice(`🔒 Akses Terbatas: Silakan Login terlebih dahulu untuk mengunduh modul "${item.title}"!`);
       setShowAuthModal(true);
+      return;
+    }
+    if (!hasPaidAccess) {
+      setDownloadNotice('🔒 Modul & E-Book hanya tersedia untuk akun langganan.');
       return;
     }
     setDownloadNotice(`Mengunduh ${item.title}...`);
@@ -440,10 +462,14 @@ export default function LMSView() {
 
   const videoPlayerRef = useRef(null);
 
-  const handlePlayVideo = (session) => {
+  const handlePlayVideo = (session, requiresPaidAccess = false) => {
     if (!user) {
-      setDownloadNotice(`🔒 Akses Terbatas: Silakan Login terlebih dahulu untuk memutar rekaman sesi kelas "${session.title}"!`);
+      setDownloadNotice(`🔒 Silakan login terlebih dahulu untuk memutar video "${session.title}"!`);
       setShowAuthModal(true);
+      return;
+    }
+    if (requiresPaidAccess && !hasPaidAccess) {
+      setDownloadNotice('🔒 Video ini khusus akun langganan. Silakan pilih paket untuk membukanya.');
       return;
     }
     setActiveRecordedVideo(session);
@@ -463,9 +489,13 @@ export default function LMSView() {
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
 
-  const openLesson = (lesson) => {
+  const openLesson = (lesson, requiresPaidAccess = false) => {
     if (!user) {
       setShowAuthModal(true);
+      return;
+    }
+    if (requiresPaidAccess && !hasPaidAccess) {
+      setDownloadNotice('Materi ini khusus akun berbayar. Pilih paket belajar untuk membuka seluruh unit.');
       return;
     }
     setSelectedLesson(lesson);
@@ -670,20 +700,20 @@ export default function LMSView() {
                   type="button"
                   onClick={() => setActiveHubTab("path")}
                   className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${activeHubTab === 'path'
-                      ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
-                      : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
+                    ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
+                    : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
                     }`}
                 >
                   <BookOpen className="h-4 w-4 stroke-[2.5]" />
-                  <span>Misi Learning Path</span>
+                  <span>Kuis & Learning Path</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveHubTab("downloads")}
                   className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${activeHubTab === 'downloads'
-                      ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
-                      : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
+                    ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
+                    : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
                     }`}
                 >
                   <Download className="h-4 w-4 stroke-[2.5]" />
@@ -694,12 +724,12 @@ export default function LMSView() {
                   type="button"
                   onClick={() => setActiveHubTab("recordings")}
                   className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md border-2 ${activeHubTab === 'recordings'
-                      ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
-                      : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
+                    ? 'bg-[#FFFF00] text-slate-950 border-dark ring-2 ring-[#FFFF00]/50 scale-[1.02]'
+                    : 'bg-white text-slate-900 border-slate-300 hover:bg-yellow-50 hover:border-[#FFFF00]'
                     }`}
                 >
                   <Video className="h-4 w-4 stroke-[2.5]" />
-                  <span>Rekaman Sesi Kelas</span>
+                  <span>Video Pembelajaran</span>
                 </button>
               </div>
             </div>
@@ -732,10 +762,10 @@ export default function LMSView() {
                 </p>
               </div>
 
-              {!user && (
+              {!hasPaidAccess && (
                 <div className="flex items-center gap-1.5 bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl border border-amber-200 text-xs font-bold">
                   <Lock className="w-4 h-4 text-amber-600" />
-                  <span>Login diperlukan untuk mengunduh</span>
+                  <span>Khusus akun langganan</span>
                 </div>
               )}
             </div>
@@ -749,7 +779,12 @@ export default function LMSView() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {allDownloads.map((item) => (
-                <div key={item.id} className="bg-slate-50 border-2 border-slate-200 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-brand transition-all">
+                <div key={item.id} className={`relative bg-slate-50 border-2 p-6 rounded-3xl space-y-4 flex flex-col justify-between transition-all ${hasPaidAccess ? 'border-slate-200 hover:border-brand' : 'border-slate-300'}`}>
+                  {!hasPaidAccess && (
+                    <div className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-slate-900 text-[#FFFF00] shadow-lg">
+                      <Lock className="h-4 w-4" />
+                    </div>
+                  )}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="bg-brand/10 text-brand text-[10px] font-black px-2.5 py-1 rounded-md border border-brand/20">
@@ -768,13 +803,13 @@ export default function LMSView() {
                   </div>
                   <button
                     onClick={() => handleDownload(item)}
-                    className={`w-full py-3.5 rounded-2xl font-black text-xs sm:text-sm transition-all border-2 border-dark flex items-center justify-center gap-2 cursor-pointer shadow-md ${user
-                        ? 'bg-[#FFFF00] text-slate-950 hover:bg-yellow-300 hover:scale-[1.01]'
-                        : 'bg-slate-200 text-slate-800 hover:bg-slate-300'
+                    className={`w-full py-3.5 rounded-2xl font-black text-xs sm:text-sm transition-all border-2 border-dark flex items-center justify-center gap-2 cursor-pointer shadow-md ${hasPaidAccess
+                      ? 'bg-[#FFFF00] text-slate-950 hover:bg-yellow-300 hover:scale-[1.01]'
+                      : 'bg-slate-900 text-white hover:bg-[#0362C0]'
                       }`}
                   >
-                    {user ? <Download className="w-4 h-4 stroke-[2.5]" /> : <Lock className="w-4 h-4 text-amber-600" />}
-                    <span>{user ? `Download ${item.type || 'Modul'}` : 'Download (Wajib Login)'}</span>
+                    {hasPaidAccess ? <Download className="w-4 h-4 stroke-[2.5]" /> : <Lock className="w-4 h-4 text-[#FFFF00]" />}
+                    <span>{hasPaidAccess ? `Download ${item.type || 'Modul'}` : 'Terkunci • Lihat Paket'}</span>
                   </button>
                 </div>
               ))}
@@ -783,20 +818,20 @@ export default function LMSView() {
         </section>
       )}
 
-      {/* 📹 TAB 2: REKAMAN MATERI (RECORDED CLASS SESSIONS) */}
+      {/* 📹 TAB 2: VIDEO PEMBELAJARAN */}
       {activeHubTab === "recordings" && (
         <section ref={videoPlayerRef} className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8 space-y-6 scroll-mt-20">
           <div className="bg-slate-900 text-white p-6 sm:p-10 rounded-4xl border-4 border-slate-800 shadow-2xl space-y-6">
             <div className="border-b border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <span className="bg-[#FFFF00] text-[#08203C] text-[10px] font-black px-3 py-1 rounded-full uppercase">
-                  RECORDED CLASS LIBRARY
+                  VIDEO LEARNING LIBRARY
                 </span>
                 <h2 className="font-stinger font-black text-2xl sm:text-4xl text-white mt-2">
-                  Rekaman Sesi Kelas Tatap Muka
+                  Video Pembelajaran
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-300 font-semibold mt-1">
-                  Putar kembali sesi live bersama Mentor Senior & Native Speaker (YouTube / Google Drive).
+                  Tonton video gratis atau buka koleksi lengkap melalui akun langganan.
                 </p>
               </div>
 
@@ -838,55 +873,74 @@ export default function LMSView() {
               </div>
             ) : null}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {allRecordings.map((session) => (
-                <div key={session.id} className="bg-slate-800 border border-slate-700 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-[#FFFF00] transition-all overflow-hidden">
-
-                  {/* THUMBNAIL PREVIEW (HANYA 1 TOMBOL PLAY DI TENGAH TERSEDIA) */}
-                  {session.thumbnail && (
-                    <div
-                      onClick={() => handlePlayVideo(session)}
-                      className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 -mt-2 -mx-2 cursor-pointer group"
-                      title="Klik untuk memutar video"
-                    >
-                      <img
-                        src={session.thumbnail}
-                        alt={session.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800';
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-all flex items-center justify-center">
-                        <div className="w-14 h-14 rounded-full bg-[#FFFF00] text-[#08203C] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform border-2 border-slate-900">
-                          <Play className="w-7 h-7 fill-current ml-1" />
-                        </div>
-                      </div>
-                      <span className="absolute top-2 left-2 px-2.5 py-1 rounded-md bg-slate-950/80 text-[10px] font-black text-lime uppercase border border-slate-700">
-                        {session.provider === 'youtube' ? 'YouTube' : session.provider === 'gdrive' ? 'Google Drive' : 'Live Class'}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                      <span className="bg-slate-700 text-emerald-400 text-[10px] font-black px-2.5 py-1 rounded-md">
-                        {session.level}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-slate-400" />
-                        <span>{session.date}</span>
-                      </span>
-                    </div>
-                    <h3 className="font-black text-lg text-white">{session.title}</h3>
-                    <p className="text-xs text-slate-300 font-semibold flex items-center gap-3">
-                      <span className="flex items-center gap-1"><UserCheck className="w-3.5 h-3.5 text-blue-400" /> {session.tutor}</span>
-                      <span className="flex items-center gap-1"><Clock3 className="w-3.5 h-3.5 text-amber-400" /> {session.duration}</span>
+            {[
+              { key: 'free-video', title: 'Video Gratis', items: freeVideos, premium: false },
+              { key: 'paid-video', title: 'Video Akun Langganan', items: paidVideos, premium: true }
+            ].map((videoSection) => (
+              <div key={videoSection.key} className="space-y-4 rounded-3xl border border-slate-700 bg-slate-950/40 p-4 sm:p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-black text-white">{videoSection.title}</h3>
+                    <p className="mt-1 text-xs font-semibold text-slate-400">
+                      {videoSection.premium ? 'Koleksi premium untuk akun dengan paket aktif.' : 'Bisa ditonton oleh semua akun yang sudah login.'}
                     </p>
                   </div>
+                  {videoSection.premium && !hasPaidAccess && <Lock className="h-5 w-5 text-[#FFFF00]" />}
                 </div>
-              ))}
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {videoSection.items.map((session) => {
+                    const videoLocked = videoSection.premium && !hasPaidAccess;
+                    return (
+                      <div key={session.id} className="bg-slate-800 border border-slate-700 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-[#FFFF00] transition-all overflow-hidden">
+
+                        {/* THUMBNAIL PREVIEW (HANYA 1 TOMBOL PLAY DI TENGAH TERSEDIA) */}
+                        {session.thumbnail && (
+                          <div
+                            onClick={() => handlePlayVideo(session, videoSection.premium)}
+                            className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 -mt-2 -mx-2 cursor-pointer group"
+                            title="Klik untuk memutar video"
+                          >
+                            <img
+                              src={session.thumbnail}
+                              alt={session.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                e.target.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-all flex items-center justify-center">
+                              <div className="w-14 h-14 rounded-full bg-[#FFFF00] text-[#08203C] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform border-2 border-slate-900">
+                                {videoLocked ? <Lock className="w-6 h-6" /> : <Play className="w-7 h-7 fill-current ml-1" />}
+                              </div>
+                            </div>
+                            <span className="absolute top-2 left-2 px-2.5 py-1 rounded-md bg-slate-950/80 text-[10px] font-black text-lime uppercase border border-slate-700">
+                              {session.provider === 'youtube' ? 'YouTube' : session.provider === 'gdrive' ? 'Google Drive' : 'Live Class'}
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span className="bg-slate-700 text-emerald-400 text-[10px] font-black px-2.5 py-1 rounded-md">
+                              {session.level}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-slate-400" />
+                              <span>{session.date}</span>
+                            </span>
+                          </div>
+                          <h3 className="font-black text-lg text-white">{session.title}</h3>
+                          <p className="text-xs text-slate-300 font-semibold flex items-center gap-3">
+                            <span className="flex items-center gap-1"><UserCheck className="w-3.5 h-3.5 text-blue-400" /> {session.tutor}</span>
+                            <span className="flex items-center gap-1"><Clock3 className="w-3.5 h-3.5 text-amber-400" /> {session.duration}</span>
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -956,60 +1010,130 @@ export default function LMSView() {
             </div>
           </section>
 
-          <section className="mx-auto mt-8 max-w-[1440px] px-3 sm:px-6 lg:px-8">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {visibleLessons.map((lesson) => {
-                const Icon = lesson.icon;
-                const completed = completedIds.includes(lesson.id);
-                const bookmarked = bookmarkedIds.includes(lesson.id);
-
-                return (
-                  <article
-                    key={lesson.id}
-                    className="group relative overflow-hidden rounded-[26px] border border-white bg-white shadow-lg shadow-blue-900/5 transition hover:-translate-y-1.5 hover:shadow-2xl"
+          {downloadNotice && !downloadNotice.includes('Mengunduh') && (
+            <section className="mx-auto mt-6 max-w-[1440px] px-3 sm:px-6 lg:px-8">
+              <div className="flex flex-col gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm font-bold text-amber-900 sm:flex-row sm:items-center sm:justify-between">
+                <span>{downloadNotice}</span>
+                {user && !hasPaidAccess && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('pricing')}
+                    className="rounded-xl bg-[#0362C0] px-4 py-2 text-xs font-black text-white hover:bg-slate-900"
                   >
-                    <div className={`h-2 bg-gradient-to-r ${lesson.color}`} />
-                    <div className="p-5 sm:p-6">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br ${lesson.color} text-white shadow-lg`}>
-                            <Icon className="h-6 w-6" />
+                    Lihat Paket
+                  </button>
+                )}
+              </div>
+            </section>
+          )}
+
+          {[
+            {
+              key: 'free',
+              title: 'Materi Gratis',
+              description: 'Mulai belajar tanpa membeli paket. Unit ini terbuka untuk semua akun.',
+              items: freeLessons,
+              premium: false,
+              badge: 'FREE ACCESS',
+              headingClass: 'text-[#0362C0]',
+              panelClass: 'border-blue-200 bg-gradient-to-br from-white to-blue-50'
+            },
+            {
+              key: 'paid',
+              title: 'Materi Berbayar',
+              description: hasPaidAccess
+                ? 'Paket akunmu aktif. Seluruh materi premium sudah terbuka.'
+                : 'Upgrade paket untuk membuka seluruh unit, latihan, dan kuis premium.',
+              items: paidLessons,
+              premium: true,
+              badge: hasPaidAccess ? 'PREMIUM TERBUKA' : 'PREMIUM ACCESS',
+              headingClass: 'text-slate-950',
+              panelClass: 'border-amber-200 bg-gradient-to-br from-amber-50 to-white'
+            }
+          ].map((section) => (
+            <section key={section.key} className="mx-auto mt-8 max-w-[1440px] px-3 sm:px-6 lg:px-8">
+              <div className={`rounded-[30px] border-2 p-5 shadow-lg sm:p-7 ${section.panelClass}`}>
+                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black tracking-wider text-[#FFFF00]">
+                      {section.premium && !hasPaidAccess ? <Lock className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+                      {section.badge}
+                    </span>
+                    <h2 className={`mt-3 font-stinger text-2xl font-black sm:text-4xl ${section.headingClass}`}>
+                      {section.title}
+                    </h2>
+                    <p className="mt-1 max-w-2xl text-xs font-semibold leading-relaxed text-slate-600 sm:text-sm">
+                      {section.description}
+                    </p>
+                  </div>
+                  <span className="w-fit rounded-full bg-white px-3 py-1.5 text-xs font-black text-slate-700 shadow-sm">
+                    {section.items.length} Unit
+                  </span>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  {section.items.map((lesson) => {
+                    const Icon = lesson.icon;
+                    const locked = section.premium && !hasPaidAccess;
+                    const completed = completedIds.includes(lesson.id);
+
+                    return (
+                      <article
+                        key={lesson.id}
+                        className={`group relative overflow-hidden rounded-[26px] border bg-white shadow-lg shadow-blue-900/5 transition ${locked
+                            ? 'border-slate-200'
+                            : 'border-white hover:-translate-y-1.5 hover:shadow-2xl'
+                          }`}
+                      >
+                        <div className={`h-2 bg-gradient-to-r ${locked ? 'from-slate-300 to-slate-400' : lesson.color}`} />
+                        <div className={`p-5 sm:p-6 ${locked ? 'opacity-75' : ''}`}>
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`grid h-12 w-12 place-items-center rounded-2xl text-white shadow-lg ${locked ? 'bg-slate-400' : `bg-gradient-to-br ${lesson.color}`
+                                }`}>
+                                {locked ? <Lock className="h-6 w-6" /> : <Icon className="h-6 w-6" />}
+                              </div>
+                              <div>
+                                <div className="inline-block rounded border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#0362C0]">
+                                  UNIT {String(lesson.id).padStart(2, '0')} • {section.premium ? 'PREMIUM' : 'GRATIS'}
+                                </div>
+                                <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-500">
+                                  <HelpCircle className="h-3.5 w-3.5 fill-amber-100 text-amber-500" />
+                                  20 Soal Kuis • Maks. 100 XP
+                                </div>
+                              </div>
+                            </div>
+                            {completed && !locked && (
+                              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                            )}
                           </div>
-                          <div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-[#0362C0] bg-blue-50 px-2 py-0.5 rounded border border-blue-200 inline-block">
-                              QUIZ UNIT {String(lesson.id).padStart(2, "0")} • 20 SOAL
-                            </div>
-                            <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-500">
-                              <HelpCircle className="h-3.5 w-3.5 text-amber-500 fill-amber-100" />
-                              20 Soal Kuis • +100 XP
-                            </div>
+
+                          <h3 className="mt-4 text-xl font-black leading-snug">{lesson.title}</h3>
+                          <p className="mt-2 line-clamp-2 text-xs font-semibold leading-relaxed text-slate-500">
+                            {lesson.description}
+                          </p>
+
+                          <div className="mt-6 border-t border-slate-100 pt-4">
+                            <button
+                              type="button"
+                              onClick={() => openLesson(lesson, section.premium)}
+                              className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-xs font-black shadow-md transition-all ${locked
+                                  ? 'cursor-pointer bg-slate-900 text-white hover:bg-[#0362C0]'
+                                  : 'cursor-pointer bg-[#0362C0] text-white hover:bg-slate-900'
+                                }`}
+                            >
+                              {locked ? <Lock className="h-4 w-4" /> : <Play className="h-3.5 w-3.5 fill-current" />}
+                              {locked ? 'Terkunci • Lihat Paket' : 'Buka Materi & Kuis'}
+                            </button>
                           </div>
                         </div>
-                      </div>
-
-                      <h3 className="mt-4 text-xl font-black leading-snug">
-                        {lesson.title}
-                      </h3>
-                      <p className="mt-2 line-clamp-2 text-xs font-semibold leading-relaxed text-slate-500">
-                        {lesson.description}
-                      </p>
-
-                      <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                        <button
-                          type="button"
-                          onClick={() => openLesson(lesson)}
-                          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#0362C0] px-4 text-xs font-black text-white shadow-md hover:bg-slate-900 transition-all cursor-pointer"
-                        >
-                          <Play className="h-3.5 w-3.5 fill-current" />
-                          Kerjakan Kuis (20 Soal) ➔
-                        </button>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          ))}
         </>
       )}
 
@@ -1108,12 +1232,12 @@ export default function LMSView() {
                           key={idx}
                           onClick={() => setQuizIndex(idx)}
                           className={`h-8 sm:h-9 rounded-xl font-black text-xs transition-all cursor-pointer border flex items-center justify-center ${isCurrent
-                              ? 'ring-4 ring-blue-500 scale-105 shadow-md border-slate-900 bg-white text-slate-900'
-                              : isAnswered
-                                ? isCorrect
-                                  ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm'
-                                  : 'bg-rose-500 text-white border-rose-600 shadow-sm'
-                                : 'bg-white text-slate-700 hover:bg-slate-200 border-slate-300'
+                            ? 'ring-4 ring-blue-500 scale-105 shadow-md border-slate-900 bg-white text-slate-900'
+                            : isAnswered
+                              ? isCorrect
+                                ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm'
+                                : 'bg-rose-500 text-white border-rose-600 shadow-sm'
+                              : 'bg-white text-slate-700 hover:bg-slate-200 border-slate-300'
                             }`}
                         >
                           {idx + 1}
@@ -1231,8 +1355,8 @@ export default function LMSView() {
                     {/* PENJELASAN SAAT JAWABAN DIPILIH (TANPA EMOJI) */}
                     {quizAnswers[quizIndex] !== undefined && (
                       <div className={`p-3.5 sm:p-4 rounded-2xl border text-xs font-semibold flex items-start gap-2.5 ${quizAnswers[quizIndex] === currentQ.ans
-                          ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
-                          : 'bg-rose-50 border-rose-300 text-rose-950'
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
+                        : 'bg-rose-50 border-rose-300 text-rose-950'
                         }`}>
                         {quizAnswers[quizIndex] === currentQ.ans ? (
                           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
