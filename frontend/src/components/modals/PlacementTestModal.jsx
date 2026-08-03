@@ -280,10 +280,10 @@ export default function PlacementTestModal({ isOpen, onClose }) {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="text-xs font-black text-slate-700">Nama Lengkap *
-                    <input type="text" required placeholder="Masukkan nama lengkap" value={leadFormData.nama} onChange={(e) => setLeadFormData({ ...leadFormData, nama: e.target.value })} className={`${inputClass} mt-1.5`} />
+                    <input type="text" required placeholder="Contoh: Asri Hartini" value={leadFormData.nama} onChange={(e) => setLeadFormData({ ...leadFormData, nama: e.target.value })} className={`${inputClass} mt-1.5`} />
                   </label>
                   <label className="text-xs font-black text-slate-700">Nomor WhatsApp Aktif *
-                    <input type="tel" required inputMode="numeric" placeholder="Contoh: 085861171129" value={leadFormData.noWa} onChange={(e) => setLeadFormData({ ...leadFormData, noWa: e.target.value })} className={`${inputClass} mt-1.5`} />
+                    <input type="tel" required inputMode="numeric" placeholder="Contoh: 085156916211" value={leadFormData.noWa} onChange={(e) => setLeadFormData({ ...leadFormData, noWa: e.target.value })} className={`${inputClass} mt-1.5`} />
                   </label>
                   <label className="text-xs font-black text-slate-700">Target Level Belajar
                     <select value={leadFormData.levelTarget} onChange={(e) => setLeadFormData({ ...leadFormData, levelTarget: e.target.value })} className={`${inputClass} mt-1.5 cursor-pointer`}>

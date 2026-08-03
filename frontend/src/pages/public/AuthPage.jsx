@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   ArrowRight, CheckCircle2, AlertCircle, User, Lock, Mail, Phone, 
@@ -84,8 +85,8 @@ export default function AuthPage() {
       avatar: null
     },
     {
-      full_name: 'Andi Asisten',
-      email: 'andi@mahirspeaking.com',
+      full_name: 'Asri Hartini',
+      email: 'hartiniasri32@gmai.com',
       role: 'admin',
       admin_type: 'Admin Asisten',
       avatar: null
@@ -268,8 +269,8 @@ export default function AuthPage() {
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-8 relative bg-slate-100 font-sans">
       
       {/* 🟢 SUCCESS NOTIFICATION MODAL WITH WAVING HAND 👋 (5 SECONDS) */}
-      {successModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
+      {successModal && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
           <div className="bg-slate-900 text-white rounded-4xl p-8 sm:p-10 text-center max-w-md w-full border-2 border-lime shadow-2xl space-y-6 relative overflow-hidden">
             
             {/* Ambient Glows */}
@@ -321,7 +322,8 @@ export default function AuthPage() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 👑 MAIN SPLIT AUTH CONTAINER (DESAIN MOCKUP SANGAT MODERN) */}
@@ -458,7 +460,7 @@ export default function AuthPage() {
                       type="text"
                       name="full_name"
                       required
-                      placeholder="Masukkan nama lengkap Anda"
+                      placeholder="Contoh: Asri Hartini"
                       value={formData.full_name}
                       onChange={handleChange}
                       className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:outline-none focus:border-brand"
@@ -474,7 +476,7 @@ export default function AuthPage() {
                       type="tel"
                       name="whatsapp"
                       required
-                      placeholder="Contoh: 085861171129"
+                      placeholder="Contoh: 085156916211"
                       value={formData.whatsapp}
                       onChange={handleChange}
                       className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:outline-none focus:border-brand"
@@ -493,7 +495,7 @@ export default function AuthPage() {
                   type="email"
                   name="email"
                   required
-                  placeholder="nama@email.com"
+                  placeholder="Contoh: hartiniasri32@gmai.com"
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:outline-none focus:border-brand"
@@ -717,8 +719,8 @@ export default function AuthPage() {
       </div>
 
       {/* 🔴 GOOGLE ACCOUNT SELECTOR MODAL */}
-      {isGoogleModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
+      {isGoogleModalOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-6 relative">
             
             {/* Modal Header */}
@@ -805,7 +807,8 @@ export default function AuthPage() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

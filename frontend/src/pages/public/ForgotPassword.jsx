@@ -63,7 +63,7 @@ export default function ForgotPassword() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="student@mahirspeaking.com"
+                  placeholder="Contoh: hartiniasri32@gmai.com"
                   className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none text-sm font-medium transition-all"
                 />
               </div>

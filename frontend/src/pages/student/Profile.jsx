@@ -204,7 +204,7 @@ export default function Profile() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand outline-none text-xs font-bold text-slate-900 shadow-sm"
-                placeholder="Nama Lengkap"
+                placeholder="Contoh: Asri Hartini"
               />
             </div>
             <div>
@@ -214,7 +214,7 @@ export default function Profile() {
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand outline-none text-xs font-bold text-slate-900 shadow-sm"
-                placeholder="08123456789"
+                placeholder="Contoh: 085156916211"
               />
             </div>
           </div>

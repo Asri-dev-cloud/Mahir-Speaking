@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
 import { adminService, exerciseService } from '../../services/api';
 import {
@@ -124,6 +125,7 @@ export default function AdminPortal() {
   const [selectedUserActivity, setSelectedUserActivity] = useState(null);
 
   const [showAddAssistantModal, setShowAddAssistantModal] = useState(false);
+  const [assistantSaving, setAssistantSaving] = useState(false);
   const [newAssistantForm, setNewAssistantForm] = useState({
     full_name: '',
     email: '',
@@ -542,12 +544,28 @@ export default function AdminPortal() {
       return;
     }
 
-    const res = await adminService.addAssistantAdmin(newAssistantForm);
-    if (res.success) {
-      showToast(`Admin Asisten ${newAssistantForm.full_name} berhasil ditambahkan!`);
-      setShowAddAssistantModal(false);
-      setNewAssistantForm({ full_name: '', email: '', whatsapp: '' });
-      loadAdminData();
+    setAssistantSaving(true);
+    try {
+      const assistantPayload = {
+        ...newAssistantForm,
+        email: newAssistantForm.email.trim().toLowerCase(),
+        role: 'admin',
+        admin_type: 'Admin Asisten'
+      };
+      const res = await adminService.addAssistantAdmin(assistantPayload);
+      if (res.success) {
+        showToast(`Admin Asisten ${newAssistantForm.full_name} berhasil ditambahkan!`);
+        setShowAddAssistantModal(false);
+        setNewAssistantForm({ full_name: '', email: '', whatsapp: '' });
+        await loadAdminData();
+      } else {
+        alert(res.message || 'Gagal menambahkan Admin Asisten.');
+      }
+    } catch (error) {
+      console.error('Gagal menambahkan Admin Asisten:', error);
+      alert('Data Admin Asisten gagal disimpan ke database.');
+    } finally {
+      setAssistantSaving(false);
     }
   };
 
@@ -717,7 +735,7 @@ export default function AdminPortal() {
 
         {/* 1. LEFT SIDEBAR */}
         <aside className="sticky top-8 hidden h-[calc(100vh-64px)] w-[260px] shrink-0 flex-col bg-[#0D52CD] p-6 lg:flex text-slate-100 rounded-[2.5rem] shadow-2xl z-20 border border-blue-700">
-          
+
           {/* Logo Box - Yellow background card to align perfectly and pop! */}
           <div className="mb-8 flex items-center gap-3 bg-[#FFDE00] text-slate-950 py-5 px-5 rounded-[2rem] shadow-sm border border-yellow-500/20">
             <div className="grid h-9 w-9 place-items-center rounded-2xl bg-[#0D52CD] text-white shadow-md">
@@ -1702,12 +1720,12 @@ export default function AdminPortal() {
                                     value={l.status || 'Belum Dihubungi'}
                                     onChange={(e) => handleUpdateLeadStatus(l.id, e.target.value)}
                                     className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold border cursor-pointer focus:outline-none ${l.status === 'Joined Member'
-                                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                                        : l.status === 'Siap Trial Class'
-                                          ? 'bg-amber-50 text-amber-600 border-amber-100'
-                                          : l.status === 'Sudah Dihubungi'
-                                            ? 'bg-blue-50 text-blue-600 border-blue-100'
-                                            : 'bg-slate-50 text-slate-600 border-slate-200'
+                                      ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                                      : l.status === 'Siap Trial Class'
+                                        ? 'bg-amber-50 text-amber-600 border-amber-100'
+                                        : l.status === 'Sudah Dihubungi'
+                                          ? 'bg-blue-50 text-blue-600 border-blue-100'
+                                          : 'bg-slate-50 text-slate-600 border-slate-200'
                                       }`}
                                   >
                                     <option value="Belum Dihubungi">Belum Dihubungi</option>
@@ -2046,8 +2064,8 @@ export default function AdminPortal() {
                                     +{q.xp_reward} XP
                                   </span>
                                   <span className={`text-[10px] font-black px-2.5 py-0.5 rounded border ${q.access_type === 'subscription'
-                                      ? 'bg-amber-50 text-amber-600 border-amber-100'
-                                      : 'bg-sky-50 text-sky-600 border-sky-100'
+                                    ? 'bg-amber-50 text-amber-600 border-amber-100'
+                                    : 'bg-sky-50 text-sky-600 border-sky-100'
                                     }`}>
                                     {q.access_type === 'subscription' ? 'BERLANGGANAN' : 'GRATIS'}
                                   </span>
@@ -2056,8 +2074,8 @@ export default function AdminPortal() {
                                 <div className="text-xs text-slate-500 flex flex-wrap gap-2 pt-1">
                                   {Array.isArray(q.options) && q.options.map((opt, i) => (
                                     <span key={i} className={`px-2.5 py-1 rounded text-[11px] font-mono border ${i === q.correct_answer
-                                        ? 'bg-emerald-50 text-emerald-700 font-extrabold border-emerald-100'
-                                        : 'bg-slate-50 text-slate-400 border-slate-100'
+                                      ? 'bg-emerald-50 text-emerald-700 font-extrabold border-emerald-100'
+                                      : 'bg-slate-50 text-slate-400 border-slate-100'
                                       }`}>
                                       {String.fromCharCode(65 + i)}. {opt}
                                     </span>
@@ -2500,19 +2518,16 @@ export default function AdminPortal() {
                 </div>
               )}
 
-              {/* -------------------------------------------------------------
-          TAB: MANAJEMEN LATIHAN BOT MASHIRA
-      ------------------------------------------------------------- */}
-              {portalTab === 'exercises' && (
-                <div className="space-y-6">
-                  <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-6">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                   {portalTab === 'exercises' && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="bg-white border border-slate-100 rounded-3xl p-6 space-y-6 shadow-sm">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                       <div>
-                        <h2 className="text-lg font-black text-white flex items-center gap-2">
-                          <MessageSquare className="w-5 h-5 text-emerald-400" />
+                        <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 font-stinger">
+                          <MessageSquare className="w-5 h-5 text-[#2563EB]" />
                           <span>Manajemen Latihan Bot Mashira AI</span>
                         </h2>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="text-xs text-slate-500 mt-1 font-semibold">
                           Tambah, edit, dan hapus latihan speaking di chatbot Mashira untuk dipraktikkan oleh siswa.
                         </p>
                       </div>
@@ -2521,20 +2536,20 @@ export default function AdminPortal() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       {/* KOLOM KIRI: FORM TAMBAH / UPDATE LATIHAN */}
                       <div id="exercise-form-section" className="lg:col-span-1 space-y-4">
-                        <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
-                          <h3 className="font-extrabold text-sm text-white flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-emerald-400" />
+                        <div className="bg-slate-55 p-5 rounded-[2rem] border border-slate-200 space-y-4 shadow-sm">
+                          <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-amber-500" />
                             <span>{selectedExerciseForEdit ? 'Edit Latihan' : 'Tambah Latihan Baru'}</span>
                           </h3>
 
                           <form onSubmit={handleSaveExercise} className="space-y-4">
                             {/* Level Select */}
                             <div className="space-y-1.5">
-                              <label className="block text-[11px] font-bold text-slate-400">Level Kemampuan:</label>
+                              <label className="block text-[11px] font-bold text-slate-600 uppercase">Level Kemampuan:</label>
                               <select
                                 value={exerciseForm.level}
                                 onChange={(e) => setExerciseForm({ ...exerciseForm, level: e.target.value })}
-                                className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer font-bold"
+                                className="w-full text-xs text-slate-800 bg-white p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 cursor-pointer font-bold transition-all shadow-sm"
                               >
                                 <option value="A1">A1 - Beginner (Pemula)</option>
                                 <option value="A2">A2 - Elementary (Dasar)</option>
@@ -2546,52 +2561,52 @@ export default function AdminPortal() {
 
                             {/* Judul Latihan */}
                             <div className="space-y-1.5">
-                              <label className="block text-[11px] font-bold text-slate-400">Judul / Topik Latihan:</label>
+                              <label className="block text-[11px] font-bold text-slate-600 uppercase">Judul / Topik Latihan:</label>
                               <input
                                 type="text"
                                 placeholder="Contoh: Introduce Yourself"
                                 value={exerciseForm.title}
                                 onChange={(e) => setExerciseForm({ ...exerciseForm, title: e.target.value })}
-                                className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                className="w-full text-xs text-slate-800 bg-white p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 font-bold transition-all shadow-sm"
                                 required
                               />
                             </div>
 
                             {/* Instruksi Latihan */}
                             <div className="space-y-1.5">
-                              <label className="block text-[11px] font-bold text-slate-400">Instruksi Latihan:</label>
+                              <label className="block text-[11px] font-bold text-slate-600 uppercase">Instruksi Latihan:</label>
                               <input
                                 type="text"
                                 placeholder="Contoh: Dengarkan lalu ulangi kalimat berikut."
                                 value={exerciseForm.instruction}
                                 onChange={(e) => setExerciseForm({ ...exerciseForm, instruction: e.target.value })}
-                                className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                className="w-full text-xs text-slate-800 bg-white p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 font-bold transition-all shadow-sm"
                                 required
                               />
                             </div>
 
                             {/* Teks Bahasa Inggris */}
                             <div className="space-y-1.5">
-                              <label className="block text-[11px] font-bold text-slate-400">Teks Bahasa Inggris (Reference Text):</label>
+                              <label className="block text-[11px] font-bold text-slate-600 uppercase">Teks Bahasa Inggris (Reference Text):</label>
                               <textarea
                                 rows={3}
                                 placeholder="Contoh: Hello, my name is Dhalfa and I am learning English."
                                 value={exerciseForm.referenceText}
                                 onChange={(e) => setExerciseForm({ ...exerciseForm, referenceText: e.target.value })}
-                                className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none font-mono"
+                                className="w-full text-xs text-slate-800 bg-white p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 resize-none font-bold transition-all shadow-sm font-mono"
                                 required
                               />
                             </div>
 
                             {/* Terjemahan Indonesia */}
                             <div className="space-y-1.5">
-                              <label className="block text-[11px] font-bold text-slate-400">Terjemahan Bahasa Indonesia:</label>
+                              <label className="block text-[11px] font-bold text-slate-600 uppercase">Terjemahan Bahasa Indonesia:</label>
                               <textarea
                                 rows={3}
                                 placeholder="Contoh: Halo, nama saya Dhalfa dan saya sedang belajar bahasa Inggris."
                                 value={exerciseForm.translation}
                                 onChange={(e) => setExerciseForm({ ...exerciseForm, translation: e.target.value })}
-                                className="w-full text-xs text-slate-200 bg-slate-900 p-2.5 rounded-xl border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+                                className="w-full text-xs text-slate-800 bg-white p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 resize-none font-bold transition-all shadow-sm"
                                 required
                               />
                             </div>
@@ -2600,9 +2615,9 @@ export default function AdminPortal() {
                             <div className="flex gap-2 pt-2">
                               <button
                                 type="submit"
-                                className="flex-1 py-2 px-4 rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 font-extrabold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                                className="flex-1 py-3 px-4 rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 font-black text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
                               >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-4 h-4 stroke-[3]" />
                                 <span>{selectedExerciseForEdit ? 'Simpan Perubahan' : 'Tambah Latihan'}</span>
                               </button>
 
@@ -2610,7 +2625,7 @@ export default function AdminPortal() {
                                 <button
                                   type="button"
                                   onClick={handleCancelExerciseEdit}
-                                  className="py-2 px-3 rounded-xl text-slate-400 bg-slate-900 hover:bg-slate-800 border border-slate-850 font-bold text-xs transition-colors cursor-pointer"
+                                  className="py-3 px-4 rounded-xl text-slate-500 bg-white hover:bg-slate-50 border border-slate-200 font-bold text-xs transition-colors cursor-pointer shadow-sm"
                                 >
                                   Batal
                                 </button>
@@ -2622,19 +2637,19 @@ export default function AdminPortal() {
 
                       {/* KOLOM KANAN: DAFTAR LATIHAN YANG ADA */}
                       <div className="lg:col-span-2 space-y-4">
-                        <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
-                          <div className="flex items-center justify-between border-b border-slate-900 pb-3">
-                            <h3 className="font-extrabold text-sm text-white">
+                        <div className="bg-slate-55 p-5 rounded-[2rem] border border-slate-200 space-y-4 shadow-sm">
+                          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                            <h3 className="font-extrabold text-sm text-slate-900">
                               Daftar Latihan Aktif ({exercisesList.length})
                             </h3>
                           </div>
 
                           {loading ? (
-                            <div className="text-center py-8 text-slate-500 text-xs font-bold animate-pulse">
+                            <div className="text-center py-8 text-slate-400 text-xs font-bold animate-pulse">
                               Memuat data latihan...
                             </div>
                           ) : exercisesList.length === 0 ? (
-                            <div className="text-center py-8 text-slate-500 text-xs font-bold border border-dashed border-slate-900 rounded-xl">
+                            <div className="text-center py-8 text-slate-400 text-xs font-bold border border-dashed border-slate-250 bg-white rounded-xl">
                               Belum ada latihan terdaftar. Silakan tambahkan lewat form di samping.
                             </div>
                           ) : (
@@ -2643,43 +2658,43 @@ export default function AdminPortal() {
                                 <div
                                   key={ex.id}
                                   className={`p-4 rounded-xl border transition-all ${selectedExerciseForEdit && selectedExerciseForEdit.id === ex.id
-                                    ? 'bg-emerald-500/5 border-emerald-500/40 shadow-sm'
-                                    : 'bg-slate-900/60 border-slate-900 hover:border-slate-800'
+                                    ? 'bg-blue-50 border-blue-300 shadow-md'
+                                    : 'bg-white border-slate-200 hover:border-slate-350 shadow-sm'
                                     }`}
                                 >
                                   <div className="flex items-start justify-between gap-3">
                                     <div className="space-y-1.5 flex-1">
                                       <div className="flex items-center gap-2">
-                                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${ex.level === 'A1' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                          ex.level === 'A2' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                            ex.level === 'B1' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                                              ex.level === 'B2' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                                                'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                          }`}>
+                                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${
+                                          ex.level === 'A1' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                          ex.level === 'A2' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                          ex.level === 'B1' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                                          ex.level === 'B2' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                          'bg-amber-50 text-amber-700 border-amber-200'
+                                        }`}>
                                           {ex.level}
                                         </span>
-                                        <h4 className="font-extrabold text-sm text-white">{ex.title}</h4>
+                                        <h4 className="font-extrabold text-sm text-slate-900">{ex.title}</h4>
                                       </div>
-                                      <p className="text-[11px] text-slate-400 italic font-medium">{ex.instruction}</p>
+                                      <p className="text-[11px] text-slate-500 italic font-bold">{ex.instruction}</p>
 
-
-                                      <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-150 space-y-1">
-                                        <div className="text-xs text-emerald-700 font-mono font-bold leading-relaxed">{ex.referenceText}</div>
-                                        <div className="text-[11px] text-slate-400 italic font-semibold">{ex.translation}</div>
+                                      <div className="bg-slate-100 p-2.5 rounded-lg border border-slate-150 space-y-1">
+                                        <div className="text-xs text-blue-700 font-mono font-bold leading-relaxed">{ex.referenceText}</div>
+                                        <div className="text-[11px] text-slate-500 italic font-semibold">{ex.translation}</div>
                                       </div>
                                     </div>
 
                                     <div className="flex items-center gap-1.5 shrink-0">
                                       <button
                                         onClick={() => handleEditExerciseClick(ex)}
-                                        className="p-1.5 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-lg border border-slate-200 cursor-pointer transition-colors"
+                                        className="p-1.5 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-800 rounded-lg border border-slate-200 cursor-pointer transition-colors shadow-sm"
                                         title="Edit Latihan"
                                       >
                                         <Edit3 className="w-3.5 h-3.5" />
                                       </button>
                                       <button
                                         onClick={() => handleDeleteExerciseItem(ex.id)}
-                                        className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg border border-red-100 cursor-pointer transition-colors"
+                                        className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg border border-rose-100 cursor-pointer transition-colors shadow-sm"
                                         title="Hapus Latihan"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
@@ -2704,7 +2719,7 @@ export default function AdminPortal() {
                 <div className="space-y-6">
                   <div className="bg-white border border-slate-100 rounded-3xl p-6 space-y-4 shadow-sm">
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 font-stinger">
                           <UserPlus className="w-5 h-5 text-[#2563EB]" />
@@ -2714,6 +2729,14 @@ export default function AdminPortal() {
                           Admin Asisten bertugas membantu memantau pengguna dan merespon bantuan tanpa memiliki hak menghapus data master.
                         </p>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddAssistantModal(true)}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0362C0] px-4 py-3 text-xs font-black text-white shadow-lg transition hover:bg-[#024f9c] sm:w-auto"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                        <span>+ Tambah Admin Asisten</span>
+                      </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
@@ -2911,8 +2934,8 @@ export default function AdminPortal() {
           {/* -------------------------------------------------------------
           MODAL 1: PERPANJANG PAKET & FREE TRIAL
       ------------------------------------------------------------- */}
-          {selectedUserForExtend && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-fade-in">
+          {selectedUserForExtend && createPortal(
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-fade-in">
               <div className="bg-white border border-slate-100 rounded-[2rem] p-6 max-w-md w-full text-slate-850 space-y-5 shadow-2xl">
 
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -2985,14 +3008,15 @@ export default function AdminPortal() {
                 </div>
 
               </div>
-            </div>
+            </div>,
+            document.body
           )}
 
           {/* -------------------------------------------------------------
           MODAL 2: TAMBAH ADMIN ASISTEN (KHUSUS SENIOR ADMIN)
       ------------------------------------------------------------- */}
-          {showAddAssistantModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-fade-in">
+          {showAddAssistantModal && createPortal(
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-fade-in">
               <form onSubmit={handleAddAssistant} className="bg-white border border-slate-100 rounded-[2rem] p-6 max-w-md w-full text-slate-850 space-y-5 shadow-2xl">
 
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -3015,7 +3039,7 @@ export default function AdminPortal() {
                     <input
                       type="text"
                       required
-                      placeholder="Contoh: Andi Asisten"
+                      placeholder="Contoh: Asri Hartini"
                       value={newAssistantForm.full_name}
                       onChange={(e) => setNewAssistantForm({ ...newAssistantForm, full_name: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#2563EB]"
@@ -3027,7 +3051,7 @@ export default function AdminPortal() {
                     <input
                       type="email"
                       required
-                      placeholder="andi@mahirspeaking.com"
+                      placeholder="hartiniasri32@gmai.com"
                       value={newAssistantForm.email}
                       onChange={(e) => setNewAssistantForm({ ...newAssistantForm, email: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#2563EB]"
@@ -3038,7 +3062,7 @@ export default function AdminPortal() {
                     <label className="text-slate-655 font-bold">No. WhatsApp:</label>
                     <input
                       type="text"
-                      placeholder="6281234567890"
+                      placeholder="085156916211"
                       value={newAssistantForm.whatsapp}
                       onChange={(e) => setNewAssistantForm({ ...newAssistantForm, whatsapp: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#2563EB]"
@@ -3056,21 +3080,23 @@ export default function AdminPortal() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3 rounded-xl bg-[#FFDE00] hover:bg-[#E6C800] text-slate-950 font-black text-xs cursor-pointer shadow-[0_4px_12px_rgba(255,222,0,0.2)] transition-colors"
+                    disabled={assistantSaving}
+                    className="flex-1 py-3 rounded-xl bg-[#FFDE00] hover:bg-[#E6C800] disabled:bg-slate-300 disabled:cursor-not-allowed text-slate-950 font-black text-xs cursor-pointer shadow-[0_4px_12px_rgba(255,222,0,0.2)] transition-colors"
                   >
-                    Tambah Asisten
+                    {assistantSaving ? 'Menyimpan...' : 'Tambah Asisten'}
                   </button>
                 </div>
 
               </form>
-            </div>
+            </div>,
+            document.body
           )}
 
           {/* -------------------------------------------------------------
           MODAL 3: DETAIL LOG AKTIVITAS PENGGUNA
       ------------------------------------------------------------- */}
-          {selectedUserActivity && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-fade-in">
+          {selectedUserActivity && createPortal(
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-fade-in">
               <div className="bg-white border border-slate-100 rounded-[2rem] p-6 max-w-md w-full text-slate-850 space-y-4 shadow-2xl">
 
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -3124,7 +3150,8 @@ export default function AdminPortal() {
                 </button>
 
               </div>
-            </div>
+            </div>,
+            document.body
           )}
 
         </main>

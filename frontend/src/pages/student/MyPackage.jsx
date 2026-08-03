@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
 import { packageService } from '../../services/api';
 import { Sparkles, CheckCircle, CreditCard, History, Shield, Zap, ArrowRight, X } from 'lucide-react';
@@ -182,8 +183,8 @@ export default function MyPackage() {
       </div>
 
       {/* Checkout Modal */}
-      {showCheckoutModal && selectedPkg && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+      {showCheckoutModal && selectedPkg && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white max-w-md w-full bg-white space-y-6 shadow-2xl relative">
             <button 
               onClick={() => setShowCheckoutModal(false)}
@@ -244,7 +245,8 @@ export default function MyPackage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

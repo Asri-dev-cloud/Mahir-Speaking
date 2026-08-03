@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import confetti from "canvas-confetti";
 import {
   ArrowLeft,
@@ -1415,8 +1416,8 @@ export default function LMSView() {
       })()}
 
       {/* 🔒 AUTH REQUIRED MODAL UNTUK QUIZ & LESSON */}
-      {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+      {showAuthModal && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 text-center space-y-5">
             <button
               onClick={() => setShowAuthModal(false)}
@@ -1467,7 +1468,8 @@ export default function LMSView() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
