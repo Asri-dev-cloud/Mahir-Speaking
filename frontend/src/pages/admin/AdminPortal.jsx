@@ -496,17 +496,44 @@ export default function AdminPortal() {
     setTimeout(() => setToastMsg(''), 3500);
   };
 
+  // Format nomor Indonesia untuk WhatsApp: 08... / 8... menjadi 628...
+  const normalizeWhatsAppNumber = (rawNumber) => {
+    let number = String(rawNumber || '').replace(/\D/g, '');
+
+    if (number.startsWith('0')) number = `62${number.slice(1)}`;
+    else if (number.startsWith('8')) number = `62${number}`;
+
+    return number;
+  };
+
+  const openWhatsAppChat = (rawNumber, message) => {
+    const waNumber = normalizeWhatsAppNumber(rawNumber);
+
+    if (!/^62\d{8,13}$/.test(waNumber)) {
+      alert('Nomor WhatsApp tidak valid. Gunakan contoh: 0895420633222.');
+      return;
+    }
+
+    const text = encodeURIComponent(message);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const whatsappUrl = isMobile
+      ? `https://api.whatsapp.com/send?phone=${waNumber}&text=${text}`
+      : `https://web.whatsapp.com/send?phone=${waNumber}&text=${text}`;
+
+    const newWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    if (!newWindow) window.location.href = whatsappUrl;
+  };
+
   // 💬 Kirim Pesan WA Otomatis
   const handleOpenWhatsApp = (userTarget) => {
-    const waNumber = userTarget.whatsapp ? userTarget.whatsapp.replace(/[^0-9]/g, '') : '';
-    if (!waNumber) {
+    if (!userTarget.whatsapp) {
       alert('Nomor WhatsApp pengguna belum terdaftar!');
       return;
     }
-    const text = encodeURIComponent(
+    openWhatsAppChat(
+      userTarget.whatsapp,
       `Halo Kak ${userTarget.full_name},\n\nKami dari Tim Mahir Speaking ingin menginformasikan status langganan Anda:\n• Paket: ${userTarget.package_name || 'Standard'}\n• Status Free Trial: ${userTarget.is_trial ? 'Aktif' : 'Non-Aktif'}\n• Tanggal Berakhir Paket: ${userTarget.package_expires || 'Tidak terbatas'}\n\nApakah ada kendala atau bantuan yang Anda butuhkan dalam belajar bahasa Inggris hari ini? 😊`
     );
-    window.open(`https://wa.me/${waNumber}?text=${text}`, '_blank');
   };
 
   // 📅 Perpanjang Paket / Free Trial
@@ -571,15 +598,14 @@ export default function AdminPortal() {
 
   // 💬 Kirim Pesan WhatsApp ke Lead Placement Test
   const handleOpenLeadWhatsApp = (lead) => {
-    const waNumber = lead.noWa ? lead.noWa.replace(/[^0-9]/g, '') : '';
-    if (!waNumber) {
+    if (!lead.noWa) {
       alert('Nomor WhatsApp lead tidak valid!');
       return;
     }
-    const text = encodeURIComponent(
+    openWhatsAppChat(
+      lead.noWa,
       `Halo Kak ${lead.nama}! 😊\n\nKami dari Tim Mahir Speaking ingin mengonfirmasi pendaftaran Placement Test & Trial Class Anda:\n• Target Level: ${lead.levelTarget}\n• Hasil Diagnosis: ${lead.recommendedLevel}\n• Pilihan Jadwal Trial: ${lead.jadwalTrial}\n• Catatan: ${lead.catatan || '-'}\n\nKapan bisa kami bantu untuk penguncian slot Trial Class-nya Kak? 🚀`
     );
-    window.open(`https://wa.me/${waNumber}?text=${text}`, '_blank');
   };
 
   // 🔄 Update Status Lead
@@ -2518,7 +2544,7 @@ export default function AdminPortal() {
                 </div>
               )}
 
-                   {portalTab === 'exercises' && (
+              {portalTab === 'exercises' && (
                 <div className="space-y-6 animate-fade-in">
                   <div className="bg-white border border-slate-100 rounded-3xl p-6 space-y-6 shadow-sm">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -2665,13 +2691,12 @@ export default function AdminPortal() {
                                   <div className="flex items-start justify-between gap-3">
                                     <div className="space-y-1.5 flex-1">
                                       <div className="flex items-center gap-2">
-                                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${
-                                          ex.level === 'A1' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                                          ex.level === 'A2' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                          ex.level === 'B1' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
-                                          ex.level === 'B2' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                                          'bg-amber-50 text-amber-700 border-amber-200'
-                                        }`}>
+                                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${ex.level === 'A1' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                            ex.level === 'A2' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                              ex.level === 'B1' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                                                ex.level === 'B2' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                                  'bg-amber-50 text-amber-700 border-amber-200'
+                                          }`}>
                                           {ex.level}
                                         </span>
                                         <h4 className="font-extrabold text-sm text-slate-900">{ex.title}</h4>
