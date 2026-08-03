@@ -490,6 +490,17 @@ export const adminService = {
       };
       currentUsers.unshift(newAssistant);
       localStorage.setItem('mahir_mock_admin_users', JSON.stringify(currentUsers));
+
+      // Save to registered users list in localStorage with default password so they can log in
+      const registered = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
+      if (!registered.some(u => u.email.toLowerCase() === assistantData.email.toLowerCase())) {
+        registered.push({
+          ...newAssistant,
+          password: 'mahirasisten123'
+        });
+        localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
+      }
+
       return { success: true, assistant: newAssistant, message: 'Admin Asisten berhasil ditambahkan!' };
     }
     return res;
