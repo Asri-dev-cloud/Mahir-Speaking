@@ -470,39 +470,45 @@ export const adminService = {
   addAssistantAdmin: async (assistantData) => {
     const res = await apiFetch('/admin/assistants', { method: 'POST', body: JSON.stringify(assistantData) });
     if (!res.success && res.isOffline) {
-      const currentUsers = JSON.parse(localStorage.getItem('mahir_mock_admin_users') || JSON.stringify(mockUsersList));
-      const newAssistant = {
-        id: Date.now(),
-        full_name: assistantData.full_name,
-        username: assistantData.email.split('@')[0],
-        email: assistantData.email,
-        whatsapp: assistantData.whatsapp || '628123456789',
-        role: 'admin',
-        admin_type: 'Admin Asisten',
-        package_id: 3,
-        package_name: 'Admin Assistant',
-        is_trial: false,
-        package_expires: '2099-12-31',
-        xp: 100,
-        points: 50,
-        streak: 1,
-        last_active: 'Baru ditambahkan',
-        activities: [{ action: 'Akun Admin Asisten Dibuat', time: 'Baru saja' }]
-      };
-      currentUsers.unshift(newAssistant);
-      localStorage.setItem('mahir_mock_admin_users', JSON.stringify(currentUsers));
-
-      // Save to registered users list in localStorage with default password so they can log in
+      const emailLower = (assistantData.email || '').trim().toLowerCase();
+      // Check if user is registered in localStorage
       const registered = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
-      if (!registered.some(u => u.email.toLowerCase() === assistantData.email.toLowerCase())) {
-        registered.push({
-          ...newAssistant,
-          password: 'mahirasisten123'
-        });
-        localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
+      const userIndex = registered.findIndex(u => u.email.toLowerCase() === emailLower);
+
+      if (userIndex === -1) {
+        return {
+          success: false,
+          message: 'Pengguna dengan email tersebut belum terdaftar! Silakan minta calon asisten mendaftar akun di website terlebih dahulu.'
+        };
       }
 
-      return { success: true, assistant: newAssistant, message: 'Admin Asisten berhasil ditambahkan!' };
+      const targetUser = registered[userIndex];
+      targetUser.role = 'admin';
+      targetUser.admin_type = 'Admin Asisten';
+      localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
+
+      // Also update in mock admin users list
+      const currentUsers = JSON.parse(localStorage.getItem('mahir_mock_admin_users') || JSON.stringify(mockUsersList));
+      const adminIndex = currentUsers.findIndex(u => u.email.toLowerCase() === emailLower);
+      if (adminIndex !== -1) {
+        currentUsers[adminIndex].role = 'admin';
+        currentUsers[adminIndex].admin_type = 'Admin Asisten';
+      } else {
+        currentUsers.unshift({
+          ...targetUser,
+          package_id: 3,
+          package_name: 'Admin Assistant',
+          last_active: 'Baru ditambahkan',
+          activities: [{ action: 'Akun Admin Asisten Dibuat', time: 'Baru saja' }]
+        });
+      }
+      localStorage.setItem('mahir_mock_admin_users', JSON.stringify(currentUsers));
+
+      return { 
+        success: true, 
+        assistant: targetUser, 
+        message: `${targetUser.full_name} berhasil dijadikan Admin Asisten!` 
+      };
     }
     return res;
   },

@@ -76,39 +76,45 @@ router.put('/users/:id', async (req, res) => {
   }
 });
 
-// Add Assistant Admin to DB (inserts user with admin role/admin_type)
+// Add Assistant Admin to DB (upgrades existing user to admin role/admin_type)
 router.post('/assistants', async (req, res) => {
-  const { full_name, email, whatsapp, role, admin_type } = req.body;
+  const { email } = req.body;
+  const emailLower = (email || '').trim().toLowerCase();
   try {
-    const defaultPassword = 'mahirasisten123';
-    const username = email.split('@')[0];
-
-    // Check if email already registered
-    const existing = await query('SELECT id FROM users WHERE email = ?', [email]);
-    if (existing && existing.length > 0) {
-      return res.status(400).json({ success: false, message: 'Email sudah terdaftar!' });
+    // Check if user exists
+    const existing = await query('SELECT id, full_name, role FROM users WHERE LOWER(email) = ?', [emailLower]);
+    if (!existing || existing.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Pengguna dengan email tersebut belum terdaftar! Silakan minta calon asisten mendaftar akun di website terlebih dahulu.' 
+      });
     }
 
-    // Insert new user into database (defaults package_id to 3 = Master/Premium Admin)
-    const result = await query(
-      `INSERT INTO users (full_name, username, email, whatsapp, password, role, admin_type, package_id) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, 3)`,
-      [full_name, username, email, whatsapp || null, defaultPassword, role || 'admin', admin_type || 'Admin Asisten']
+    const targetUser = existing[0];
+    if (targetUser.role === 'admin') {
+      return res.status(400).json({ 
+        success: false, 
+        message: `${targetUser.full_name} sudah berstatus sebagai Admin!` 
+      });
+    }
+
+    // Upgrade their role to admin and admin_type to Admin Asisten
+    await query(
+      `UPDATE users SET role = 'admin', admin_type = 'Admin Asisten' WHERE id = ?`,
+      [targetUser.id]
     );
 
-    // Retrieve inserted ID from returning result
-    const newId = result.lastID || Date.now();
-    const newUser = {
-      id: newId,
-      full_name,
-      username,
-      email,
-      whatsapp,
-      role: role || 'admin',
-      admin_type: admin_type || 'Admin Asisten'
-    };
-
-    return res.status(201).json({ success: true, assistant: newUser, message: 'Admin Asisten berhasil ditambahkan!' });
+    return res.status(201).json({ 
+      success: true, 
+      assistant: {
+        id: targetUser.id,
+        full_name: targetUser.full_name,
+        email: emailLower,
+        role: 'admin',
+        admin_type: 'Admin Asisten'
+      }, 
+      message: `${targetUser.full_name} berhasil dijadikan Admin Asisten!` 
+    });
   } catch (err) {
     console.error('Failed to add assistant admin:', err);
     return res.status(500).json({ success: false, message: 'Gagal menambahkan Admin Asisten.' });

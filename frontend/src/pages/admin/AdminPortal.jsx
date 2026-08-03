@@ -3022,11 +3022,14 @@ export default function AdminPortal() {
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <h3 className="font-extrabold text-base flex items-center gap-2 text-slate-900">
                     <UserPlus className="w-5 h-5 text-blue-600" />
-                    <span>Tambah Admin Asisten Baru</span>
+                    <span>Jadikan Admin Asisten</span>
                   </h3>
                   <button
                     type="button"
-                    onClick={() => setShowAddAssistantModal(false)}
+                    onClick={() => {
+                      setShowAddAssistantModal(false);
+                      setNewAssistantForm({ email: '', full_name: '', whatsapp: '' });
+                    }}
                     className="text-slate-400 hover:text-slate-900 font-black text-lg cursor-pointer"
                   >
                     ✕
@@ -3034,56 +3037,72 @@ export default function AdminPortal() {
                 </div>
 
                 <div className="space-y-3 text-xs font-semibold">
-                  <div className="space-y-1">
-                    <label className="text-slate-655 font-bold">Nama Lengkap Admin Asisten:</label>
-                    <input
-                      type="text"
+                  <div className="space-y-1.5">
+                    <label className="text-slate-655 font-bold">Pilih Pengguna Terdaftar:</label>
+                    <select
                       required
-                      placeholder="Contoh: Asri Hartini"
-                      value={newAssistantForm.full_name}
-                      onChange={(e) => setNewAssistantForm({ ...newAssistantForm, full_name: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#2563EB]"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-slate-655 font-bold">Email:</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="hartiniasri32@gmai.com"
                       value={newAssistantForm.email}
-                      onChange={(e) => setNewAssistantForm({ ...newAssistantForm, email: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#2563EB]"
-                    />
+                      onChange={(e) => {
+                        const selected = userList.find(u => u && u.email === e.target.value);
+                        if (selected) {
+                          setNewAssistantForm({
+                            email: selected.email,
+                            full_name: selected.full_name,
+                            whatsapp: selected.whatsapp || ''
+                          });
+                        } else {
+                          setNewAssistantForm({ email: '', full_name: '', whatsapp: '' });
+                        }
+                      }}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-850 focus:outline-none focus:border-[#2563EB] cursor-pointer"
+                    >
+                      <option value="">-- Pilih Akun Calon Asisten --</option>
+                      {userList
+                        .filter(u => u && u.role !== 'admin' && u.role !== 'tutor')
+                        .map(u => (
+                          <option key={u.id} value={u.email}>
+                            {u.full_name} ({u.email})
+                          </option>
+                        ))
+                      }
+                    </select>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-slate-655 font-bold">No. WhatsApp:</label>
-                    <input
-                      type="text"
-                      placeholder="085156916211"
-                      value={newAssistantForm.whatsapp}
-                      onChange={(e) => setNewAssistantForm({ ...newAssistantForm, whatsapp: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#2563EB]"
-                    />
-                  </div>
+                  {newAssistantForm.email && (
+                    <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl space-y-2 mt-2">
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Nama Lengkap:</span>
+                        <span className="text-slate-900 font-extrabold">{newAssistantForm.full_name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Email:</span>
+                        <span className="text-slate-900 font-extrabold font-mono">{newAssistantForm.email}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">No. WhatsApp:</span>
+                        <span className="text-slate-900 font-extrabold">{newAssistantForm.whatsapp || '-'}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 pt-2">
                   <button
                     type="button"
-                    onClick={() => setShowAddAssistantModal(false)}
+                    onClick={() => {
+                      setShowAddAssistantModal(false);
+                      setNewAssistantForm({ email: '', full_name: '', whatsapp: '' });
+                    }}
                     className="flex-1 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 font-bold text-xs cursor-pointer transition-colors"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    disabled={assistantSaving}
-                    className="flex-1 py-3 rounded-xl bg-[#FFDE00] hover:bg-[#E6C800] disabled:bg-slate-300 disabled:cursor-not-allowed text-slate-950 font-black text-xs cursor-pointer shadow-[0_4px_12px_rgba(255,222,0,0.2)] transition-colors"
+                    disabled={assistantSaving || !newAssistantForm.email}
+                    className="flex-1 py-3 rounded-xl bg-[#FFDE00] hover:bg-[#E6C800] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-950 font-black text-xs cursor-pointer shadow-[0_4px_12px_rgba(255,222,0,0.2)] transition-colors"
                   >
-                    {assistantSaving ? 'Menyimpan...' : 'Tambah Asisten'}
+                    {assistantSaving ? 'Menyimpan...' : 'Jadikan Asisten'}
                   </button>
                 </div>
 
