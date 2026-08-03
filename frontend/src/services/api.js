@@ -1,4 +1,5 @@
 // 🌐 Base URL API ngambil dari environment variable ya bestie, super fleksibel & anti ribet! ✨
+// Trigger build vercel 2
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // 🔑 Helper buat ngambil token autentikasi di localStorage biar aman jaya no cap 🛡️
