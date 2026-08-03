@@ -26,7 +26,7 @@ const activities = [
     title: "One-on-One Speaking",
     category: "mentorship",
     label: "Mentorship",
-    image: "/mo.png",
+    image: "/a.jpeg",
     description:
       "Sesi personal untuk melatih pelafalan, intonasi, dan rasa percaya diri.",
     color: "#0362C0",
@@ -36,7 +36,7 @@ const activities = [
     title: "Interactive Group Class",
     category: "class",
     label: "Live Class",
-    image: "/ma.png",
+    image: "/b.jpeg",
     description:
       "Belajar aktif lewat diskusi, role-play, dan speaking challenge bersama.",
     color: "#FFA715",
@@ -46,7 +46,7 @@ const activities = [
     title: "English Practice Day",
     category: "community",
     label: "Community",
-    image: "/mi.png",
+    image: "/c.jpeg",
     description:
       "Ruang aman untuk berlatih, bertemu teman baru, dan berani berbicara.",
     color: "#12B886",
@@ -56,7 +56,7 @@ const activities = [
     title: "Career Speaking Workshop",
     category: "workshop",
     label: "Workshop",
-    image: "/mo.png",
+    image: "/d.jpeg",
     description:
       "Latihan interview, presentasi, dan komunikasi profesional yang aplikatif.",
     color: "#7457E8",
@@ -66,7 +66,7 @@ const activities = [
     title: "Weekly Speaking Mission",
     category: "class",
     label: "Speaking Mission",
-    image: "/ma.png",
+    image: "/e.jpeg",
     description:
       "Tantangan mingguan singkat agar kebiasaan speaking terus bertumbuh.",
     color: "#0362C0",
@@ -76,11 +76,62 @@ const activities = [
     title: "Student Celebration",
     category: "community",
     label: "Student Moment",
-    image: "/mi.png",
+    image: "/f.jpeg",
     description:
       "Merayakan setiap progres kecil yang membuat siswa semakin percaya diri.",
     color: "#FFA715",
   },
+];
+
+const galleryActivities = [
+  {
+    id: 1,
+    title: "Sesi Pendampingan Individu",
+    image: "/g.jpeg",
+    description: "Fokus melatih rasa percaya diri siswa secara personal.",
+    color: "#0362C0",
+    label: "Mentorship"
+  },
+  {
+    id: 2,
+    title: "Diskusi Kelompok Interaktif",
+    image: "/h.jpeg",
+    description: "Kolaborasi aktif bertukar opini menggunakan bahasa Inggris sehari-hari.",
+    color: "#FFA715",
+    label: "Live Class"
+  },
+  {
+    id: 3,
+    title: "Speaking Club & Community",
+    image: "/i.jpeg",
+    description: "Membangun rasa berani berdialog di lingkungan yang sangat suportif.",
+    color: "#12B886",
+    label: "Community"
+  },
+  {
+    id: 4,
+    title: "Workshop Komunikasi Profesional",
+    image: "/j.jpeg",
+    description: "Mempersiapkan bekal interview kerja dan cara presentasi yang meyakinkan.",
+    color: "#7457E8",
+    label: "Workshop"
+  },
+  {
+    id: 5,
+    title: "Evaluasi Pelafalan & Aksen",
+    image: "/k.jpeg",
+    description: "Bedah intonasi dan pengucapan agar terdengar natural layaknya native speaker.",
+    color: "#0362C0",
+    label: "Speaking Drill"
+  },
+  {
+    id: 6,
+    title: "Perayaan Progres Kelulusan",
+    image: "/l.jpeg",
+    description: "Apresiasi atas konsistensi dan keberanian melangkah dari nol.",
+    color: "#FFA715",
+    label: "Student Moment"
+  }
 ];
 
 const categories = [
@@ -177,10 +228,7 @@ export default function Branding() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
-  const filteredActivities =
-    activeCategory === "all"
-      ? activities
-      : activities.filter((item) => item.category === activeCategory);
+  const filteredActivities = galleryActivities;
 
   const changeSlide = (direction) => {
     setActiveSlide((current) => {
@@ -514,33 +562,15 @@ export default function Branding() {
             <div>
               <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#0362C0]">
                 <Sparkles size={15} className="text-[#FFA715]" />
-                Cerita dari ruang belajar
+                Dokumentasi & Aktivitas Belajar
               </p>
               <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-4xl">
-                Kegiatan yang bikin belajar
-                <span className="text-[#0362C0]"> nggak membosankan.</span>
+                Keseruan Belajar & <span className="text-[#0362C0]">Aktivitas Komunitas</span>
               </h2>
             </div>
             <p className="max-w-md text-sm leading-6 text-slate-600">
-              Pilih kategori untuk melihat suasana belajar yang paling kamu suka.
+              Intip dokumentasi kegiatan mentoring, kelas interaktif, dan kebersamaan komunitas Mahir Speaking.
             </p>
-          </div>
-
-          <div className="-mx-4 mt-7 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => setActiveCategory(category.id)}
-                className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-extrabold transition ${
-                  activeCategory === category.id
-                    ? "bg-[#0362C0] text-[#FFFF00] shadow-md"
-                    : "border border-[#0362C0]/15 bg-white text-[#42617F] hover:border-[#0362C0]/40"
-                }`}
-              >
-                {category.label}
-              </button>
-            ))}
           </div>
 
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
