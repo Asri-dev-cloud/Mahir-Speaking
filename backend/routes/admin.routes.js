@@ -52,7 +52,7 @@ router.get('/analytics', async (req, res) => {
 router.get('/users', async (req, res) => {
   try {
     const users = await query(`
-      SELECT u.id, u.full_name, u.username, u.email, u.whatsapp, u.role, u.package_id, u.xp, u.points, u.streak, u.created_at, p.name as package_name
+      SELECT u.id, u.full_name, u.username, u.email, u.whatsapp, u.role, u.package_id, u.xp, u.points, u.streak, u.created_at, p.name as package_name, u.admin_type
       FROM users u
       LEFT JOIN packages p ON u.package_id = p.id
       ORDER BY u.id DESC
@@ -65,14 +65,53 @@ router.get('/users', async (req, res) => {
 
 router.put('/users/:id', async (req, res) => {
   try {
-    const { role, package_id } = req.body;
+    const { role, package_id, admin_type } = req.body;
     const userId = req.params.id;
 
-    await query(`UPDATE users SET role = ?, package_id = ? WHERE id = ?`, [role, package_id, userId]);
+    await query(`UPDATE users SET role = ?, package_id = ?, admin_type = ? WHERE id = ?`, [role, package_id || null, admin_type || null, userId]);
 
     return res.json({ success: true, message: 'User updated successfully!' });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Failed to update user.' });
+  }
+});
+
+// Add Assistant Admin to DB (inserts user with admin role/admin_type)
+router.post('/assistants', async (req, res) => {
+  const { full_name, email, whatsapp, role, admin_type } = req.body;
+  try {
+    const defaultPassword = 'mahirasisten123';
+    const username = email.split('@')[0];
+
+    // Check if email already registered
+    const existing = await query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existing && existing.length > 0) {
+      return res.status(400).json({ success: false, message: 'Email sudah terdaftar!' });
+    }
+
+    // Insert new user into database (defaults package_id to 3 = Master/Premium Admin)
+    const result = await query(
+      `INSERT INTO users (full_name, username, email, whatsapp, password, role, admin_type, package_id) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, 3)`,
+      [full_name, username, email, whatsapp || null, defaultPassword, role || 'admin', admin_type || 'Admin Asisten']
+    );
+
+    // Retrieve inserted ID from returning result
+    const newId = result.lastID || Date.now();
+    const newUser = {
+      id: newId,
+      full_name,
+      username,
+      email,
+      whatsapp,
+      role: role || 'admin',
+      admin_type: admin_type || 'Admin Asisten'
+    };
+
+    return res.status(201).json({ success: true, assistant: newUser, message: 'Admin Asisten berhasil ditambahkan!' });
+  } catch (err) {
+    console.error('Failed to add assistant admin:', err);
+    return res.status(500).json({ success: false, message: 'Gagal menambahkan Admin Asisten.' });
   }
 });
 

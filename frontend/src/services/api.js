@@ -28,11 +28,13 @@ export const apiFetch = async (endpoint, options = {}) => {
     }
 
     if (!response.ok) {
+      // Treat 404 (Not Found) or 5xx (Server Error) as backend unavailable to trigger local mock database fallback
+      const isUnavailable = response.status === 404 || response.status >= 500;
       return {
         success: false,
         status: response.status,
         message: data.message || `Server status ${response.status}`,
-        isOffline: false
+        isOffline: isUnavailable
       };
     }
 
