@@ -516,12 +516,22 @@ export default function AdminPortal() {
 
     const text = encodeURIComponent(message);
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const whatsappUrl = isMobile
-      ? `https://api.whatsapp.com/send?phone=${waNumber}&text=${text}`
-      : `https://web.whatsapp.com/send?phone=${waNumber}&text=${text}`;
+    if (isMobile) {
+      // Di HP, buka aplikasi WhatsApp seperti sebelumnya.
+      window.location.href = `https://api.whatsapp.com/send?phone=${waNumber}&text=${text}`;
+      return;
+    }
 
-    const newWindow = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-    if (!newWindow) window.location.href = whatsappUrl;
+    // Di desktop, selalu buka WhatsApp Web di tab baru.
+    // Jangan alihkan tab website utama jika popup diblokir browser.
+    const whatsappUrl = `https://web.whatsapp.com/send?phone=${waNumber}&text=${text}`;
+    const whatsappTab = window.open(whatsappUrl, '_blank');
+
+    if (whatsappTab) {
+      whatsappTab.opener = null;
+    } else {
+      alert('Tab WhatsApp diblokir browser. Izinkan pop-up untuk website ini, lalu coba lagi.');
+    }
   };
 
   // 💬 Kirim Pesan WA Otomatis
