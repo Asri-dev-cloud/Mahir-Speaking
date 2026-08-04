@@ -1,10 +1,72 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircle, Sparkles, Shield, Zap, Users, UserCheck, Star, Award, Check, MessageCircle, ArrowRight, BookOpen, Video, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { paymentService } from '../../services/paymentService';
 
 export default function PricingPage() {
   const { setActiveTab, user } = useAuth();
   const [activeCategory, setActiveCategory] = useState('reguler'); // reguler | semi_private | private
+  const [payingPackage, setPayingPackage] = useState('');
+  const [paymentError, setPaymentError] = useState('');
+
+  useEffect(() => {
+    if (document.getElementById('midtrans-snap-script')) return;
+
+    const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY;
+    if (!clientKey) return;
+
+    const isProduction = import.meta.env.VITE_MIDTRANS_IS_PRODUCTION === 'true';
+    const script = document.createElement('script');
+    script.id = 'midtrans-snap-script';
+    script.src = isProduction
+      ? 'https://app.midtrans.com/snap/snap.js'
+      : 'https://app.sandbox.midtrans.com/snap/snap.js';
+    script.setAttribute('data-client-key', clientKey);
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  const getPackageCode = (category, levelName) =>
+    `${category}_${levelName.toLowerCase().replace(' level', '').replace(/\s+/g, '_')}`;
+
+  const handleMidtransPayment = async (category, levelName) => {
+    if (!user) {
+      alert('Silakan masuk atau daftar akun terlebih dahulu sebelum membeli paket.');
+      setActiveTab?.('profile');
+      return;
+    }
+
+    if (!window.snap) {
+      setPaymentError('Midtrans Sandbox belum siap. Periksa VITE_MIDTRANS_CLIENT_KEY lalu muat ulang halaman.');
+      return;
+    }
+
+    const packageCode = getPackageCode(category, levelName);
+    setPaymentError('');
+    setPayingPackage(packageCode);
+
+    try {
+      const transaction = await paymentService.createTransaction(packageCode);
+      window.snap.pay(transaction.token, {
+        onSuccess: () => {
+          setPayingPackage('');
+          alert('Pembayaran berhasil. Paket akan aktif setelah konfirmasi Midtrans diterima.');
+        },
+        onPending: () => {
+          setPayingPackage('');
+          alert('Pembayaran masih menunggu penyelesaian.');
+        },
+        onError: () => {
+          setPayingPackage('');
+          setPaymentError('Pembayaran gagal. Silakan coba kembali.');
+        },
+        onClose: () => setPayingPackage('')
+      });
+    } catch (error) {
+      setPayingPackage('');
+      setPaymentError(error.message || 'Gagal memulai pembayaran.');
+    }
+  };
 
   // 💰 Skema Pembiayaan Resmi Mahir Speaking (dari TOR)
   const pricingData = {
@@ -121,7 +183,7 @@ export default function PricingPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pt-3 pb-16 space-y-12">
-      
+
       {/* 🌟 Header Halaman Pricing */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 bg-lime text-dark text-xs font-black px-4 py-1.5 rounded-full uppercase border border-dark shadow-sm">
@@ -187,14 +249,18 @@ export default function PricingPage() {
 
       {/* 🔘 TAB CATEGORY SELECTOR (Reguler | Semi Private | Private 1-on-1) */}
       <div className="space-y-8">
+        {paymentError && (
+          <div className="max-w-3xl mx-auto rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-xs font-bold text-red-700">
+            {paymentError}
+          </div>
+        )}
         <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 bg-slate-100 p-2 rounded-3xl border border-slate-200 max-w-3xl mx-auto shadow-inner">
           <button
             onClick={() => setActiveCategory('reguler')}
-            className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
-              activeCategory === 'reguler'
+            className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${activeCategory === 'reguler'
                 ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
                 : 'text-slate-700 hover:bg-white hover:text-brand'
-            }`}
+              }`}
           >
             <Users className="w-4 h-4" />
             <span>Kelas Reguler (4–8 Peserta)</span>
@@ -202,11 +268,10 @@ export default function PricingPage() {
 
           <button
             onClick={() => setActiveCategory('semi_private')}
-            className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
-              activeCategory === 'semi_private'
+            className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${activeCategory === 'semi_private'
                 ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
                 : 'text-slate-700 hover:bg-white hover:text-brand'
-            }`}
+              }`}
           >
             <UserCheck className="w-4 h-4" />
             <span>Semi Private (2–3 Peserta)</span>
@@ -214,11 +279,10 @@ export default function PricingPage() {
 
           <button
             onClick={() => setActiveCategory('private')}
-            className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
-              activeCategory === 'private'
+            className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${activeCategory === 'private'
                 ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
                 : 'text-slate-700 hover:bg-white hover:text-brand'
-            }`}
+              }`}
           >
             <Star className="w-4 h-4" />
             <span>Private VIP (1-on-1)</span>
@@ -250,11 +314,10 @@ export default function PricingPage() {
             {pricingData[activeCategory].levels.map((lvl, index) => (
               <div
                 key={index}
-                className={`rounded-3xl p-6 border-2 flex flex-col justify-between space-y-6 transition-all relative ${
-                  lvl.popular
+                className={`rounded-3xl p-6 border-2 flex flex-col justify-between space-y-6 transition-all relative ${lvl.popular
                     ? 'border-brand bg-gradient-to-b from-emerald-50/50 to-white shadow-xl ring-2 ring-brand/20'
                     : 'border-slate-200 bg-white hover:border-slate-300'
-                }`}
+                  }`}
               >
                 {lvl.popular && (
                   <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand text-lime font-black text-[10px] uppercase px-3 py-1 rounded-full border border-dark shadow-sm">
@@ -278,18 +341,19 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <a
-                  href={`https://wa.me/6285156916211?text=${encodeURIComponent(`Halo Mahir Speaking! Saya berminat untuk daftar ${pricingData[activeCategory].title} - ${lvl.name} (${lvl.price}).`)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`w-full py-3.5 rounded-2xl font-black text-xs text-center block cursor-pointer transition-all border-2 ${
-                    lvl.popular
+                <button
+                  type="button"
+                  onClick={() => handleMidtransPayment(activeCategory, lvl.name)}
+                  disabled={Boolean(payingPackage)}
+                  className={`w-full py-3.5 rounded-2xl font-black text-xs text-center block cursor-pointer transition-all border-2 ${lvl.popular
                       ? 'bg-brand text-lime hover:bg-dark hover:text-lime border-dark shadow-md'
                       : 'bg-slate-900 text-white hover:bg-brand hover:text-lime border-slate-900'
-                  }`}
+                    } disabled:cursor-not-allowed disabled:opacity-60`}
                 >
-                  Pilih Paket {lvl.name} ➔
-                </a>
+                  {payingPackage === getPackageCode(activeCategory, lvl.name)
+                    ? 'Menyiapkan Pembayaran...'
+                    : `Bayar Paket ${lvl.name} ➔`}
+                </button>
               </div>
             ))}
           </div>
