@@ -16,7 +16,7 @@ export default function FloatingWhatsApp() {
         className="hidden sm:flex items-center gap-2 bg-slate-900 text-white text-xs font-bold px-3.5 py-2 rounded-full border border-slate-700 shadow-xl hover:bg-slate-800 transition-all group"
       >
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Tanya Konsultasi WA (0851-5691-6211)</span>
+        <span>tanya konsultasi WA (0815-7212-0190)</span>
       </a>
 
       {/* Floating Button */}
