@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
         .catch(() => {
           const savedUser = localStorage.getItem('mahir_user');
           if (savedUser) {
-            try { setUser(JSON.parse(savedUser)); } catch (e) {}
+            try { setUser(JSON.parse(savedUser)); } catch (e) { }
           }
         })
         .finally(() => setLoading(false));
@@ -253,18 +253,18 @@ export const useAuth = () => {
       token: null,
       loading: false,
       activeTab: 'home',
-      setActiveTab: () => {},
+      setActiveTab: () => { },
       showWelcomeModal: false,
       welcomeUserName: '',
-      closeWelcomeModal: () => {},
-      triggerWelcome: () => {},
+      closeWelcomeModal: () => { },
+      triggerWelcome: () => { },
       login: async () => ({ success: false }),
       register: async () => ({ success: false }),
       resetPassword: async () => ({ success: false }),
       googleLogin: async () => ({ success: false }),
-      logout: () => {},
-      updateUserProfile: () => {},
-      addXpAndPoints: () => {}
+      logout: () => { },
+      updateUserProfile: () => { },
+      addXpAndPoints: () => { }
     };
   }
   return context;

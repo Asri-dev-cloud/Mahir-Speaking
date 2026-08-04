@@ -12,8 +12,12 @@ router.get('/profile', verifyToken, async (req, res) => {
     res.set('Expires', '0');
 
     const users = await query(
-      `SELECT u.id, u.full_name, u.username, u.email, u.whatsapp, u.role, u.package_id, u.xp, u.points, u.streak, u.avatar, u.created_at,
-              p.name as package_name, p.ai_daily_limit, p.tutor_sessions, p.badge as package_badge
+      `SELECT u.id, u.full_name, u.username, u.email, u.whatsapp, u.role,
+              u.package_id, u.package_expires, u.is_trial,
+              u.xp, u.points, u.streak, u.avatar, u.created_at,
+              COALESCE(NULLIF(u.package_name, ''), p.name) AS package_name,
+              p.name AS package_plan_name,
+              p.ai_daily_limit, p.tutor_sessions, p.badge AS package_badge
        FROM users u
        LEFT JOIN packages p ON u.package_id = p.id
        WHERE u.id = ?`,

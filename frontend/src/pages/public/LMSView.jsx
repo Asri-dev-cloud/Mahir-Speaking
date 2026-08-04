@@ -396,10 +396,10 @@ const lessons = (() => {
       xp: 80,
       color: isPremium
         ? (id <= 15
-            ? "from-emerald-500 to-teal-600"
-            : id <= 27
-              ? "from-amber-500 to-orange-600"
-              : "from-indigo-600 to-purple-800")
+          ? "from-emerald-500 to-teal-600"
+          : id <= 27
+            ? "from-amber-500 to-orange-600"
+            : "from-indigo-600 to-purple-800")
         : "from-blue-600 to-blue-800",
       mission: `Selesaikan kuis 20 soal Unit ${id} untuk menguji pemahaman dan kefasihan berbicara Anda.`,
       description: detail.description,
@@ -633,11 +633,13 @@ export default function LMSView() {
   const packageExpiresAt = accountUser?.package_expires
     ? new Date(accountUser.package_expires).getTime()
     : null;
+  const packageIsActiveByExpiry = Number.isFinite(packageExpiresAt) && packageExpiresAt > Date.now();
   const packageStillActive = !packageExpiresAt || packageExpiresAt > Date.now();
   const hasPaidAccess = Boolean(
     accountUser && packageStillActive && (
       accountUser.role === 'admin' ||
       accountUser.role === 'tutor' ||
+      packageIsActiveByExpiry ||
       accountUser.is_paid === true ||
       accountUser.subscription_status === 'active' ||
       Number(accountUser.package_id || 0) > 1 ||
@@ -1307,8 +1309,8 @@ export default function LMSView() {
                       <article
                         key={lesson.id}
                         className={`group relative overflow-hidden rounded-[26px] border bg-white shadow-lg shadow-blue-900/5 transition ${locked
-                            ? 'border-slate-200'
-                            : 'border-white hover:-translate-y-1.5 hover:shadow-2xl'
+                          ? 'border-slate-200'
+                          : 'border-white hover:-translate-y-1.5 hover:shadow-2xl'
                           }`}
                       >
                         <div className={`h-2 bg-gradient-to-r ${locked ? 'from-slate-300 to-slate-400' : lesson.color}`} />
@@ -1344,8 +1346,8 @@ export default function LMSView() {
                               type="button"
                               onClick={() => openLesson(lesson, section.premium)}
                               className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-xs font-black shadow-md transition-all ${locked
-                                  ? 'cursor-pointer bg-slate-900 text-white hover:bg-[#0362C0]'
-                                  : 'cursor-pointer bg-[#0362C0] text-white hover:bg-slate-900'
+                                ? 'cursor-pointer bg-slate-900 text-white hover:bg-[#0362C0]'
+                                : 'cursor-pointer bg-[#0362C0] text-white hover:bg-slate-900'
                                 }`}
                             >
                               {locked ? <Lock className="h-4 w-4" /> : <Play className="h-3.5 w-3.5 fill-current" />}
