@@ -52,7 +52,7 @@ const defaultRegisteredUsers = [
     id: 1,
     full_name: 'Hartini Asri (Admin Senior)',
     email: 'hartiniasri32@gmail.com',
-    whatsapp: '6285156916211',
+    whatsapp: '6281572120190',
     password: '20424014',
     role: 'admin',
     admin_type: 'Senior Admin',
@@ -398,7 +398,7 @@ const mockUsersList = [
     full_name: 'Hartini Asri (Admin Senior)',
     username: 'hartiniasri',
     email: 'hartiniasri32@gmail.com',
-    whatsapp: '6285156916211',
+    whatsapp: '6281572120190',
     role: 'admin',
     admin_type: 'Senior Admin',
     package_id: 3,
@@ -504,10 +504,10 @@ export const adminService = {
       }
       localStorage.setItem('mahir_mock_admin_users', JSON.stringify(currentUsers));
 
-      return { 
-        success: true, 
-        assistant: targetUser, 
-        message: `${targetUser.full_name} berhasil dijadikan Admin Asisten!` 
+      return {
+        success: true,
+        assistant: targetUser,
+        message: `${targetUser.full_name} berhasil dijadikan Admin Asisten!`
       };
     }
     return res;

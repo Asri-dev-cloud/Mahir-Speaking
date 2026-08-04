@@ -241,7 +241,7 @@ export default function Home() {
 
                 {/* CTA 2: KONSULTASI WHATSAPP */}
                 <a
-                  href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20untuk%20konsultasi%20dan%20daftar%20Trial%20Class%20Gratis."
+                  href="https://wa.me/6281572120190?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20untuk%20konsultasi%20dan%20daftar%20Trial%20Class%20Gratis."
                   target="_blank"
                   rel="noreferrer"
                   className="px-6 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 font-black text-xs sm:text-sm border-2 border-slate-300 hover:scale-105 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
@@ -422,8 +422,8 @@ export default function Home() {
           <button
             onClick={() => setActiveLevelTab('basic')}
             className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${activeLevelTab === 'basic'
-                ? 'bg-blue-600 text-white shadow-md scale-105'
-                : 'text-slate-700 hover:bg-white'
+              ? 'bg-blue-600 text-white shadow-md scale-105'
+              : 'text-slate-700 hover:bg-white'
               }`}
           >
             Level Basic
@@ -432,8 +432,8 @@ export default function Home() {
           <button
             onClick={() => setActiveLevelTab('intermediate')}
             className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${activeLevelTab === 'intermediate'
-                ? 'bg-amber-500 text-slate-950 shadow-md scale-105'
-                : 'text-slate-700 hover:bg-white'
+              ? 'bg-amber-500 text-slate-950 shadow-md scale-105'
+              : 'text-slate-700 hover:bg-white'
               }`}
           >
             Level Intermediate
@@ -442,8 +442,8 @@ export default function Home() {
           <button
             onClick={() => setActiveLevelTab('advanced')}
             className={`px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer ${activeLevelTab === 'advanced'
-                ? 'bg-purple-600 text-white shadow-md scale-105'
-                : 'text-slate-700 hover:bg-white'
+              ? 'bg-purple-600 text-white shadow-md scale-105'
+              : 'text-slate-700 hover:bg-white'
               }`}
           >
             Level Advanced

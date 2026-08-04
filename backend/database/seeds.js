@@ -167,7 +167,7 @@ export async function initSeedData() {
       // Admin Senior (Hartini Asri)
       await query(`
         INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6285156916211', '${hashedAdminPassword}', 'admin', 5, 0, 0, 0, '/ma.png')
+        VALUES ('Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6281572120190', '${hashedAdminPassword}', 'admin', 5, 0, 0, 0, '/ma.png')
       `);
 
       // Student 5: Fauzi

@@ -47,6 +47,18 @@ export default function AdminPortal() {
 
   const SENIOR_ADMIN_EMAIL = 'hartiniasri32@gmail.com';
 
+  const packageOptions = [
+    { id: 2, name: 'Kelas Reguler - Basic Level' },
+    { id: 3, name: 'Kelas Reguler - Intermediate Level' },
+    { id: 4, name: 'Kelas Reguler - Advanced Level' },
+    { id: 5, name: 'Kelas Semi Private - Basic Level' },
+    { id: 6, name: 'Kelas Semi Private - Intermediate Level' },
+    { id: 7, name: 'Kelas Semi Private - Advanced Level' },
+    { id: 8, name: 'Kelas Private - Basic Level' },
+    { id: 9, name: 'Kelas Private - Intermediate Level' },
+    { id: 10, name: 'Kelas Private - Advanced Level' }
+  ];
+
   // 📊 State Data Portal
   const [users, setUsers] = useState([]);
   const [leads, setLeads] = useState([]);
@@ -118,7 +130,7 @@ export default function AdminPortal() {
 
   // 🪟 State Modals
   const [selectedUserForExtend, setSelectedUserForExtend] = useState(null);
-  const [extendDays, setExtendDays] = useState(30);
+  const [extendDays, setExtendDays] = useState(90);
   const [selectedPackageId, setSelectedPackageId] = useState(2);
   const [isTrialToggle, setIsTrialToggle] = useState(false);
 
@@ -550,16 +562,22 @@ export default function AdminPortal() {
   const handleSavePackageExtension = async () => {
     if (!selectedUserForExtend) return;
 
+    const durationDays = Number.parseInt(extendDays, 10);
+    if (!Number.isInteger(durationDays) || durationDays < 1) {
+      alert('Masa aktif paket minimal 1 hari.');
+      return;
+    }
+
     // Hitung tanggal kadaluarsa baru
     const curDate = new Date();
-    curDate.setDate(curDate.getDate() + parseInt(extendDays));
+    curDate.setDate(curDate.getDate() + durationDays);
     const newExpDate = curDate.toISOString().split('T')[0];
 
-    const pkgNames = { 1: 'Standard Pro', 2: 'Premium VIP', 3: 'Enterprise VIP' };
+    const selectedPackage = packageOptions.find((item) => item.id === Number(selectedPackageId));
 
     const updateData = {
       package_id: selectedPackageId,
-      package_name: pkgNames[selectedPackageId] || 'Custom Pro',
+      package_name: selectedPackage?.name || 'Paket Berlangganan',
       package_expires: newExpDate,
       is_trial: isTrialToggle,
       trial_expires: isTrialToggle ? newExpDate : null
@@ -1378,6 +1396,9 @@ export default function AdminPortal() {
                           ) : (
                             filteredUsers.map((u) => {
                               const isExpired = u.package_expires && new Date(u.package_expires) < new Date();
+                              const hasActiveSubscription = Boolean(
+                                u.package_expires && new Date(u.package_expires) >= new Date()
+                              );
 
                               return (
                                 <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
@@ -1430,9 +1451,13 @@ export default function AdminPortal() {
                                         <Zap className="w-3 h-3" />
                                         <span>Trial Aktif</span>
                                       </span>
+                                    ) : hasActiveSubscription ? (
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500">
+                                        <span>Berlangganan</span>
+                                      </span>
                                     ) : (
                                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500">
-                                        <span>Reguler / Paid</span>
+                                        <span>Gratis</span>
                                       </span>
                                     )}
                                   </td>
@@ -1470,7 +1495,7 @@ export default function AdminPortal() {
                                       <button
                                         onClick={() => {
                                           setSelectedUserForExtend(u);
-                                          setSelectedPackageId(u.package_id || 1);
+                                          setSelectedPackageId(Number(u.package_id) > 1 ? Number(u.package_id) : 2);
                                           setIsTrialToggle(u.is_trial || false);
                                         }}
                                         className="px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-[#2563EB] text-[#2563EB] font-black text-[11px] transition-all border border-blue-100 hover:text-white cursor-pointer flex items-center gap-1"
@@ -1513,6 +1538,9 @@ export default function AdminPortal() {
                     ) : (
                       filteredUsers.map((u) => {
                         const isExpired = u.package_expires && new Date(u.package_expires) < new Date();
+                        const hasActiveSubscription = Boolean(
+                          u.package_expires && new Date(u.package_expires) >= new Date()
+                        );
                         return (
                           <div key={u.id} className="bg-white border border-slate-150 rounded-2xl p-4 space-y-3 shadow-sm">
                             {/* Header Card */}
@@ -1549,7 +1577,9 @@ export default function AdminPortal() {
                                     <Zap className="w-2.5 h-2.5" /> Trial Aktif
                                   </span>
                                 ) : (
-                                  <span className="text-[10px] text-slate-400 font-bold">Reguler / Paid</span>
+                                  <span className="text-[10px] text-slate-400 font-bold">
+                                    {hasActiveSubscription ? 'Berlangganan' : 'Gratis'}
+                                  </span>
                                 )}
                               </div>
 
@@ -1590,7 +1620,7 @@ export default function AdminPortal() {
                               <button
                                 onClick={() => {
                                   setSelectedUserForExtend(u);
-                                  setSelectedPackageId(u.package_id || 1);
+                                  setSelectedPackageId(Number(u.package_id) > 1 ? Number(u.package_id) : 2);
                                   setIsTrialToggle(u.is_trial || false);
                                 }}
                                 className="py-2 px-3 bg-[#2563EB] text-white font-black text-xs rounded-xl flex items-center gap-1 cursor-pointer shadow-sm hover:bg-[#1D4ED8]"
@@ -2702,10 +2732,10 @@ export default function AdminPortal() {
                                     <div className="space-y-1.5 flex-1">
                                       <div className="flex items-center gap-2">
                                         <span className={`px-2 py-0.5 text-[9px] font-black rounded-md border ${ex.level === 'A1' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                                            ex.level === 'A2' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                              ex.level === 'B1' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
-                                                ex.level === 'B2' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                                                  'bg-amber-50 text-amber-700 border-amber-200'
+                                          ex.level === 'A2' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                            ex.level === 'B1' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                                              ex.level === 'B2' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                                'bg-amber-50 text-amber-700 border-amber-200'
                                           }`}>
                                           {ex.level}
                                         </span>
@@ -3000,9 +3030,9 @@ export default function AdminPortal() {
                       onChange={(e) => setSelectedPackageId(parseInt(e.target.value))}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-700 focus:outline-none focus:border-[#2563EB] cursor-pointer"
                     >
-                      <option value={1}>Standard Pro</option>
-                      <option value={2}>Premium VIP</option>
-                      <option value={3}>Enterprise VIP</option>
+                      {packageOptions.map((pkg) => (
+                        <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
+                      ))}
                     </select>
                   </div>
 

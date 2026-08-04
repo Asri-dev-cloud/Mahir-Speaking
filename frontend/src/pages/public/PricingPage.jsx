@@ -214,7 +214,7 @@ export default function PricingPage() {
             <div className="text-3xl font-stinger font-black text-dark">Rp 750.000 <span className="text-xs font-bold">(Nett Lunas)</span></div>
           </div>
           <a
-            href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengambil%20Promo%20Diskon%20Cash%20Lunas%20Rp%20750.000."
+            href="https://wa.me/6281572120190?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengambil%20Promo%20Diskon%20Cash%20Lunas%20Rp%20750.000."
             target="_blank"
             rel="noreferrer"
             className="w-full py-3 rounded-2xl bg-dark text-lime font-black text-xs text-center block hover:bg-brand hover:text-white transition-all border-2 border-dark"
@@ -237,7 +237,7 @@ export default function PricingPage() {
             <div>Angsuran 2 (15%): <strong className="text-emerald-400">Rp 225.000</strong> | Angsuran 3 (15%): <strong className="text-emerald-400">Rp 225.000</strong></div>
           </div>
           <a
-            href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20dengan%20Skema%20Cicilan%203x%20(DP%2070%25)."
+            href="https://wa.me/6281572120190?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20dengan%20Skema%20Cicilan%203x%20(DP%2070%25)."
             target="_blank"
             rel="noreferrer"
             className="w-full py-3 rounded-2xl bg-lime text-dark font-black text-xs text-center block hover:bg-emerald-400 transition-all border-2 border-dark"
@@ -258,8 +258,8 @@ export default function PricingPage() {
           <button
             onClick={() => setActiveCategory('reguler')}
             className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${activeCategory === 'reguler'
-                ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
-                : 'text-slate-700 hover:bg-white hover:text-brand'
+              ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
+              : 'text-slate-700 hover:bg-white hover:text-brand'
               }`}
           >
             <Users className="w-4 h-4" />
@@ -269,8 +269,8 @@ export default function PricingPage() {
           <button
             onClick={() => setActiveCategory('semi_private')}
             className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${activeCategory === 'semi_private'
-                ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
-                : 'text-slate-700 hover:bg-white hover:text-brand'
+              ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
+              : 'text-slate-700 hover:bg-white hover:text-brand'
               }`}
           >
             <UserCheck className="w-4 h-4" />
@@ -280,8 +280,8 @@ export default function PricingPage() {
           <button
             onClick={() => setActiveCategory('private')}
             className={`px-5 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${activeCategory === 'private'
-                ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
-                : 'text-slate-700 hover:bg-white hover:text-brand'
+              ? 'bg-brand text-lime shadow-md scale-105 border-2 border-dark'
+              : 'text-slate-700 hover:bg-white hover:text-brand'
               }`}
           >
             <Star className="w-4 h-4" />
@@ -315,8 +315,8 @@ export default function PricingPage() {
               <div
                 key={index}
                 className={`rounded-3xl p-6 border-2 flex flex-col justify-between space-y-6 transition-all relative ${lvl.popular
-                    ? 'border-brand bg-gradient-to-b from-emerald-50/50 to-white shadow-xl ring-2 ring-brand/20'
-                    : 'border-slate-200 bg-white hover:border-slate-300'
+                  ? 'border-brand bg-gradient-to-b from-emerald-50/50 to-white shadow-xl ring-2 ring-brand/20'
+                  : 'border-slate-200 bg-white hover:border-slate-300'
                   }`}
               >
                 {lvl.popular && (
@@ -346,8 +346,8 @@ export default function PricingPage() {
                   onClick={() => handleMidtransPayment(activeCategory, lvl.name)}
                   disabled={Boolean(payingPackage)}
                   className={`w-full py-3.5 rounded-2xl font-black text-xs text-center block cursor-pointer transition-all border-2 ${lvl.popular
-                      ? 'bg-brand text-lime hover:bg-dark hover:text-lime border-dark shadow-md'
-                      : 'bg-slate-900 text-white hover:bg-brand hover:text-lime border-slate-900'
+                    ? 'bg-brand text-lime hover:bg-dark hover:text-lime border-dark shadow-md'
+                    : 'bg-slate-900 text-white hover:bg-brand hover:text-lime border-slate-900'
                     } disabled:cursor-not-allowed disabled:opacity-60`}
                 >
                   {payingPackage === getPackageCode(activeCategory, lvl.name)
@@ -450,7 +450,7 @@ export default function PricingPage() {
             <p className="text-xs text-slate-300 font-semibold">Konsultasikan kebutuhan belajarmu secara gratis bersama Tim Mahir Speaking.</p>
           </div>
           <a
-            href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20ingin%20konsultasi%20pemilihan%20paket%20dan%20level."
+            href="https://wa.me/6281572120190?text=Halo%20Mahir%20Speaking!%20Saya%20ingin%20konsultasi%20pemilihan%20paket%20dan%20level."
             target="_blank"
             rel="noreferrer"
             className="px-6 py-3.5 rounded-2xl bg-lime text-dark font-black text-xs flex items-center gap-2 hover:bg-emerald-400 transition-all border-2 border-dark flex-shrink-0"

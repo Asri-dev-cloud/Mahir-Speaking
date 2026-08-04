@@ -18,13 +18,21 @@ router.get('/analytics', async (req, res) => {
     const activeTrials = await query(`SELECT COUNT(*) as count FROM users WHERE is_trial = true`);
     const totalLeads = await query(`SELECT COUNT(*) as count FROM placement_test_leads`);
     const expiringSoon = await query(`SELECT COUNT(*) as count FROM users WHERE package_expires BETWEEN NOW() AND NOW() + INTERVAL '7 days'`);
-    const totalRevenue = await query(`SELECT SUM(amount) as sum FROM purchases WHERE status = 'success'`);
+    const totalRevenue = await query(`
+      SELECT COALESCE(SUM(gross_amount), 0) AS sum
+      FROM payment_transactions
+      WHERE payment_status = 'paid'
+    `);
     const recentPurchases = await query(`
-      SELECT p.*, u.full_name, u.email, pkg.name as package_name 
-      FROM purchases p 
-      JOIN users u ON p.user_id = u.id 
-      JOIN packages pkg ON p.package_id = pkg.id 
-      ORDER BY p.created_at DESC 
+      SELECT pt.id, pt.order_id, pt.user_id, pt.package_code,
+             pt.package_name, pt.gross_amount AS amount,
+             pt.payment_status AS status, pt.payment_type,
+             pt.paid_at, pt.created_at,
+             u.full_name, u.email
+      FROM payment_transactions pt
+      JOIN users u ON pt.user_id = u.id
+      WHERE pt.payment_status = 'paid'
+      ORDER BY COALESCE(pt.paid_at, pt.created_at) DESC
       LIMIT 10
     `);
 
@@ -44,6 +52,7 @@ router.get('/analytics', async (req, res) => {
       recentPurchases
     });
   } catch (err) {
+    console.error('Admin analytics error:', err);
     return res.status(500).json({ success: false, message: 'Failed to fetch admin analytics.' });
   }
 });
@@ -52,23 +61,50 @@ router.get('/analytics', async (req, res) => {
 router.get('/users', async (req, res) => {
   try {
     const users = await query(`
-      SELECT u.id, u.full_name, u.username, u.email, u.whatsapp, u.role, u.package_id, u.xp, u.points, u.streak, u.created_at, p.name as package_name, u.admin_type
+      SELECT u.id, u.full_name, u.username, u.email, u.whatsapp,
+             u.role, u.admin_type, u.package_id,
+             COALESCE(NULLIF(u.package_name, ''), p.name) AS package_name,
+             u.package_expires, u.is_trial,
+             u.xp, u.points, u.streak, u.created_at
       FROM users u
       LEFT JOIN packages p ON u.package_id = p.id
       ORDER BY u.id DESC
     `);
     return res.json({ success: true, users });
   } catch (err) {
+    console.error('Admin users error:', err);
     return res.status(500).json({ success: false, message: 'Failed to fetch user list.' });
   }
 });
 
 router.put('/users/:id', async (req, res) => {
   try {
-    const { role, package_id, admin_type } = req.body;
     const userId = req.params.id;
 
-    await query(`UPDATE users SET role = ?, package_id = ?, admin_type = ? WHERE id = ?`, [role, package_id || null, admin_type || null, userId]);
+    const allowedFields = [
+      'role',
+      'package_id',
+      'admin_type',
+      'package_name',
+      'package_expires',
+      'is_trial'
+    ];
+    const updates = [];
+    const values = [];
+
+    for (const field of allowedFields) {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+        updates.push(`${field} = ?`);
+        values.push(req.body[field]);
+      }
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({ success: false, message: 'Tidak ada data pengguna yang diperbarui.' });
+    }
+
+    values.push(userId);
+    await query(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`, values);
 
     return res.json({ success: true, message: 'User updated successfully!' });
   } catch (err) {
@@ -84,17 +120,17 @@ router.post('/assistants', async (req, res) => {
     // Check if user exists
     const existing = await query('SELECT id, full_name, role FROM users WHERE LOWER(email) = ?', [emailLower]);
     if (!existing || existing.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Pengguna dengan email tersebut belum terdaftar! Silakan minta calon asisten mendaftar akun di website terlebih dahulu.' 
+      return res.status(400).json({
+        success: false,
+        message: 'Pengguna dengan email tersebut belum terdaftar! Silakan minta calon asisten mendaftar akun di website terlebih dahulu.'
       });
     }
 
     const targetUser = existing[0];
     if (targetUser.role === 'admin') {
-      return res.status(400).json({ 
-        success: false, 
-        message: `${targetUser.full_name} sudah berstatus sebagai Admin!` 
+      return res.status(400).json({
+        success: false,
+        message: `${targetUser.full_name} sudah berstatus sebagai Admin!`
       });
     }
 
@@ -104,16 +140,16 @@ router.post('/assistants', async (req, res) => {
       [targetUser.id]
     );
 
-    return res.status(201).json({ 
-      success: true, 
+    return res.status(201).json({
+      success: true,
       assistant: {
         id: targetUser.id,
         full_name: targetUser.full_name,
         email: emailLower,
         role: 'admin',
         admin_type: 'Admin Asisten'
-      }, 
-      message: `${targetUser.full_name} berhasil dijadikan Admin Asisten!` 
+      },
+      message: `${targetUser.full_name} berhasil dijadikan Admin Asisten!`
     });
   } catch (err) {
     console.error('Failed to add assistant admin:', err);

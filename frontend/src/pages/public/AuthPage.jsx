@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  ArrowRight, CheckCircle2, AlertCircle, User, Lock, Mail, Phone, 
+import {
+  ArrowRight, CheckCircle2, AlertCircle, User, Lock, Mail, Phone,
   Eye, EyeOff, ShieldCheck, KeyRound, Sparkles, ChevronLeft, ChevronRight,
   Globe
 } from 'lucide-react';
 
 export default function AuthPage() {
   const { login, register, resetPassword, googleLogin, setActiveTab } = useAuth();
-  
+
   // Modes: 'login', 'register', 'forgot'
   const [authMode, setAuthMode] = useState('login');
-  
+
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -109,7 +109,7 @@ export default function AuthPage() {
         id: Date.now(),
         full_name: acc.full_name,
         email: acc.email,
-        whatsapp: '6285156916211',
+        whatsapp: '6281572120190',
         role: acc.role || 'student',
         admin_type: acc.admin_type || null,
         avatar: acc.avatar || null,
@@ -267,12 +267,12 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-8 relative bg-slate-100 font-sans">
-      
+
       {/* 🟢 SUCCESS NOTIFICATION MODAL WITH WAVING HAND 👋 (5 SECONDS) */}
       {successModal && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
           <div className="bg-slate-900 text-white rounded-4xl p-8 sm:p-10 text-center max-w-md w-full border-2 border-lime shadow-2xl space-y-6 relative overflow-hidden">
-            
+
             {/* Ambient Glows */}
             <div className="absolute -top-16 -left-16 w-40 h-40 bg-lime/20 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-16 -right-16 w-40 h-40 bg-brand/30 rounded-full blur-3xl pointer-events-none" />
@@ -328,10 +328,10 @@ export default function AuthPage() {
 
       {/* 👑 MAIN SPLIT AUTH CONTAINER (DESAIN MOCKUP SANGAT MODERN) */}
       <div className="max-w-5xl w-full bg-white rounded-4xl sm:rounded-5xl border border-slate-200/80 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
-        
+
         {/* 🎨 LEFT ARTWORK PANEL (DESAIN COSMIC CARDS - SHOWCASE SIDE) */}
         <div className="lg:col-span-5 hidden lg:flex flex-col justify-between p-8 sm:p-10 bg-gradient-to-br from-slate-950 via-slate-900 to-[#08203C] text-white relative overflow-hidden">
-          
+
           {/* Subtle Glow Elements */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-brand/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-lime/10 rounded-full blur-3xl pointer-events-none" />
@@ -385,7 +385,7 @@ export default function AuthPage() {
 
         {/* 📝 RIGHT FORM PANEL (SLOPE/CLEAN FORM SIDE) */}
         <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-center space-y-6 bg-white">
-          
+
           {/* Header Title */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
@@ -413,18 +413,16 @@ export default function AuthPage() {
               <button
                 type="button"
                 onClick={() => { setAuthMode('login'); setErrorMsg(''); setSuccessMsg(''); }}
-                className={`flex-1 py-2.5 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                  authMode === 'login' ? 'bg-brand text-lime shadow-md' : 'text-slate-600 hover:text-slate-900'
-                }`}
+                className={`flex-1 py-2.5 text-xs font-black rounded-xl transition-all cursor-pointer ${authMode === 'login' ? 'bg-brand text-lime shadow-md' : 'text-slate-600 hover:text-slate-900'
+                  }`}
               >
                 Masuk
               </button>
               <button
                 type="button"
                 onClick={() => { setAuthMode('register'); setErrorMsg(''); setSuccessMsg(''); }}
-                className={`flex-1 py-2.5 text-xs font-black rounded-xl transition-all cursor-pointer ${
-                  authMode === 'register' ? 'bg-brand text-lime shadow-md' : 'text-slate-600 hover:text-slate-900'
-                }`}
+                className={`flex-1 py-2.5 text-xs font-black rounded-xl transition-all cursor-pointer ${authMode === 'register' ? 'bg-brand text-lime shadow-md' : 'text-slate-600 hover:text-slate-900'
+                  }`}
               >
                 Daftar Baru
               </button>
@@ -449,7 +447,7 @@ export default function AuthPage() {
 
           {/* FORM INPUTS */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            
+
             {/* 1. REGISTER SPECIFIC FIELDS */}
             {authMode === 'register' && (
               <>
@@ -645,10 +643,10 @@ export default function AuthPage() {
                 className="w-full py-2.5 rounded-2xl bg-white border-2 border-slate-200 text-slate-700 font-extrabold text-xs flex items-center justify-center gap-2 hover:bg-slate-50 transition-all cursor-pointer shadow-sm"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                 </svg>
                 <span>Login with Google</span>
               </button>
@@ -722,15 +720,15 @@ export default function AuthPage() {
       {isGoogleModalOpen && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-6 relative">
-            
+
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
                 <svg className="w-6 h-6" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                 </svg>
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-sm">Pilih Akun Google</h3>

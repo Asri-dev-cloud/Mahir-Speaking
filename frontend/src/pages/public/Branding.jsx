@@ -342,11 +342,10 @@ export default function Branding() {
                 type="button"
                 aria-label={`Ke slide ${index + 1}`}
                 onClick={() => setActiveSlide(index)}
-                className={`h-2.5 rounded-full transition-all ${
-                  activeSlide === index
+                className={`h-2.5 rounded-full transition-all ${activeSlide === index
                     ? "w-8 bg-[#0362C0]"
                     : "w-2.5 bg-white/75"
-                }`}
+                  }`}
               />
             ))}
           </div>
@@ -507,7 +506,7 @@ export default function Branding() {
                 </div>
 
                 <a
-                  href={`https://wa.me/6285156916211?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ingin konsultasi jadwal belajar bersama ${mentor.name}.`)}`}
+                  href={`https://wa.me/6281572120190?text=${encodeURIComponent(`Halo Mahir Speaking! Saya ingin konsultasi jadwal belajar bersama ${mentor.name}.`)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="w-full py-2.5 rounded-xl bg-slate-100 text-slate-900 font-black text-xs text-center block hover:bg-[#0362C0] hover:text-white transition-all border border-slate-200"
@@ -539,7 +538,7 @@ export default function Branding() {
             </div>
 
             <a
-              href="https://wa.me/6285156916211?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengikuti%20Sesi%20Native%20Speaker%20Meeting."
+              href="https://wa.me/6281572120190?text=Halo%20Mahir%20Speaking!%20Saya%20berminat%20mengikuti%20Sesi%20Native%20Speaker%20Meeting."
               target="_blank"
               rel="noreferrer"
               className="px-6 py-4 rounded-2xl bg-cyan-400 text-slate-950 font-black text-xs hover:bg-white transition-all border-2 border-white flex-shrink-0 shadow-lg"
@@ -579,18 +578,16 @@ export default function Branding() {
                 key={item.id}
                 type="button"
                 onClick={() => setSelectedPhoto(item)}
-                className={`group overflow-hidden rounded-[24px] bg-white text-left shadow-[0_12px_35px_rgba(8,32,60,0.08)] ring-1 ring-[#0362C0]/10 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(3,98,192,0.15)] ${
-                  index === 0 && filteredActivities.length > 2
+                className={`group overflow-hidden rounded-[24px] bg-white text-left shadow-[0_12px_35px_rgba(8,32,60,0.08)] ring-1 ring-[#0362C0]/10 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(3,98,192,0.15)] ${index === 0 && filteredActivities.length > 2
                     ? "sm:row-span-2"
                     : ""
-                }`}
+                  }`}
               >
                 <div
-                  className={`relative overflow-hidden ${
-                    index === 0 && filteredActivities.length > 2
+                  className={`relative overflow-hidden ${index === 0 && filteredActivities.length > 2
                       ? "h-64 sm:h-[420px]"
                       : "h-56"
-                  }`}
+                    }`}
                 >
                   <img
                     src={item.image}
@@ -631,11 +628,10 @@ export default function Branding() {
             {quotes.map((quote, index) => (
               <article
                 key={quote.tag}
-                className={`rounded-[22px] border p-5 ${
-                  index === 1
+                className={`rounded-[22px] border p-5 ${index === 1
                     ? "border-[#FFFF00] bg-[#FFFF00] text-[#08203C]"
                     : "border-white/20 bg-white/10"
-                }`}
+                  }`}
               >
                 <Star
                   size={20}
@@ -646,9 +642,8 @@ export default function Branding() {
                   “{quote.text}”
                 </p>
                 <p
-                  className={`mt-4 text-[10px] font-black uppercase tracking-[0.16em] ${
-                    index === 1 ? "text-[#0362C0]" : "text-white/60"
-                  }`}
+                  className={`mt-4 text-[10px] font-black uppercase tracking-[0.16em] ${index === 1 ? "text-[#0362C0]" : "text-white/60"
+                    }`}
                 >
                   {quote.tag}
                 </p>
