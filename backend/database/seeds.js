@@ -14,7 +14,7 @@ export async function initSeedData() {
 
     if (isPostgres) {
       console.log('🏗️ [Database] Menginisialisasi/memperbarui skema & Stored Procedures PostgreSQL...');
-      const schemaPath = path.join(__dirname, 'schema_postgres.sql');
+      const schemaPath = path.join(__dirname, 'mahir_speaking_supabase.sql');
       const schemaSql = fs.readFileSync(schemaPath, 'utf8');
 
       // Jalankan seluruh skema SQL
