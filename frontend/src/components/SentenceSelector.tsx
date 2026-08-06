@@ -54,7 +54,7 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
 }) => {
   const [selectedLevelFilter, setSelectedLevelFilter] = useState<string>('ALL');
 
-  const dataList = useMemo(() => exercises || INITIAL_PRACTICE_DATA, [exercises]);
+  const dataList = useMemo(() => (exercises && exercises.length > 0) ? exercises : INITIAL_PRACTICE_DATA, [exercises]);
 
   const filteredSentences = useMemo(() => {
     if (selectedLevelFilter === 'ALL') return dataList;
@@ -62,11 +62,13 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
   }, [selectedLevelFilter, dataList]);
 
   const currentIndex = useMemo(() => {
+    if (!selectedSentence) return -1;
     const idx = filteredSentences.findIndex((item) => item.title === selectedSentence.title);
     return idx >= 0 ? idx : 0;
   }, [filteredSentences, selectedSentence]);
 
   const handlePrev = () => {
+    if (filteredSentences.length === 0) return;
     if (currentIndex > 0) {
       onSelectSentence(filteredSentences[currentIndex - 1]);
     } else {
@@ -75,6 +77,7 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
   };
 
   const handleNext = () => {
+    if (filteredSentences.length === 0) return;
     if (currentIndex < filteredSentences.length - 1) {
       onSelectSentence(filteredSentences[currentIndex + 1]);
     } else {
@@ -113,9 +116,10 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
             onChange={(e) => {
               const val = e.target.value;
               setSelectedLevelFilter(val);
-              const firstMatch = val === 'ALL'
-                ? dataList[0]
-                : dataList.find((i) => i.level === val) || dataList[0];
+              const filtered = val === 'ALL'
+                ? dataList
+                : dataList.filter((i) => i.level === val);
+              const firstMatch = filtered.length > 0 ? filtered[0] : undefined;
               onSelectSentence(firstMatch);
             }}
             className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1 text-xs text-[#0F172A] font-semibold focus:outline-hidden focus:ring-2 focus:ring-[#0F9F95] cursor-pointer"
@@ -133,18 +137,22 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrev}
-            className="p-1.5 rounded-lg hover:bg-slate-100 text-[#0F172A] transition-colors focus:ring-2 focus:ring-[#0F9F95] focus:outline-hidden cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center"
+            disabled={filteredSentences.length <= 1}
+            className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-50 text-[#0F172A] transition-colors focus:ring-2 focus:ring-[#0F9F95] focus:outline-hidden cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center"
             aria-label="Latihan sebelumnya"
             title="Latihan sebelumnya"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-xs text-[#64748B] font-semibold min-w-[32px] text-center">
-            {currentIndex + 1} / {filteredSentences.length}
-          </span>
+          {filteredSentences.length > 0 && (
+            <span className="text-xs text-[#64748B] font-semibold min-w-[32px] text-center">
+              {currentIndex + 1} / {filteredSentences.length}
+            </span>
+          )}
           <button
             onClick={handleNext}
-            className="p-1.5 rounded-lg hover:bg-slate-100 text-[#0F172A] transition-colors focus:ring-2 focus:ring-[#0F9F95] focus:outline-hidden cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center"
+            disabled={filteredSentences.length <= 1}
+            className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-50 text-[#0F172A] transition-colors focus:ring-2 focus:ring-[#0F9F95] focus:outline-hidden cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center"
             aria-label="Latihan berikutnya"
             title="Latihan berikutnya"
           >
@@ -156,32 +164,46 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
       {/* Selected Exercise Header */}
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${getLevelBadgeColor(selectedSentence.level)}`}>
-            Level {selectedSentence.level}
-          </span>
-          <h3 className="text-sm font-bold text-[#0F172A]">{selectedSentence.title}</h3>
+          {selectedSentence && (
+            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${getLevelBadgeColor(selectedSentence.level)}`}>
+              Level {selectedSentence.level}
+            </span>
+          )}
+          <h3 className="text-sm font-bold text-[#0F172A]">{selectedSentence?.title || 'Tidak Ada Latihan'}</h3>
         </div>
-        <p className="text-xs text-[#64748B]">{selectedSentence.instruction}</p>
+        <p className="text-xs text-[#64748B]">{selectedSentence?.instruction || 'Silakan pilih level filter yang lain.'}</p>
       </div>
 
       {/* Target English sentence */}
-      <div className="bg-[#F8FAFC] rounded-xl p-3.5 border border-[#E2E8F0] space-y-1.5">
-        <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
-          Kalimat Target
+      {selectedSentence ? (
+        <div className="bg-[#F8FAFC] rounded-xl p-3.5 border border-[#E2E8F0] space-y-1.5">
+          <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+            Kalimat Target
+          </div>
+          <p className="text-base font-bold text-[#071B34] leading-relaxed select-text">
+            "{selectedSentence.referenceText}"
+          </p>
+          <p className="text-xs text-[#64748B]">
+            Arti: {selectedSentence.translation}
+          </p>
         </div>
-        <p className="text-base font-bold text-[#071B34] leading-relaxed select-text">
-          "{selectedSentence.referenceText}"
-        </p>
-        <p className="text-xs text-[#64748B]">
-          Arti: {selectedSentence.translation}
-        </p>
-      </div>
+      ) : (
+        <div className="bg-[#F8FAFC] rounded-xl p-6 border border-[#E2E8F0] text-center space-y-2">
+          <p className="text-sm font-semibold text-slate-500">
+            Tidak ada latihan untuk level ini gais~
+          </p>
+          <p className="text-xs text-[#64748B]">
+            Silakan pilih level filter yang lain atau tambahkan lewat admin.
+          </p>
+        </div>
+      )}
 
       {/* Listen Sample button */}
       <div>
         {isPlayingSample ? (
           <button
             onClick={onStopSample}
+            disabled={!selectedSentence}
             className="w-full py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-2xs focus:ring-2 focus:ring-amber-500 focus:outline-hidden cursor-pointer min-h-[44px]"
           >
             <Square className="w-3.5 h-3.5 fill-current animate-pulse" />
@@ -190,7 +212,8 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
         ) : (
           <button
             onClick={onPlaySample}
-            className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#0F172A] font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-2xs focus:ring-2 focus:ring-[#0F9F95] focus:outline-hidden cursor-pointer min-h-[44px]"
+            disabled={!selectedSentence}
+            className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-[#0F172A] font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-2xs focus:ring-2 focus:ring-[#0F9F95] focus:outline-hidden cursor-pointer min-h-[44px]"
           >
             <Volume2 className="w-4 h-4 text-[#0F9F95]" />
             <span>Dengarkan Contoh</span>
@@ -201,7 +224,8 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
       {/* Primary Button "Mulai Latihan" */}
       <button
         onClick={onStartPracticeStep}
-        className="w-full py-3 px-4 rounded-xl bg-[#0F9F95] hover:bg-[#0b827a] text-white font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md cursor-pointer min-h-[44px]"
+        disabled={!selectedSentence}
+        className="w-full py-3 px-4 rounded-xl bg-[#0F9F95] hover:bg-[#0b827a] disabled:opacity-50 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md cursor-pointer min-h-[44px]"
       >
         <Play className="w-4 h-4 fill-current" />
         <span>Mulai Latihan</span>

@@ -140,6 +140,9 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
         if (res.success && res.exercises) {
           setExercises(res.exercises);
           setSelectedSentence((prev) => {
+            if (!prev) {
+              return res.exercises.length > 0 ? res.exercises[0] : INITIAL_PRACTICE_DATA[0];
+            }
             const isDefault = prev.title === INITIAL_PRACTICE_DATA[0].title && prev.referenceText === INITIAL_PRACTICE_DATA[0].referenceText;
             if (isDefault && res.exercises.length > 0) {
               return res.exercises[0];
@@ -158,11 +161,11 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
 
   // Calculate Voice Scores
   const calculatedScore: ScoringResult | null = useMemo(() => {
-    if (!finalTranscript.trim() || isListening) {
+    if (!finalTranscript.trim() || isListening || !selectedSentence) {
       return null;
     }
     return calculateScores(selectedSentence.referenceText, finalTranscript, durationSeconds);
-  }, [selectedSentence.referenceText, finalTranscript, isListening, durationSeconds]);
+  }, [selectedSentence, finalTranscript, isListening, durationSeconds]);
 
   // Auto transition from Step 2 to Step 3 in Voice Coach
   useEffect(() => {
@@ -239,7 +242,8 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
   const handleNextExerciseVoice = () => {
     setIsCustomExercise(false);
     const currentList = exercises.length > 0 ? exercises : INITIAL_PRACTICE_DATA;
-    const currentIdx = currentList.findIndex((i) => i.title === selectedSentence.title);
+    if (currentList.length === 0) return;
+    const currentIdx = selectedSentence ? currentList.findIndex((i) => i.title === selectedSentence.title) : -1;
     const nextIdx = currentIdx >= 0 && currentIdx < currentList.length - 1 ? currentIdx + 1 : 0;
     setSelectedSentence(currentList[nextIdx]);
     resetState();
@@ -253,9 +257,9 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
     setTimeout(() => {
       const historyRecord: HistoryItem = {
         id: Date.now().toString(),
-        title: selectedSentence.title,
-        level: selectedSentence.level,
-        referenceText: selectedSentence.referenceText,
+        title: selectedSentence?.title || 'Latihan',
+        level: selectedSentence?.level || 'A1',
+        referenceText: selectedSentence?.referenceText || '',
         recognizedText: finalTranscript.trim(),
         pronunciationScore: calculatedScore.pronunciationScore,
         completenessScore: calculatedScore.completenessScore,
@@ -656,7 +660,7 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
                                 resetState();
                               }}
                               isPlayingSample={isPlayingTTS}
-                              onPlaySample={() => speak(selectedSentence.referenceText)}
+                              onPlaySample={() => selectedSentence && speak(selectedSentence.referenceText)}
                               onStopSample={stopTTS}
                               onStartPracticeStep={() => changeVoiceStep(2)}
                               exercises={exercises}
@@ -664,7 +668,7 @@ export const MashiraAssistant: React.FC<MashiraAssistantProps> = ({
                           )}
 
                           {/* STEP 2: BICARA */}
-                          {voiceStep === 2 && (
+                          {voiceStep === 2 && selectedSentence && (
                             <VoiceRecorder
                               referenceText={selectedSentence.referenceText}
                               translation={selectedSentence.translation}
