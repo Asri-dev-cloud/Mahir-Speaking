@@ -7,7 +7,17 @@ const router = express.Router();
 // 📂 Ambil semua data latihan (Public / All Users)
 router.get('/', async (req, res) => {
   try {
-    const exercises = await query(`SELECT * FROM exercises ORDER BY id ASC`);
+    const rawExercises = await query(`SELECT * FROM exercises ORDER BY id ASC`);
+    const exercises = rawExercises.map(ex => ({
+      id: ex.id,
+      level: ex.level,
+      title: ex.title,
+      instruction: ex.instruction,
+      referenceText: ex.referenceText || ex.reference_text || '',
+      translation: ex.translation,
+      created_at: ex.created_at,
+      updated_at: ex.updated_at
+    }));
     return res.json({ success: true, exercises });
   } catch (err) {
     console.error('Error fetching exercises:', err);
@@ -24,8 +34,11 @@ router.post('/', verifyToken, checkRole(['admin']), async (req, res) => {
       return res.status(400).json({ success: false, message: 'Semua field wajib diisi ya bestie!' });
     }
 
+    const { dbType } = await import('../database/db.js');
+    const column = dbType === 'postgres' ? 'reference_text' : 'referenceText';
+
     const result = await query(
-      `INSERT INTO exercises (level, title, instruction, referenceText, translation) VALUES (?, ?, ?, ?, ?)`,
+      `INSERT INTO exercises (level, title, instruction, ${column}, translation) VALUES (?, ?, ?, ?, ?)`,
       [level, title, instruction, referenceText, translation]
     );
 
@@ -55,8 +68,11 @@ router.put('/:id', verifyToken, checkRole(['admin']), async (req, res) => {
       return res.status(404).json({ success: false, message: 'Latihan tidak ditemukan.' });
     }
 
+    const { dbType } = await import('../database/db.js');
+    const column = dbType === 'postgres' ? 'reference_text' : 'referenceText';
+
     await query(
-      `UPDATE exercises SET level = ?, title = ?, instruction = ?, referenceText = ?, translation = ? WHERE id = ?`,
+      `UPDATE exercises SET level = ?, title = ?, instruction = ?, ${column} = ?, translation = ? WHERE id = ?`,
       [level, title, instruction, referenceText, translation, exerciseId]
     );
 

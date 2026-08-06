@@ -13,8 +13,8 @@ export default defineConfig({
         configure: (proxy, _options) => {
           proxy.on('error', (_err, _req, res) => {
             if (res && !res.headersSent) {
-              res.writeHead(200, { 'Content-Type': 'application/json' });
-              res.end(JSON.stringify({ success: true, isOffline: true }));
+              res.writeHead(502, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: false, isOffline: true, message: 'Backend offline' }));
             }
           });
         }
