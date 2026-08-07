@@ -575,8 +575,19 @@ export default function LMSView() {
         const profileRes = await userService.getProfile();
         if (!active || !profileRes.success || !profileRes.user) return;
 
-        setLiveUser(profileRes.user);
-        updateUserProfile(profileRes.user);
+        // Map completedLessons dari database ke completed_units agar sinkron penuh!
+        const completedUnits = Array.isArray(profileRes.completedLessons)
+          ? profileRes.completedLessons.map(l => l.lesson_id)
+          : [];
+
+        const dbUser = {
+          ...profileRes.user,
+          completed_units: completedUnits
+        };
+
+        setLiveUser(dbUser);
+        updateUserProfile(dbUser);
+        setCompletedIds(completedUnits);
       } catch (err) {
         console.error('Gagal mengambil data LMS terbaru:', err);
       }

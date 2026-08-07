@@ -46,7 +46,17 @@ export const AuthProvider = ({ children }) => {
         .then(data => {
           if (data.success && data.user) {
             const saved = JSON.parse(localStorage.getItem('mahir_user') || '{}');
-            const mergedUser = { ...saved, ...data.user };
+            
+            // Map completedLessons dari database ke completed_units agar sinkron penuh!
+            const completedUnits = Array.isArray(data.completedLessons)
+              ? data.completedLessons.map(l => l.lesson_id)
+              : (saved.completed_units || []);
+
+            const mergedUser = {
+              ...saved,
+              ...data.user,
+              completed_units: completedUnits
+            };
             setUser(mergedUser);
             localStorage.setItem('mahir_user', JSON.stringify(mergedUser));
           }
