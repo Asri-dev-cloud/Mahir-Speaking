@@ -69,6 +69,10 @@ export default function QuizView() {
     } else {
       // Quiz Complete
       setIsCompleted(true);
+      
+      // Calculate totalXp earned based on score (matching results screen formula)
+      const totalXp = newScore * 25 + 20;
+      
       addXpAndPoints(totalXp, Math.floor(totalXp / 2), true);
 
       // Trigger Confetti
