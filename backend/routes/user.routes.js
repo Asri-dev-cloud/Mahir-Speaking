@@ -47,15 +47,32 @@ router.get('/profile', verifyToken, async (req, res) => {
 // Update Profile
 router.put('/profile', verifyToken, async (req, res) => {
   try {
-    const { full_name, whatsapp, avatar } = req.body;
+    const { full_name, whatsapp, avatar, xp, points, streak } = req.body;
+    
+    const fields = [];
+    const values = [];
+
+    if (full_name !== undefined) { fields.push('full_name = ?'); values.push(full_name); }
+    if (whatsapp !== undefined) { fields.push('whatsapp = ?'); values.push(whatsapp); }
+    if (avatar !== undefined) { fields.push('avatar = ?'); values.push(avatar); }
+    if (xp !== undefined) { fields.push('xp = ?'); values.push(Number(xp)); }
+    if (points !== undefined) { fields.push('points = ?'); values.push(Number(points)); }
+    if (streak !== undefined) { fields.push('streak = ?'); values.push(Number(streak)); }
+
+    if (fields.length === 0) {
+      return res.status(400).json({ success: false, message: 'No fields to update.' });
+    }
+
+    values.push(req.user.id);
     await query(
-      `UPDATE users SET full_name = ?, whatsapp = ?, avatar = ? WHERE id = ?`,
-      [full_name, whatsapp, avatar, req.user.id]
+      `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
+      values
     );
 
     const updated = await query(`SELECT id, full_name, username, email, whatsapp, role, package_id, xp, points, streak, avatar FROM users WHERE id = ?`, [req.user.id]);
     return res.json({ success: true, message: 'Profile updated successfully!', user: updated[0] });
   } catch (err) {
+    console.error('Update profile error:', err);
     return res.status(500).json({ success: false, message: 'Failed to update profile.' });
   }
 });

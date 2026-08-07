@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from '../database/db.js';
+import { query, dbType } from '../database/db.js';
 import { verifyToken, checkRole } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -17,7 +17,9 @@ router.get('/analytics', async (req, res) => {
     const totalLessons = await query(`SELECT COUNT(*) as count FROM lessons`);
     const activeTrials = await query(`SELECT COUNT(*) as count FROM users WHERE is_trial = true`);
     const totalLeads = await query(`SELECT COUNT(*) as count FROM placement_test_leads`);
-    const expiringSoon = await query(`SELECT COUNT(*) as count FROM users WHERE package_expires BETWEEN NOW() AND NOW() + INTERVAL '7 days'`);
+    const expiringSoon = dbType === 'postgres'
+      ? await query(`SELECT COUNT(*) as count FROM users WHERE package_expires BETWEEN NOW() AND NOW() + INTERVAL '7 days'`)
+      : await query(`SELECT COUNT(*) as count FROM users WHERE package_expires BETWEEN datetime('now') AND datetime('now', '+7 days')`);
     const totalRevenue = await query(`
       SELECT COALESCE(SUM(gross_amount), 0) AS sum
       FROM payment_transactions

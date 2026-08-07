@@ -155,13 +155,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ✨ Tambah XP & Poin Biar Makin Slay di Leaderboard
-  const addXpAndPoints = (xp, points) => {
+  const addXpAndPoints = async (xp, points) => {
+    let nextXp = 0;
+    let nextPoints = 0;
+
     setUser(prev => {
       if (!prev) return prev;
+      nextXp = (prev.xp || 0) + xp;
+      nextPoints = (prev.points || 0) + points;
       const updated = {
         ...prev,
-        xp: (prev.xp || 0) + xp,
-        points: (prev.points || 0) + points
+        xp: nextXp,
+        points: nextPoints
       };
       localStorage.setItem('mahir_user', JSON.stringify(updated));
 
@@ -179,6 +184,16 @@ export const AuthProvider = ({ children }) => {
 
       return updated;
     });
+
+    // Kirim pembaruan ke database backend secara asinkron
+    try {
+      await userService.updateProfile({
+        xp: nextXp,
+        points: nextPoints
+      });
+    } catch (err) {
+      console.error('Failed to sync XP/points to backend:', err);
+    }
   };
 
   // 🌐 Login dengan Google Direct OAuth Flow

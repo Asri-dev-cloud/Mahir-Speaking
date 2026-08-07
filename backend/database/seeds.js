@@ -23,126 +23,126 @@ export async function initSeedData() {
 
       // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari cloud Neon Postgres agar leaderboard bersih
       await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'tutor@mahirspeaking.com', 'admin@mahirspeaking.com')`);
-      return;
+    } else {
+      // 🏗️ Bikin Tabel Database Kalo Belum Ada Gais~
+      await query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          full_name TEXT NOT NULL,
+          username TEXT UNIQUE NOT NULL,
+          email TEXT UNIQUE NOT NULL,
+          whatsapp TEXT,
+          password TEXT NOT NULL,
+          role TEXT DEFAULT 'student',
+          package_id INTEGER DEFAULT 1,
+          xp INTEGER DEFAULT 0,
+          points INTEGER DEFAULT 0,
+          streak INTEGER DEFAULT 1,
+          avatar TEXT DEFAULT '/ma.png',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      await query(`
+        CREATE TABLE IF NOT EXISTS packages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          price INTEGER NOT NULL,
+          period TEXT DEFAULT 'monthly',
+          ai_daily_limit INTEGER NOT NULL,
+          tutor_sessions INTEGER NOT NULL,
+          badge TEXT,
+          features TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      await query(`
+        CREATE TABLE IF NOT EXISTS courses (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          level TEXT NOT NULL,
+          description TEXT,
+          tutor_id INTEGER,
+          thumbnail TEXT,
+          total_lessons INTEGER DEFAULT 0,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      await query(`
+        CREATE TABLE IF NOT EXISTS lessons (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          course_id INTEGER NOT NULL,
+          title TEXT NOT NULL,
+          order_index INTEGER NOT NULL,
+          video_url TEXT,
+          reading_content TEXT,
+          target_vocabulary TEXT,
+          speaking_prompt TEXT,
+          xp_reward INTEGER DEFAULT 50,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      await query(`
+        CREATE TABLE IF NOT EXISTS quizzes (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          lesson_id INTEGER NOT NULL,
+          question TEXT NOT NULL,
+          options TEXT NOT NULL,
+          correct_answer INTEGER NOT NULL,
+          xp_reward INTEGER DEFAULT 20
+        )
+      `);
+
+      await query(`
+        CREATE TABLE IF NOT EXISTS user_progress (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          lesson_id INTEGER NOT NULL,
+          completed INTEGER DEFAULT 0,
+          score INTEGER DEFAULT 0,
+          completed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      await query(`
+        CREATE TABLE IF NOT EXISTS purchases (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          package_id INTEGER NOT NULL,
+          amount INTEGER NOT NULL,
+          payment_method TEXT DEFAULT 'QRIS',
+          status TEXT DEFAULT 'success',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      await query(`
+        CREATE TABLE IF NOT EXISTS ai_chats (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          role TEXT NOT NULL,
+          mode TEXT DEFAULT 'general',
+          content TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // 🤖 Tabel Latihan Bot Mashira AI
+      await query(`
+        CREATE TABLE IF NOT EXISTS exercises (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          level TEXT NOT NULL,
+          title TEXT NOT NULL,
+          instruction TEXT NOT NULL,
+          referenceText TEXT NOT NULL,
+          translation TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
     }
-
-    // 🏗️ Bikin Tabel Database Kalo Belum Ada Gais~
-    await query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        full_name TEXT NOT NULL,
-        username TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        whatsapp TEXT,
-        password TEXT NOT NULL,
-        role TEXT DEFAULT 'student',
-        package_id INTEGER DEFAULT 1,
-        xp INTEGER DEFAULT 0,
-        points INTEGER DEFAULT 0,
-        streak INTEGER DEFAULT 1,
-        avatar TEXT DEFAULT '/ma.png',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS packages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        price INTEGER NOT NULL,
-        period TEXT DEFAULT 'monthly',
-        ai_daily_limit INTEGER NOT NULL,
-        tutor_sessions INTEGER NOT NULL,
-        badge TEXT,
-        features TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS courses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        level TEXT NOT NULL,
-        description TEXT,
-        tutor_id INTEGER,
-        thumbnail TEXT,
-        total_lessons INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS lessons (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        course_id INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        order_index INTEGER NOT NULL,
-        video_url TEXT,
-        reading_content TEXT,
-        target_vocabulary TEXT,
-        speaking_prompt TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS quizzes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        lesson_id INTEGER NOT NULL,
-        question TEXT NOT NULL,
-        options TEXT NOT NULL,
-        correct_answer INTEGER NOT NULL,
-        xp_reward INTEGER DEFAULT 20
-      )
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS user_progress (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        lesson_id INTEGER NOT NULL,
-        completed INTEGER DEFAULT 0,
-        score INTEGER DEFAULT 0,
-        completed_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS purchases (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        package_id INTEGER NOT NULL,
-        amount INTEGER NOT NULL,
-        payment_method TEXT DEFAULT 'QRIS',
-        status TEXT DEFAULT 'success',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await query(`
-      CREATE TABLE IF NOT EXISTS ai_chats (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        role TEXT NOT NULL,
-        mode TEXT DEFAULT 'general',
-        content TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // 🤖 Tabel Latihan Bot Mashira AI
-    await query(`
-      CREATE TABLE IF NOT EXISTS exercises (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        level TEXT NOT NULL,
-        title TEXT NOT NULL,
-        instruction TEXT NOT NULL,
-        referenceText TEXT NOT NULL,
-        translation TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
 
     // 📦 Cek & Semai Paket Langganan Biar User Bisa Belanja
     console.log('Nyiapin paket-paket langganan ketche dlu gais...');
@@ -159,7 +159,7 @@ export async function initSeedData() {
 
     // 👑 Cek & Semai User Awal (Hanya Hartini Asri Senior Admin, Fauzi, dan Cintiani)
     const usersCount = await query(`SELECT COUNT(*) as count FROM users`);
-    if (usersCount[0].count === 0) {
+    if (Number(usersCount[0].count) === 0) {
       console.log('Nyiapin data user awal...');
       const hashedPassword = await bcrypt.hash('password123', 10);
 
@@ -188,24 +188,64 @@ export async function initSeedData() {
 
     // 📚 Cek Kursus & Materi Pembelajaran
     const coursesCount = await query(`SELECT COUNT(*) as count FROM courses`);
-    if (coursesCount[0].count === 0) {
+    if (Number(coursesCount[0].count) === 0) {
       console.log('Nyiapin materi kursus yang daging semua gais...');
       const tutor = await query(`SELECT id FROM users WHERE role = 'tutor' LIMIT 1`);
-      const tutorId = tutor[0]?.id || 5;
+      const tutorId = tutor[0]?.id || null;
 
       await query(`
         INSERT INTO courses (title, level, description, tutor_id, thumbnail, total_lessons)
         VALUES 
-        ('Daily Conversation Mastery', 'A1 - Beginner', 'Learn essential English phrases for everyday introductions, ordering food, asking for directions, and small talk.', ${tutorId}, 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600', 4),
-        ('Business English Speaking & Pitching', 'B1 - Intermediate', 'Master professional workplace communication, meeting contributions, job interview answers, and elevator pitches.', ${tutorId}, 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=600', 3),
-        ('IELTS Speaking 7.0+ Intensive', 'B2 - Upper Intermediate', 'Advanced strategies for IELTS Speaking Parts 1, 2, and 3 with real examiner criteria and fluency drills.', ${tutorId}, 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600', 3),
-        ('Confident Public Speaking & Debating', 'C1 - Advanced', 'Hone persuasion skills, rhetorical devices, voice modulation, and spontaneous speech formulation.', ${tutorId}, 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=600', 2)
+        ('Daily Conversation Mastery', 'A1 - Beginner', 'Learn essential English phrases for everyday introductions, ordering food, asking for directions, and small talk.', ${tutorId === null ? 'NULL' : tutorId}, 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600', 4),
+        ('Business English Speaking & Pitching', 'B1 - Intermediate', 'Master professional workplace communication, meeting contributions, job interview answers, and elevator pitches.', ${tutorId === null ? 'NULL' : tutorId}, 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=600', 3),
+        ('IELTS Speaking 7.0+ Intensive', 'B2 - Upper Intermediate', 'Advanced strategies for IELTS Speaking Parts 1, 2, and 3 with real examiner criteria and fluency drills.', ${tutorId === null ? 'NULL' : tutorId}, 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600', 3),
+        ('Confident Public Speaking & Debating', 'C1 - Advanced', 'Hone persuasion skills, rhetorical devices, voice modulation, and spontaneous speech formulation.', ${tutorId === null ? 'NULL' : tutorId}, 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=600', 2)
       `);
+    }
+
+    // 📚 Cek & Semai Lessons 1 sampai 40 biar kuis & LMS nyambung
+    if (!isPostgres) {
+      try {
+        await query(`ALTER TABLE lessons ADD COLUMN xp_reward INTEGER DEFAULT 50`);
+      } catch (e) {
+        // Kolom mungkin sudah ada, abaikan
+      }
+    }
+    const lessonsCount = await query(`SELECT COUNT(*) as count FROM lessons`);
+    if (Number(lessonsCount[0].count) === 0) {
+      console.log('Nyiapin data lesson 1-40 biar lms & kuis nyambung... 🚀');
+      const courses = await query(`SELECT id FROM courses ORDER BY id ASC`);
+      const course1Id = courses[0]?.id || 1;
+      const course2Id = courses[1]?.id || 2;
+      const course3Id = courses[2]?.id || 3;
+      const course4Id = courses[3]?.id || 4;
+
+      for (let i = 1; i <= 40; i++) {
+        let courseId = course1Id;
+        if (i > 10 && i <= 20) courseId = course2Id;
+        else if (i > 20 && i <= 30) courseId = course3Id;
+        else if (i > 30) courseId = course4Id;
+
+        const title = `Unit ${i} Speaking Practice`;
+
+        if (isPostgres) {
+          await query(`
+            INSERT INTO lessons (id, course_id, title, order_index, reading_content, target_vocabulary, speaking_prompt, xp_reward, is_published)
+            VALUES (?, ?, ?, ?, ?, '[]'::jsonb, ?, 80, true)
+            ON CONFLICT (id) DO NOTHING
+          `, [i, courseId, title, i, `Reading content for ${title}`, `Speaking prompt for ${title}`]);
+        } else {
+          await query(`
+            INSERT OR IGNORE INTO lessons (id, course_id, title, order_index, reading_content, target_vocabulary, speaking_prompt, xp_reward)
+            VALUES (?, ?, ?, ?, ?, '[]', ?, 80)
+          `, [i, courseId, title, i, `Reading content for ${title}`, `Speaking prompt for ${title}`]);
+        }
+      }
     }
 
     // 🤖 Semai data latihan bot Mashira AI
     const exercisesCount = await query(`SELECT COUNT(*) as count FROM exercises`);
-    if (exercisesCount[0].count === 0) {
+    if (Number(exercisesCount[0].count) === 0) {
       console.log('Nyiapin data latihan chatbot awal gais...');
       await query(`
         INSERT INTO exercises (level, title, instruction, referenceText, translation)

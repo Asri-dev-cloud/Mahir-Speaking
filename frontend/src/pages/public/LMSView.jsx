@@ -624,11 +624,9 @@ export default function LMSView() {
 
   const progress = user ? Math.round((completedIds.length / lessons.length) * 100) : 0;
   const displayCompletedCount = user ? completedIds.length : 0;
-  const displayStreak = liveUser ? (liveUser.streak || 0) : 0;
-  const displayXp = liveUser ? (liveUser.xp || 0) : 0;
-
-  // Hak akses paket dibaca dari data akun terbaru.
   const accountUser = liveUser || user;
+  const displayStreak = accountUser ? (accountUser.streak || 0) : 0;
+  const displayXp = accountUser ? (accountUser.xp || 0) : 0;
   const packageName = String(accountUser?.package_name || '').toLowerCase();
   const packageExpiresAt = accountUser?.package_expires
     ? new Date(accountUser.package_expires).getTime()
@@ -800,6 +798,8 @@ export default function LMSView() {
 
       const updatedUser = {
         ...(liveUser || user),
+        xp: ((liveUser || user).xp || 0) + addedXp,
+        points: ((liveUser || user).points || 0) + Math.floor(addedXp / 2),
         has_completed_quiz: true,
         quiz_completed: true,
         quizzes_completed: ((liveUser || user).quizzes_completed || 0) + 1,
