@@ -28,8 +28,8 @@ export default {
         }
       },
       fontFamily: {
-        stinger: ['Outfit', 'sans-serif'],
-        helios: ['Plus Jakarta Sans', 'sans-serif'],
+        stinger: ['Roboto', 'sans-serif'],
+        helios: ['Roboto', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],
         brush: ['Permanent Marker', 'Caveat', 'cursive'],
         verandah: ['VerandahReverie', 'cursive', 'sans-serif'],

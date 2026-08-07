@@ -42,7 +42,7 @@ export default function Profile() {
 
   const currentUser = profile || user;
 
-  const presetAvatars = ['/ma.png', '/mi.png', '/mo.png', '/4.png', '/1.png'];
+  const presetAvatars = ['/ma.png', '/mi.png', '/mo.png', '/mashira chibi.png', '/mashira chibi.png'];
 
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];

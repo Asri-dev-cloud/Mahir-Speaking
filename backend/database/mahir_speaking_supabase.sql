@@ -224,6 +224,7 @@ returns table (
   progress_id bigint,
   new_xp integer,
   new_points integer,
+  new_streak integer,
   status_code varchar
 )
 language plpgsql
@@ -237,9 +238,10 @@ declare
   v_reward integer;
   v_xp integer;
   v_points integer;
+  v_streak integer;
 begin
   if not exists (select 1 from public.users where id = p_user_id) then
-    return query select 0::bigint, 0, 0, 'USER_NOT_FOUND'::varchar;
+    return query select 0::bigint, 0, 0, 0, 'USER_NOT_FOUND'::varchar;
     return;
   end if;
 
@@ -266,10 +268,10 @@ begin
        set score = greatest(v_old_score, greatest(0, least(100, p_score)))
      where id = v_progress_id;
 
-    select xp, points into v_xp, v_points
+    select xp, points, streak into v_xp, v_points, v_streak
     from public.users where id = p_user_id;
 
-    return query select v_progress_id, v_xp, v_points, 'ALREADY_COMPLETED'::varchar;
+    return query select v_progress_id, v_xp, v_points, v_streak, 'ALREADY_COMPLETED'::varchar;
     return;
   end if;
 
@@ -288,9 +290,9 @@ begin
          points = points + floor(v_reward / 2.0)::integer,
          streak = streak + 1
     where id = p_user_id
-  returning xp, points into v_xp, v_points;
+  returning xp, points, streak into v_xp, v_points, v_streak;
 
-  return query select v_progress_id, v_xp, v_points, 'SUCCESS'::varchar;
+  return query select v_progress_id, v_xp, v_points, v_streak, 'SUCCESS'::varchar;
 end;
 $$;
 

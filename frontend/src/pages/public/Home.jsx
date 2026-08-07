@@ -257,7 +257,7 @@ export default function Home() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[420px] sm:h-[420px] rounded-full border-2 border-dashed border-emerald-300/80 pointer-events-none z-0"></div>
 
               <img
-                src="/2.png"
+                src="/mashira orang.png"
                 alt="Student Mahir Speaking"
                 className="w-auto max-h-[340px] xs:max-h-[400px] sm:max-h-[520px] lg:max-h-[560px] object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.18)] block align-bottom pointer-events-none z-20 relative -mb-4 sm:-mb-8 lg:-mb-12"
               />
@@ -306,7 +306,7 @@ export default function Home() {
               <div className="relative my-2 flex justify-center items-center w-full">
                 <div className="absolute inset-0 bg-lime/25 rounded-full blur-3xl pointer-events-none transform scale-90"></div>
                 <img
-                  src="/4.png"
+                  src="/mashira chibi.png"
                   alt="Mashira - AI Speaking Companion"
                   className="h-80 sm:h-[430px] w-auto object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] relative z-10 hover:scale-105 transition-transform duration-500"
                 />

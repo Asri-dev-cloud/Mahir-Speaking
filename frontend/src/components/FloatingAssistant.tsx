@@ -30,7 +30,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
         <span>Tanya Mashira AI Assistant</span>
       </div>
 
-      {/* Circular Floating Mashira Assistant Button with Character 4.png */}
+      {/* Circular Floating Mashira Assistant Button with Character mashira chibi.png */}
       <button
         ref={buttonRef}
         onClick={onToggle}
@@ -47,9 +47,9 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
           <span className="absolute -inset-1 rounded-full bg-[#FFFF00]/50 animate-ping pointer-events-none" />
         )}
 
-        {/* Character Avatar 4.png */}
+        {/* Character Avatar mashira chibi.png */}
         <img
-          src="/4.png"
+          src="/mashira chibi.png"
           alt="Mashira Assistant Character"
           className="w-full h-full rounded-full object-cover p-0.5 bg-[#FFFF00]"
         />

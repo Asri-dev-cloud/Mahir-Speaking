@@ -73,7 +73,8 @@ router.post('/complete-lesson', verifyToken, async (req, res) => {
         ? `Lesson score updated! Current highscore: ${score}%`
         : `Lesson completed! +${addXp} XP earned! ✨`,
       xp: result.new_xp,
-      points: result.new_points
+      points: result.new_points,
+      streak: result.new_streak
     });
   } catch (err) {
     console.error('Complete lesson error:', err);

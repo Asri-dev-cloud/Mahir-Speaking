@@ -788,6 +788,7 @@ export default function LMSView() {
   const finishLesson = async (customXp, quizScore) => {
     if (!selectedLesson) return;
 
+    const isAlreadyCompleted = completedIds.includes(selectedLesson.id);
     const nextCompleted = Array.from(new Set([...completedIds, selectedLesson.id]));
     setCompletedIds(nextCompleted);
 
@@ -798,11 +799,20 @@ export default function LMSView() {
 
       const updatedUser = {
         ...(liveUser || user),
-        xp: ((liveUser || user).xp || 0) + addedXp,
-        points: ((liveUser || user).points || 0) + Math.floor(addedXp / 2),
+        xp: isAlreadyCompleted
+          ? ((liveUser || user).xp || 0)
+          : ((liveUser || user).xp || 0) + addedXp,
+        points: isAlreadyCompleted
+          ? ((liveUser || user).points || 0)
+          : ((liveUser || user).points || 0) + Math.floor(addedXp / 2),
+        streak: isAlreadyCompleted
+          ? ((liveUser || user).streak || 0)
+          : ((liveUser || user).streak || 0) + 1,
         has_completed_quiz: true,
         quiz_completed: true,
-        quizzes_completed: ((liveUser || user).quizzes_completed || 0) + 1,
+        quizzes_completed: isAlreadyCompleted
+          ? ((liveUser || user).quizzes_completed || 0)
+          : ((liveUser || user).quizzes_completed || 0) + 1,
         completed_units: nextCompleted
       };
 
@@ -836,13 +846,18 @@ export default function LMSView() {
         });
         console.log('⚡ [LMS debug] Respon completeLesson:', res);
         if (res.success) {
-          // Fetch updated profile to sync latest XP, points, and streak
-          const profileRes = await userService.getProfile();
-          console.log('⚡ [LMS debug] Respon getProfile:', profileRes);
-          if (profileRes.success && profileRes.user) {
-            setLiveUser(profileRes.user);
-            updateUserProfile(profileRes.user);
-          }
+          // Sinkronisasi dengan database secara langsung dan presisi
+          const dbUser = {
+            ...(liveUser || user),
+            xp: res.xp !== undefined ? res.xp : updatedUser.xp,
+            points: res.points !== undefined ? res.points : updatedUser.points,
+            streak: res.streak !== undefined ? res.streak : updatedUser.streak,
+            has_completed_quiz: true,
+            quiz_completed: true,
+            completed_units: nextCompleted
+          };
+          setLiveUser(dbUser);
+          updateUserProfile(dbUser);
         }
       } catch (err) {
         console.error('⚡ [LMS debug] Gagal menyimpan progres ke database:', err);
@@ -964,7 +979,7 @@ export default function LMSView() {
 
             <div className="relative hidden min-h-[260px] lg:block">
               <img
-                src="/4.png"
+                src="/mashira chibi.png"
                 alt="Mashira, AI speaking companion"
                 className="absolute bottom-0 left-1/2 h-[320px] w-auto -translate-x-1/2 object-contain drop-shadow-2xl"
               />

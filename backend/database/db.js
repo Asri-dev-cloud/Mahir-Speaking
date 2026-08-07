@@ -489,7 +489,7 @@ export const dbCompleteLesson = async (
 
     const users = await query(
       `
-        SELECT xp, points
+        SELECT xp, points, streak
         FROM users
         WHERE id = ?
       `,
@@ -500,6 +500,7 @@ export const dbCompleteLesson = async (
       progress_id: existingProgress[0].id,
       new_xp: users[0]?.xp || 0,
       new_points: users[0]?.points || 0,
+      new_streak: users[0]?.streak || 0,
       status_code: "ALREADY_COMPLETED",
     };
   }
@@ -560,7 +561,7 @@ export const dbCompleteLesson = async (
 
   const updatedUsers = await query(
     `
-      SELECT xp, points
+      SELECT xp, points, streak
       FROM users
       WHERE id = ?
     `,
@@ -572,6 +573,7 @@ export const dbCompleteLesson = async (
       progress_id: progressId,
       new_xp: 0,
       new_points: 0,
+      new_streak: 0,
       status_code: "USER_NOT_FOUND",
     };
   }
@@ -580,6 +582,7 @@ export const dbCompleteLesson = async (
     progress_id: progressId,
     new_xp: updatedUsers[0].xp,
     new_points: updatedUsers[0].points,
+    new_streak: updatedUsers[0].streak,
     status_code: "SUCCESS",
   };
 };

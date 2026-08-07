@@ -123,20 +123,36 @@ export default function LeaderboardView() {
         currentUser = JSON.parse(localStorage.getItem('mahir_user'));
       } catch (e) {}
 
-      let allUsers = [...savedReg];
-      if (currentUser) {
-        const idx = allUsers.findIndex(u => (currentUser.email && u.email?.toLowerCase() === currentUser.email?.toLowerCase()) || (currentUser.id && u.id === currentUser.id));
-        if (idx !== -1) {
-          allUsers[idx] = { ...allUsers[idx], ...currentUser };
+      // Bersihkan user dummy palsu
+      let allUsers = savedReg.filter(u => u && u.full_name !== 'Aci Student' && u.full_name !== 'Siswa Google Active' && u.full_name !== 'Fariha Salsabila' && u.full_name !== 'Ira Kusuma' && u.full_name !== 'Pipit Andriani');
+
+      // Deduplikasi list pengguna berdasarkan email/username case-insensitive agar tidak ada data ganda di leaderboard
+      const uniqueUsersMap = new Map();
+      allUsers.forEach(u => {
+        if (!u) return;
+        const key = (u.email || u.username || `user_${u.id || Math.random()}`).toLowerCase().trim();
+        if (uniqueUsersMap.has(key)) {
+          const existing = uniqueUsersMap.get(key);
+          if ((u.xp || 0) > (existing.xp || 0)) {
+            uniqueUsersMap.set(key, { ...existing, ...u });
+          }
         } else {
-          allUsers.push(currentUser);
+          uniqueUsersMap.set(key, u);
         }
+      });
+
+      // Timpa secara mutlak dengan currentUser agar data XP & Streak yang tampil di leaderboard sama persis dengan LMS/Profile
+      if (currentUser) {
+        const key = (currentUser.email || currentUser.username || `user_${currentUser.id || 'current'}`).toLowerCase().trim();
+        uniqueUsersMap.set(key, {
+          ...(uniqueUsersMap.get(key) || {}),
+          ...currentUser
+        });
       }
 
-      // Bersihkan user dummy palsu
-      allUsers = allUsers.filter(u => u && u.full_name !== 'Aci Student' && u.full_name !== 'Siswa Google Active' && u.full_name !== 'Fariha Salsabila' && u.full_name !== 'Ira Kusuma' && u.full_name !== 'Pipit Andriani');
+      const deduplicated = Array.from(uniqueUsersMap.values());
+      const sorted = deduplicated.sort((a, b) => (b.xp || 0) - (a.xp || 0));
 
-      const sorted = [...allUsers].sort((a, b) => (b.xp || 0) - (a.xp || 0));
       const formatted = sorted.map((u, idx) => ({
         rank: idx + 1,
         full_name: u.full_name,

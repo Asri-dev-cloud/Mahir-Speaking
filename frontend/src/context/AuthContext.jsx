@@ -155,18 +155,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ✨ Tambah XP & Poin Biar Makin Slay di Leaderboard
-  const addXpAndPoints = async (xp, points) => {
+  const addXpAndPoints = async (xp, points, incrementStreak = false) => {
     let nextXp = 0;
     let nextPoints = 0;
+    let nextStreak = 0;
 
     setUser(prev => {
       if (!prev) return prev;
       nextXp = (prev.xp || 0) + xp;
       nextPoints = (prev.points || 0) + points;
+      nextStreak = (prev.streak || 0) + (incrementStreak ? 1 : 0);
       const updated = {
         ...prev,
         xp: nextXp,
-        points: nextPoints
+        points: nextPoints,
+        streak: nextStreak
       };
       localStorage.setItem('mahir_user', JSON.stringify(updated));
 
@@ -189,7 +192,8 @@ export const AuthProvider = ({ children }) => {
     try {
       await userService.updateProfile({
         xp: nextXp,
-        points: nextPoints
+        points: nextPoints,
+        streak: nextStreak
       });
     } catch (err) {
       console.error('Failed to sync XP/points to backend:', err);

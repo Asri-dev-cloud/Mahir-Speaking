@@ -69,8 +69,7 @@ export default function QuizView() {
     } else {
       // Quiz Complete
       setIsCompleted(true);
-      const totalXp = newScore * 25 + 20;
-      addXpAndPoints(totalXp, Math.floor(totalXp / 2));
+      addXpAndPoints(totalXp, Math.floor(totalXp / 2), true);
 
       // Trigger Confetti
       try {
@@ -89,7 +88,8 @@ export default function QuizView() {
           updateUserProfile({
             ...user,
             xp: res.xp,
-            points: res.points
+            points: res.points,
+            streak: res.streak !== undefined ? res.streak : (user.streak || 0) + 1
           });
         }
       } catch (err) {
