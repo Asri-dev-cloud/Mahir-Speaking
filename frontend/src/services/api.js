@@ -253,6 +253,24 @@ export const userService = {
     }
     return res;
   },
+  addXp: async (xp, points, incrementStreak = false) => {
+    const res = await apiFetch('/users/add-xp', {
+      method: 'POST',
+      body: JSON.stringify({ xp, points, increment_streak: incrementStreak })
+    });
+    if (!res.success) {
+      const savedUser = JSON.parse(localStorage.getItem('mahir_user') || '{}');
+      const updated = {
+        ...savedUser,
+        xp: (savedUser.xp || 0) + xp,
+        points: (savedUser.points || 0) + points,
+        streak: (savedUser.streak || 0) + (incrementStreak ? 1 : 0)
+      };
+      localStorage.setItem('mahir_user', JSON.stringify(updated));
+      return { success: true, xp: updated.xp, points: updated.points, streak: updated.streak };
+    }
+    return res;
+  },
 };
 
 export const courseService = {
@@ -576,6 +594,7 @@ export const adminService = {
     const res = await apiFetch('/admin/modules');
     return { ...res, modules: Array.isArray(res.modules) ? res.modules : [] };
   },
+
 
   saveModule: async (moduleData) => {
     return apiFetch('/admin/modules', {

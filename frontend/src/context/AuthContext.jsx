@@ -190,11 +190,30 @@ export const AuthProvider = ({ children }) => {
 
     // Kirim pembaruan ke database backend secara asinkron
     try {
-      await userService.updateProfile({
-        xp: nextXp,
-        points: nextPoints,
-        streak: nextStreak
-      });
+      const res = await userService.addXp(xp, points, incrementStreak);
+      if (res.success && res.xp !== undefined) {
+        setUser(prev => {
+          if (!prev) return prev;
+          const updated = {
+            ...prev,
+            xp: res.xp,
+            points: res.points,
+            streak: res.streak
+          };
+          localStorage.setItem('mahir_user', JSON.stringify(updated));
+
+          try {
+            const registered = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
+            const idx = registered.findIndex(u => u.email?.toLowerCase() === prev.email?.toLowerCase());
+            if (idx !== -1) {
+              registered[idx] = { ...registered[idx], ...updated };
+              localStorage.setItem('mahir_registered_users', JSON.stringify(registered));
+            }
+          } catch (e) {}
+
+          return updated;
+        });
+      }
     } catch (err) {
       console.error('Failed to sync XP/points to backend:', err);
     }

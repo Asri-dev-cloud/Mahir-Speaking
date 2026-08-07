@@ -880,6 +880,15 @@ export default function LMSView() {
         <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#0362C0] via-blue-700 to-slate-950 p-5 text-white shadow-2xl sm:rounded-[40px] sm:p-9 lg:p-12 border border-white/20">
           <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-[#87CEFA]/25 blur-3xl" />
 
+          {/* Character Mashira Orang sitting exactly on the bottom border/line of the card */}
+          <div className="absolute bottom-0 right-[5%] lg:right-[8%] hidden lg:block pointer-events-none z-10">
+            <img
+              src="/mashira orang.png"
+              alt="Mashira, AI speaking companion"
+              className="h-[340px] sm:h-[390px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
+            />
+          </div>
+
           <div className="relative grid items-center gap-8 lg:grid-cols-[1.2fr_.8fr]">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-[#FFFF00] px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#0362C0] sm:text-xs">
@@ -978,11 +987,7 @@ export default function LMSView() {
             </div>
 
             <div className="relative hidden min-h-[260px] lg:block">
-              <img
-                src="/mashira chibi.png"
-                alt="Mashira, AI speaking companion"
-                className="absolute bottom-0 left-1/2 h-[320px] w-auto -translate-x-1/2 object-contain drop-shadow-2xl"
-              />
+              {/* Spacer container to keep the right column space occupied */}
             </div>
           </div>
         </div>

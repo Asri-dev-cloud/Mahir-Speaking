@@ -44,6 +44,39 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
+// Add XP and Points (Safe Increment)
+router.post('/add-xp', verifyToken, async (req, res) => {
+  try {
+    const { xp, points, increment_streak } = req.body;
+    const userId = req.user.id;
+
+    const xpToAdd = Number(xp || 0);
+    const pointsToAdd = Number(points || 0);
+    const streakAdd = increment_streak ? 1 : 0;
+
+    await query(
+      `UPDATE users
+       SET xp = xp + ?,
+           points = points + ?,
+           streak = streak + ?
+       WHERE id = ?`,
+      [xpToAdd, pointsToAdd, streakAdd, userId]
+    );
+
+    const updated = await query('SELECT xp, points, streak FROM users WHERE id = ?', [userId]);
+
+    return res.json({
+      success: true,
+      xp: updated[0].xp,
+      points: updated[0].points,
+      streak: updated[0].streak
+    });
+  } catch (err) {
+    console.error('Add XP error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to add XP.' });
+  }
+});
+
 // Update Profile
 router.put('/profile', verifyToken, async (req, res) => {
   try {
