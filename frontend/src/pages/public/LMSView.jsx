@@ -930,17 +930,8 @@ export default function LMSView() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-black text-[#FFFF00] bg-black/30 px-3 py-1.5 rounded-xl border border-[#FFFF00]/30 inline-flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 fill-[#FFFF00]" />
-                      <span>{displayXp} XP</span>
-                    </span>
-                    <span className="text-xs font-black text-orange-300 bg-black/30 px-3 py-1.5 rounded-xl border border-orange-400/30 inline-flex items-center gap-1.5">
-                      <Flame className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                      <span>{displayStreak} Hari Streak</span>
-                    </span>
+                    {/* XP dan Streak dihilangkan atas permintaan pengguna */}
                   </div>
-                </div>
               ) : (
                 <div className="mt-4 p-3 bg-amber-400/20 border border-amber-300/40 rounded-2xl flex items-center justify-between text-xs text-amber-200">
                   <span className="flex items-center gap-2 font-bold">
@@ -1208,7 +1199,7 @@ export default function LMSView() {
       {activeHubTab === "path" && (
         <>
           <section className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8">
-            <div className="grid gap-4 lg:grid-cols-[1.5fr_.5fr]">
+            <div className="w-full">
               <div className="rounded-[26px] border border-white bg-white p-5 shadow-lg shadow-blue-700/5 sm:p-6">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
                   <div className="relative grid h-20 w-20 shrink-0 place-items-center rounded-full bg-blue-50">
@@ -1245,27 +1236,6 @@ export default function LMSView() {
                   </div>
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 gap-3 rounded-[26px] bg-slate-950 p-4 text-white shadow-xl">
-                <div className="rounded-2xl bg-white/5 p-4">
-                  <Flame className="h-5 w-5 text-[#FFA715]" />
-                  <div className="mt-3 text-2xl font-black">
-                    {displayStreak}
-                  </div>
-                  <div className="text-[10px] font-bold uppercase text-slate-400">
-                    Day streak
-                  </div>
-                </div>
-                <div className="rounded-2xl bg-white/5 p-4">
-                  <Zap className="h-5 w-5 text-[#FFFF00]" />
-                  <div className="mt-3 text-2xl font-black">
-                    {displayXp}
-                  </div>
-                  <div className="text-[10px] font-bold uppercase text-slate-400">
-                    Total XP
-                  </div>
-                </div>
-              </div>
             </div>
           </section>
 
@@ -1286,113 +1256,85 @@ export default function LMSView() {
             </section>
           )}
 
-          {[
-            {
-              key: 'free',
-              title: 'Quizz Gratis',
-              description: 'Mulai belajar tanpa membeli paket. Unit ini terbuka untuk semua akun.',
-              items: freeLessons,
-              premium: false,
-              badge: 'FREE ACCESS',
-              headingClass: 'text-[#0362C0]',
-              panelClass: 'border-blue-200 bg-gradient-to-br from-white to-blue-50'
-            },
-            {
-              key: 'paid',
-              title: 'Quizz Berlangganan',
-              description: hasPaidAccess
-                ? 'Paket akunmu aktif. Seluruh kuis premium sudah terbuka.'
-                : 'Upgrade paket untuk membuka seluruh unit, latihan, dan kuis premium.',
-              items: paidLessons,
-              premium: true,
-              badge: hasPaidAccess ? 'PREMIUM TERBUKA' : 'PREMIUM ACCESS',
-              headingClass: 'text-slate-950',
-              panelClass: 'border-amber-200 bg-gradient-to-br from-amber-50 to-white'
-            }
-          ].map((section) => (
-            <section key={section.key} className="mx-auto mt-8 max-w-[1440px] px-3 sm:px-6 lg:px-8">
-              <div className={`rounded-[30px] border-2 p-5 shadow-lg sm:p-7 ${section.panelClass}`}>
-                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black tracking-wider text-[#FFFF00]">
-                      {section.premium && !hasPaidAccess ? <Lock className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
-                      {section.badge}
-                    </span>
-                    <h2 className={`mt-3 font-stinger text-2xl font-black sm:text-4xl ${section.headingClass}`}>
-                      {section.title}
-                    </h2>
-                    <p className="mt-1 max-w-2xl text-xs font-semibold leading-relaxed text-slate-600 sm:text-sm">
-                      {section.description}
-                    </p>
-                  </div>
-                  <span className="w-fit rounded-full bg-white px-3 py-1.5 text-xs font-black text-slate-700 shadow-sm">
-                    {section.items.length} Unit
-                  </span>
+          <section className="mx-auto mt-8 max-w-[1440px] px-3 sm:px-6 lg:px-8 animate-fadeIn">
+            <div className="rounded-[30px] border-2 p-5 shadow-lg sm:p-7 border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
+              <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-slate-200/80 pb-4">
+                <div>
+                  <h2 className="mt-3 font-stinger text-2xl font-black sm:text-4xl text-[#0362C0]">
+                    Daftar Unit Latihan & Quizz
+                  </h2>
+                  <p className="mt-1 max-w-2xl text-xs font-semibold leading-relaxed text-slate-600 sm:text-sm">
+                    Ikuti unit latihan speaking interaktif dan selesaikan quizz harian untuk terus mengasah kemampuan bicaramu.
+                  </p>
                 </div>
+                <span className="w-fit rounded-full bg-white px-3.5 py-1.5 text-xs font-black text-slate-700 shadow-sm border border-slate-200">
+                  {filteredLessons.length} Unit
+                </span>
+              </div>
 
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {section.items.map((lesson) => {
-                    const Icon = lesson.icon;
-                    const locked = section.premium && !hasPaidAccess;
-                    const completed = completedIds.includes(lesson.id);
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {filteredLessons.map((lesson) => {
+                  const Icon = lesson.icon;
+                  const isPremium = lesson.id > 2;
+                  const locked = isPremium && !hasPaidAccess;
+                  const completed = completedIds.includes(lesson.id);
 
-                    return (
-                      <article
-                        key={lesson.id}
-                        className={`group relative overflow-hidden rounded-[26px] border bg-white shadow-lg shadow-blue-900/5 transition ${locked
-                          ? 'border-slate-200'
-                          : 'border-white hover:-translate-y-1.5 hover:shadow-2xl'
-                          }`}
-                      >
-                        <div className={`h-2 bg-gradient-to-r ${locked ? 'from-slate-300 to-slate-400' : lesson.color}`} />
-                        <div className={`p-5 sm:p-6 ${locked ? 'opacity-75' : ''}`}>
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-center gap-3">
-                              <div className={`grid h-12 w-12 place-items-center rounded-2xl text-white shadow-lg ${locked ? 'bg-slate-400' : `bg-gradient-to-br ${lesson.color}`
-                                }`}>
-                                {locked ? <Lock className="h-6 w-6" /> : <Icon className="h-6 w-6" />}
+                  return (
+                    <article
+                      key={lesson.id}
+                      className={`group relative overflow-hidden rounded-[26px] border bg-white shadow-lg shadow-blue-900/5 transition ${locked
+                        ? 'border-slate-200'
+                        : 'border-white hover:-translate-y-1.5 hover:shadow-2xl'
+                        }`}
+                    >
+                      <div className={`h-2 bg-gradient-to-r ${locked ? 'from-slate-300 to-slate-400' : lesson.color}`} />
+                      <div className={`p-5 sm:p-6 ${locked ? 'opacity-75' : ''}`}>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`grid h-12 w-12 place-items-center rounded-2xl text-white shadow-lg ${locked ? 'bg-slate-400' : `bg-gradient-to-br ${lesson.color}`
+                              }`}>
+                              {locked ? <Lock className="h-6 w-6" /> : <Icon className="h-6 w-6" />}
+                            </div>
+                            <div>
+                              <div className="inline-block rounded border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#0362C0]">
+                                UNIT {String(lesson.id).padStart(2, '0')} • {isPremium ? `PREMIUM • ${lesson.id <= 15 ? 'BASIC' : lesson.id <= 27 ? 'INTERMEDIATE' : 'ADVANCE'}` : 'GRATIS'}
                               </div>
-                              <div>
-                                <div className="inline-block rounded border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#0362C0]">
-                                  UNIT {String(lesson.id).padStart(2, '0')} • {section.premium ? `PREMIUM • ${lesson.id <= 15 ? 'BASIC' : lesson.id <= 27 ? 'INTERMEDIATE' : 'ADVANCE'}` : 'GRATIS'}
-                                </div>
-                                <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-500">
-                                  <HelpCircle className="h-3.5 w-3.5 fill-amber-100 text-amber-500" />
-                                  20 Soal Kuis • Maks. 100 XP
-                                </div>
+                              <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-500">
+                                <HelpCircle className="h-3.5 w-3.5 fill-amber-100 text-amber-500" />
+                                20 Soal Kuis • Maks. 100 XP
                               </div>
                             </div>
-                            {completed && !locked && (
-                              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                            )}
                           </div>
-
-                          <h3 className="mt-4 text-xl font-black leading-snug">{lesson.title}</h3>
-                          <p className="mt-2 line-clamp-2 text-xs font-semibold leading-relaxed text-slate-500">
-                            {lesson.description}
-                          </p>
-
-                          <div className="mt-6 border-t border-slate-100 pt-4">
-                            <button
-                              type="button"
-                              onClick={() => openLesson(lesson, section.premium)}
-                              className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-xs font-black shadow-md transition-all ${locked
-                                ? 'cursor-pointer bg-slate-900 text-white hover:bg-[#0362C0]'
-                                : 'cursor-pointer bg-[#0362C0] text-white hover:bg-slate-900'
-                                }`}
-                            >
-                              {locked ? <Lock className="h-4 w-4" /> : <Play className="h-3.5 w-3.5 fill-current" />}
-                              {locked ? 'Terkunci • Lihat Paket' : 'Buka Quizz'}
-                            </button>
-                          </div>
+                          {completed && !locked && (
+                            <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                          )}
                         </div>
-                      </article>
-                    );
-                  })}
-                </div>
+
+                        <h3 className="mt-4 text-xl font-black leading-snug">{lesson.title}</h3>
+                        <p className="mt-2 line-clamp-2 text-xs font-semibold leading-relaxed text-slate-500">
+                          {lesson.description}
+                        </p>
+
+                        <div className="mt-6 border-t border-slate-100 pt-4">
+                          <button
+                            type="button"
+                            onClick={() => openLesson(lesson, isPremium)}
+                            className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-xs font-black shadow-md transition-all ${locked
+                              ? 'cursor-pointer bg-slate-900 text-white hover:bg-[#0362C0]'
+                              : 'cursor-pointer bg-[#0362C0] text-white hover:bg-slate-900'
+                              }`}
+                          >
+                            {locked ? <Lock className="h-4 w-4" /> : <Play className="h-3.5 w-3.5 fill-current" />}
+                            {locked ? 'Terkunci • Lihat Paket' : 'Buka Quizz'}
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
-            </section>
-          ))}
+            </div>
+          </section>
         </>
       )}
 

@@ -73,7 +73,25 @@ export default function QuizView() {
       // Calculate totalXp earned based on score (matching results screen formula)
       const totalXp = newScore * 25 + 20;
       
-      addXpAndPoints(totalXp, Math.floor(totalXp / 2), true);
+      // Optimistic update to match LMSView logic
+      if (user) {
+        const isAlreadyCompleted = user.completed_units && user.completed_units.includes(1);
+        const nextCompleted = Array.from(new Set([...(user.completed_units || []), 1]));
+        const updatedUser = {
+          ...user,
+          xp: isAlreadyCompleted
+            ? (user.xp || 0)
+            : (user.xp || 0) + totalXp,
+          points: isAlreadyCompleted
+            ? (user.points || 0)
+            : (user.points || 0) + Math.floor(totalXp / 2),
+          streak: isAlreadyCompleted
+            ? (user.streak || 0)
+            : (user.streak || 0) + 1,
+          completed_units: nextCompleted
+        };
+        updateUserProfile(updatedUser);
+      }
 
       // Trigger Confetti
       try {
@@ -89,11 +107,14 @@ export default function QuizView() {
         });
         if (res.success && res.xp !== undefined && user) {
           // Sinkronisasi dengan XP dan poin terbaru dari database cloud
+          const isAlreadyCompleted = user.completed_units && user.completed_units.includes(1);
+          const nextCompleted = Array.from(new Set([...(user.completed_units || []), 1]));
           updateUserProfile({
             ...user,
             xp: res.xp,
             points: res.points,
-            streak: res.streak !== undefined ? res.streak : (user.streak || 0) + 1
+            streak: res.streak !== undefined ? res.streak : (user.streak || 0) + (isAlreadyCompleted ? 0 : 1),
+            completed_units: nextCompleted
           });
         }
       } catch (err) {

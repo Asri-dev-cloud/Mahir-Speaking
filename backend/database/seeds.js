@@ -35,6 +35,10 @@ export async function initSeedData() {
           password TEXT NOT NULL,
           role TEXT DEFAULT 'student',
           package_id INTEGER DEFAULT 1,
+          package_name TEXT,
+          package_expires TEXT,
+          is_trial INTEGER DEFAULT 0,
+          admin_type TEXT,
           xp INTEGER DEFAULT 0,
           points INTEGER DEFAULT 0,
           streak INTEGER DEFAULT 1,
@@ -42,6 +46,28 @@ export async function initSeedData() {
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `);
+
+      // Migrasi kolom tambahan di SQLite untuk sinkronisasi role & package admin/student
+      try {
+        const tableInfo = await query(`PRAGMA table_info(users)`);
+        if (Array.isArray(tableInfo) && tableInfo.length > 0) {
+          const columns = tableInfo.map(info => info.name);
+          if (!columns.includes('package_name')) {
+            await query(`ALTER TABLE users ADD COLUMN package_name TEXT`);
+          }
+          if (!columns.includes('package_expires')) {
+            await query(`ALTER TABLE users ADD COLUMN package_expires TEXT`);
+          }
+          if (!columns.includes('is_trial')) {
+            await query(`ALTER TABLE users ADD COLUMN is_trial INTEGER DEFAULT 0`);
+          }
+          if (!columns.includes('admin_type')) {
+            await query(`ALTER TABLE users ADD COLUMN admin_type TEXT`);
+          }
+        }
+      } catch (err) {
+        console.error('⚠️ [Database] Gagal migrasi kolom baru di SQLite:', err.message);
+      }
 
       await query(`
         CREATE TABLE IF NOT EXISTS packages (
