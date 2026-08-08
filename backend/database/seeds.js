@@ -257,16 +257,24 @@ export async function initSeedData() {
         if (isPostgres) {
           await query(`
             INSERT INTO lessons (id, course_id, title, order_index, reading_content, target_vocabulary, speaking_prompt, xp_reward, is_published)
-            VALUES (?, ?, ?, ?, ?, '[]'::jsonb, ?, 80, true)
+            VALUES (?, ?, ?, ?, ?, '[]'::jsonb, ?, 25, true)
             ON CONFLICT (id) DO NOTHING
           `, [i, courseId, title, i, `Reading content for ${title}`, `Speaking prompt for ${title}`]);
         } else {
           await query(`
             INSERT OR IGNORE INTO lessons (id, course_id, title, order_index, reading_content, target_vocabulary, speaking_prompt, xp_reward)
-            VALUES (?, ?, ?, ?, ?, '[]', ?, 80)
+            VALUES (?, ?, ?, ?, ?, '[]', ?, 25)
           `, [i, courseId, title, i, `Reading content for ${title}`, `Speaking prompt for ${title}`]);
         }
       }
+    }
+
+    // Force update existing records to make sure all lessons have xp_reward = 25
+    try {
+      await query(`UPDATE lessons SET xp_reward = 25`);
+      console.log('✅ Berhasil menyelaraskan semua xp_reward lesson ke 25.');
+    } catch (e) {
+      console.error('⚠️ Gagal menyelaraskan xp_reward lesson:', e.message);
     }
 
     // 🤖 Semai data latihan bot Mashira AI

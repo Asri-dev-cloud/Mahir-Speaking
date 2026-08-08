@@ -71,7 +71,7 @@ export default function QuizView() {
       setIsCompleted(true);
       
       // Calculate totalXp earned based on score (matching results screen formula)
-      const totalXp = newScore * 25 + 20;
+      const totalXp = 25;
       
       // Optimistic update to match LMSView logic
       if (user) {
@@ -197,7 +197,7 @@ export default function QuizView() {
               {Math.round((score / quizQuestions.length) * 100)}%
             </div>
             <div className="text-xs font-bold text-amber-800 pt-1">
-              ⚡ Earned +{score * 25 + 20} XP Points!
+              ⚡ Earned +25 XP Points!
             </div>
           </div>
 
