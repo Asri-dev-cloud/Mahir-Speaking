@@ -539,22 +539,15 @@ export const dbCompleteLesson = async (
     progressId = existingProgress[0].id;
   }
 
-  const addedPoints = Math.floor(
-    Number(xpReward || 0) / 2
-  );
-
   await query(
     `
       UPDATE users
       SET
-        xp = xp + ?,
-        points = points + ?,
-        streak = streak + 1
+        xp = xp + ?
       WHERE id = ?
     `,
     [
-      Number(xpReward || 0),
-      addedPoints,
+      Number(xpReward !== undefined ? xpReward : 50),
       userId,
     ]
   );

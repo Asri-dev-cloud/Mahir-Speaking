@@ -62,7 +62,7 @@ router.post('/complete-lesson', verifyToken, async (req, res) => {
     const { lesson_id, score, xp_earned } = req.body;
     const userId = req.user.id;
 
-    const addXp = xp_earned || 50;
+    const addXp = xp_earned !== undefined ? Number(xp_earned) : 50;
 
     // Jalankan Stored Procedure / Transaksi Aman kelulusan materi & kuis
     const result = await dbCompleteLesson(userId, lesson_id, score || 100, addXp);

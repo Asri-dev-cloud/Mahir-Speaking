@@ -813,12 +813,6 @@ export default function LMSView() {
         xp: isAlreadyCompleted
           ? ((liveUser || user).xp || 0)
           : ((liveUser || user).xp || 0) + addedXp,
-        points: isAlreadyCompleted
-          ? ((liveUser || user).points || 0)
-          : ((liveUser || user).points || 0) + Math.floor(addedXp / 2),
-        streak: isAlreadyCompleted
-          ? ((liveUser || user).streak || 0)
-          : ((liveUser || user).streak || 0) + 1,
         has_completed_quiz: true,
         quiz_completed: true,
         quizzes_completed: isAlreadyCompleted
@@ -861,8 +855,6 @@ export default function LMSView() {
           const dbUser = {
             ...(liveUser || user),
             xp: res.xp !== undefined ? res.xp : updatedUser.xp,
-            points: res.points !== undefined ? res.points : updatedUser.points,
-            streak: res.streak !== undefined ? res.streak : updatedUser.streak,
             has_completed_quiz: true,
             quiz_completed: true,
             completed_units: nextCompleted
@@ -1198,46 +1190,7 @@ export default function LMSView() {
       {/* 🎒 TAB 3: MISSION LEARNING PATH & PROGRESS */}
       {activeHubTab === "path" && (
         <>
-          <section className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8">
-            <div className="w-full">
-              <div className="rounded-[26px] border border-white bg-white p-5 shadow-lg shadow-blue-700/5 sm:p-6">
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                  <div className="relative grid h-20 w-20 shrink-0 place-items-center rounded-full bg-blue-50">
-                    <div
-                      className="absolute inset-0 rounded-full"
-                      style={{
-                        background: `conic-gradient(#0362C0 ${progress * 3.6}deg, #DBEAFE 0deg)`,
-                      }}
-                    />
-                    <div className="relative grid h-14 w-14 place-items-center rounded-full bg-white text-sm font-black text-[#0362C0]">
-                      {progress}%
-                    </div>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div>
-                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-[#0362C0]">
-                          Progress belajar
-                        </div>
-                        <h2 className="mt-1 font-helios text-xl font-black sm:text-2xl">
-                          Halo, {user?.full_name || "Tamu Mahir"}!
-                        </h2>
-                      </div>
-                      <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-black text-[#0362C0]">
-                        {displayCompletedCount}/{lessons.length} unit selesai
-                      </span>
-                    </div>
-                    <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#0362C0] to-[#87CEFA] transition-all duration-700"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+
 
           {downloadNotice && !downloadNotice.includes('Mengunduh') && (
             <section className="mx-auto mt-6 max-w-[1440px] px-3 sm:px-6 lg:px-8">

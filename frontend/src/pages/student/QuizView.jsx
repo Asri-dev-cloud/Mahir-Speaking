@@ -71,7 +71,8 @@ export default function QuizView() {
       setIsCompleted(true);
       
       // Calculate totalXp earned based on score (matching results screen formula)
-      const totalXp = 25;
+      const correctCount = newScore;
+      const totalXp = Math.max(5, correctCount * 5);
       
       // Optimistic update to match LMSView logic
       if (user) {
@@ -82,12 +83,6 @@ export default function QuizView() {
           xp: isAlreadyCompleted
             ? (user.xp || 0)
             : (user.xp || 0) + totalXp,
-          points: isAlreadyCompleted
-            ? (user.points || 0)
-            : (user.points || 0) + Math.floor(totalXp / 2),
-          streak: isAlreadyCompleted
-            ? (user.streak || 0)
-            : (user.streak || 0) + 1,
           completed_units: nextCompleted
         };
         updateUserProfile(updatedUser);
@@ -106,14 +101,11 @@ export default function QuizView() {
           xp_earned: totalXp
         });
         if (res.success && res.xp !== undefined && user) {
-          // Sinkronisasi dengan XP dan poin terbaru dari database cloud
-          const isAlreadyCompleted = user.completed_units && user.completed_units.includes(1);
+          // Sinkronisasi dengan XP terbaru dari database cloud
           const nextCompleted = Array.from(new Set([...(user.completed_units || []), 1]));
           updateUserProfile({
             ...user,
             xp: res.xp,
-            points: res.points,
-            streak: res.streak !== undefined ? res.streak : (user.streak || 0) + (isAlreadyCompleted ? 0 : 1),
             completed_units: nextCompleted
           });
         }
@@ -197,7 +189,7 @@ export default function QuizView() {
               {Math.round((score / quizQuestions.length) * 100)}%
             </div>
             <div className="text-xs font-bold text-amber-800 pt-1">
-              ⚡ Earned +25 XP Points!
+              ⚡ Earned +{Math.max(5, score * 5)} XP!
             </div>
           </div>
 

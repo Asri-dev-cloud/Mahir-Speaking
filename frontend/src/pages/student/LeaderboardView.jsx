@@ -19,8 +19,6 @@ const fallbackLearners = [
     full_name: 'Fariha Salsabila',
     username: 'fariha_salsa',
     xp: 3450,
-    points: 345,
-    streak: 15,
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
     package_badge: 'Pro Member'
   },
@@ -29,8 +27,6 @@ const fallbackLearners = [
     full_name: 'Ira Kusuma',
     username: 'ira_kusuma',
     xp: 2890,
-    points: 289,
-    streak: 12,
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150',
     package_badge: 'Active Member'
   },
@@ -39,8 +35,6 @@ const fallbackLearners = [
     full_name: 'Pipit Andriani',
     username: 'pipit_andri',
     xp: 2450,
-    points: 245,
-    streak: 9,
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150',
     package_badge: 'Active Member'
   },
@@ -49,8 +43,6 @@ const fallbackLearners = [
     full_name: 'Aci Student',
     username: 'aci_student',
     xp: 1980,
-    points: 198,
-    streak: 5,
     avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=150',
     package_badge: 'Free Trial'
   }
@@ -158,8 +150,6 @@ export default function LeaderboardView() {
         full_name: u.full_name,
         username: u.username || u.email?.split('@')[0] || `user_${u.id}`,
         xp: u.xp || 0,
-        points: u.points || 0,
-        streak: u.streak || 0,
         avatar: u.avatar || null,
         package_badge: u.role === 'admin' ? 'Admin Senior' : (u.package_name || "Active Member")
       }));
@@ -386,17 +376,6 @@ export default function LeaderboardView() {
                           />
                           {formatXp(user.xp)}
                         </p>
-                        <p
-                          className={`mt-2 flex items-center gap-1 text-[11px] font-black sm:mt-0 ${rank === 1 ? "text-white/70" : "text-[#D46A00]"
-                            }`}
-                        >
-                          <Flame
-                            size={14}
-                            className="text-[#FFA715]"
-                            fill="currentColor"
-                          />
-                          {user.streak || 0} hari
-                        </p>
                       </div>
                     </article>
                   );
@@ -437,23 +416,22 @@ export default function LeaderboardView() {
               </div>
 
               <div className="mt-7 overflow-hidden rounded-[28px] border border-[#0362C0]/10 bg-white shadow-[0_16px_45px_rgba(8,32,60,0.08)]">
-                <div className="hidden grid-cols-[80px_1.5fr_1fr_1fr_1fr] border-b border-slate-100 bg-[#EAF6FF] px-6 py-4 text-[10px] font-black uppercase tracking-[0.14em] text-[#42617F] md:grid">
+                <div className="hidden grid-cols-[80px_2fr_1fr_1.2fr] border-b border-slate-100 bg-[#EAF6FF] px-6 py-4 text-[10px] font-black uppercase tracking-[0.14em] text-[#42617F] md:grid">
                   <span>Rank</span>
                   <span>Siswa</span>
                   <span>Level</span>
-                  <span>Streak</span>
                   <span className="text-right">Total XP</span>
                 </div>
-
+ 
                 <div className="divide-y divide-slate-100">
                   {displayRankings.map((user, index) => {
                     const rank = user.rank || index + 1;
                     const isTopThree = rank <= 3;
-
+ 
                     return (
                       <article
                         key={user.id || user.username || index}
-                        className="group flex items-center gap-3 p-4 transition hover:bg-[#F4FBFF] md:grid md:grid-cols-[80px_1.5fr_1fr_1fr_1fr] md:px-6 md:py-4"
+                        className="group flex items-center gap-3 p-4 transition hover:bg-[#F4FBFF] md:grid md:grid-cols-[80px_2fr_1fr_1.2fr] md:px-6 md:py-4"
                       >
                         <div
                           className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-black ${rank === 1
@@ -467,7 +445,7 @@ export default function LeaderboardView() {
                         >
                           {isTopThree ? <Medal size={17} /> : `#${rank}`}
                         </div>
-
+ 
                         <div className="flex min-w-0 flex-1 items-center gap-3">
                           <img
                             src={getAvatar(user, rank) || '/ma.png'}
@@ -483,30 +461,17 @@ export default function LeaderboardView() {
                             </p>
                           </div>
                         </div>
-
+ 
                         <div className="hidden md:block">
                           <span className="rounded-full bg-[#EAF6FF] px-3 py-1.5 text-[10px] font-black uppercase text-[#0362C0]">
                             {user.package_badge || "Starter"}
                           </span>
                         </div>
-
-                        <div className="hidden items-center gap-1.5 text-xs font-black text-[#D46A00] md:flex">
-                          <Flame
-                            size={16}
-                            className="text-[#FFA715]"
-                            fill="currentColor"
-                          />
-                          {user.streak || 0} hari
-                        </div>
-
+ 
                         <div className="ml-auto text-right">
                           <p className="flex items-center justify-end gap-1 text-sm font-black text-[#0362C0] sm:text-base">
                             <Zap size={15} fill="currentColor" />
                             {formatXp(user.xp)}
-                          </p>
-                          <p className="mt-1 flex items-center justify-end gap-1 text-[9px] font-bold text-[#D46A00] md:hidden">
-                            <Flame size={11} fill="currentColor" />
-                            {user.streak || 0} hari
                           </p>
                         </div>
                       </article>

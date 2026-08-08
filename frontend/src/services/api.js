@@ -253,21 +253,19 @@ export const userService = {
     }
     return res;
   },
-  addXp: async (xp, points, incrementStreak = false) => {
+  addXp: async (xp) => {
     const res = await apiFetch('/users/add-xp', {
       method: 'POST',
-      body: JSON.stringify({ xp, points, increment_streak: incrementStreak })
+      body: JSON.stringify({ xp })
     });
     if (!res.success) {
       const savedUser = JSON.parse(localStorage.getItem('mahir_user') || '{}');
       const updated = {
         ...savedUser,
-        xp: (savedUser.xp || 0) + xp,
-        points: (savedUser.points || 0) + points,
-        streak: (savedUser.streak || 0) + (incrementStreak ? 1 : 0)
+        xp: (savedUser.xp || 0) + xp
       };
       localStorage.setItem('mahir_user', JSON.stringify(updated));
-      return { success: true, xp: updated.xp, points: updated.points, streak: updated.streak };
+      return { success: true, xp: updated.xp };
     }
     return res;
   },

@@ -1376,7 +1376,7 @@ export default function AdminPortal() {
                             <th className="py-3.5 px-4 font-black">No. WhatsApp</th>
                             <th className="py-3.5 px-4 font-black">Status Free Trial</th>
                             <th className="py-3.5 px-4 font-black">Paket & Berakhir</th>
-                            <th className="py-3.5 px-4 font-black">Aktivitas (XP/Streak)</th>
+                            <th className="py-3.5 px-4 font-black">Aktivitas (XP)</th>
                             <th className="py-3.5 px-4 text-center font-black">Aksi / Tindakan</th>
                           </tr>
                         </thead>
@@ -1480,7 +1480,7 @@ export default function AdminPortal() {
                                   <td className="py-3.5 px-4">
                                     <div className="space-y-0.5 text-[11px]">
                                       <div className="text-emerald-600 font-extrabold">
-                                        ⚡ {u.xp || 0} XP • 🔥 {u.streak || 0} Hari
+                                        ⚡ {u.xp || 0} XP
                                       </div>
                                       <div className="text-slate-400 text-[10px]">
                                         Terakhir: {u.last_active || 'Baru saja'}
@@ -1599,7 +1599,7 @@ export default function AdminPortal() {
                                 </span>
                               </div>
                               <div className="text-emerald-600 font-extrabold">
-                                ⚡ {u.xp || 0} XP • 🔥 {u.streak || 0} Hari
+                                ⚡ {u.xp || 0} XP
                               </div>
                             </div>
 

@@ -286,9 +286,7 @@ begin
   returning id into v_progress_id;
 
   update public.users
-     set xp = xp + v_reward,
-         points = points + floor(v_reward / 2.0)::integer,
-         streak = streak + 1
+     set xp = xp + coalesce(p_xp_reward, v_reward)
     where id = p_user_id
   returning xp, points, streak into v_xp, v_points, v_streak;
 

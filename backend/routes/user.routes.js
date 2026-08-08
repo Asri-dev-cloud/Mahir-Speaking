@@ -44,23 +44,19 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Add XP and Points (Safe Increment)
+// Add XP (Safe Increment)
 router.post('/add-xp', verifyToken, async (req, res) => {
   try {
-    const { xp, points, increment_streak } = req.body;
+    const { xp } = req.body;
     const userId = req.user.id;
 
     const xpToAdd = Number(xp || 0);
-    const pointsToAdd = Number(points || 0);
-    const streakAdd = increment_streak ? 1 : 0;
 
     await query(
       `UPDATE users
-       SET xp = xp + ?,
-           points = points + ?,
-           streak = streak + ?
+       SET xp = xp + ?
        WHERE id = ?`,
-      [xpToAdd, pointsToAdd, streakAdd, userId]
+      [xpToAdd, userId]
     );
 
     const updated = await query('SELECT xp, points, streak FROM users WHERE id = ?', [userId]);
@@ -80,7 +76,7 @@ router.post('/add-xp', verifyToken, async (req, res) => {
 // Update Profile
 router.put('/profile', verifyToken, async (req, res) => {
   try {
-    const { full_name, whatsapp, avatar, xp, points, streak } = req.body;
+    const { full_name, whatsapp, avatar, xp } = req.body;
     
     const fields = [];
     const values = [];
@@ -89,8 +85,6 @@ router.put('/profile', verifyToken, async (req, res) => {
     if (whatsapp !== undefined) { fields.push('whatsapp = ?'); values.push(whatsapp); }
     if (avatar !== undefined) { fields.push('avatar = ?'); values.push(avatar); }
     if (xp !== undefined) { fields.push('xp = ?'); values.push(Number(xp)); }
-    if (points !== undefined) { fields.push('points = ?'); values.push(Number(points)); }
-    if (streak !== undefined) { fields.push('streak = ?'); values.push(Number(streak)); }
 
     if (fields.length === 0) {
       return res.status(400).json({ success: false, message: 'No fields to update.' });

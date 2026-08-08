@@ -136,12 +136,6 @@ export default function Profile() {
             <span className="text-xs font-black text-lime bg-slate-900/90 border border-lime/30 px-3.5 py-1.5 rounded-xl">
               ⚡ {currentUser?.xp ?? 0} XP
             </span>
-            <span className="text-xs font-black text-orange-400 bg-slate-900/90 border border-orange-500/30 px-3.5 py-1.5 rounded-xl">
-              🔥 {currentUser?.streak ?? 0} Days Streak
-            </span>
-            <span className="text-xs font-black text-emerald-400 bg-slate-900/90 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl">
-              🏆 {currentUser?.points ?? 0} Points
-            </span>
           </div>
         </div>
       </div>
