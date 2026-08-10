@@ -246,14 +246,6 @@ export default function LeaderboardView() {
                       {formatXp(champion.xp)} XP
                     </p>
                   </div>
-                  <div className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1.5 text-xs font-black">
-                    <Flame
-                      size={14}
-                      className="text-[#FFA715]"
-                      fill="currentColor"
-                    />
-                    {champion.streak || 0}
-                  </div>
                 </div>
               </>
             ) : (

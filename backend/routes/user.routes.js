@@ -30,7 +30,7 @@ router.get('/profile', verifyToken, async (req, res) => {
 
     // Also fetch completed lesson IDs
     const progress = await query(
-      `SELECT lesson_id, score, completed_at FROM user_progress WHERE user_id = ? AND completed = 1`,
+      `SELECT lesson_id, score, completed_at FROM user_progress WHERE user_id = ? AND completed = true`,
       [req.user.id]
     );
 
@@ -52,7 +52,7 @@ router.post('/add-xp', verifyToken, async (req, res) => {
     // Recalculate user's XP strictly based on completed quizzes progress
     await query(
       `UPDATE users
-       SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = 1)
+       SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = true)
        WHERE id = ?`,
       [userId, userId]
     );

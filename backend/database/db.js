@@ -470,7 +470,7 @@ export const dbCompleteLesson = async (
 
   if (
     existingProgress.length > 0 &&
-    Number(existingProgress[0].completed) === 1
+    (Boolean(existingProgress[0].completed) === true || Number(existingProgress[0].completed) === 1)
   ) {
     const highestScore = Math.max(
       Number(existingProgress[0].score || 0),
@@ -494,7 +494,7 @@ export const dbCompleteLesson = async (
     await query(
       `
         UPDATE users
-        SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = 1)
+        SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = true)
         WHERE id = ?
       `,
       [userId, userId]
@@ -541,7 +541,7 @@ export const dbCompleteLesson = async (
       `
         UPDATE user_progress
         SET
-          completed = 1,
+          completed = true,
           score = ?,
           xp_earned = ?,
           completed_at = CURRENT_TIMESTAMP
@@ -557,7 +557,7 @@ export const dbCompleteLesson = async (
   await query(
     `
       UPDATE users
-      SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = 1)
+      SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = true)
       WHERE id = ?
     `,
     [userId, userId]
