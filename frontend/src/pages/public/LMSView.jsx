@@ -46,6 +46,34 @@ import { courseService, userService } from "../../services/api";
 import FreeQuizModal, { freeQuestionsByUnit } from "../../components/modals/FreeQuizModal";
 import PremiumQuizModal, { premiumQuestionsByUnit } from "../../components/modals/PremiumQuizModal";
 
+const getYoutubeThumbnail = (url) => {
+  if (!url) return null;
+  let match = url.match(/embed\/([^/?#]+)/);
+  if (match) return `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg`;
+  match = url.match(/[?&]v=([^&#]+)/);
+  if (match) return `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg`;
+  match = url.match(/youtu\.be\/([^/?#]+)/);
+  if (match) return `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg`;
+  return null;
+};
+
+const getYoutubeEmbedUrl = (url) => {
+  if (!url) return '';
+  if (url.includes('/embed/')) return url;
+  let match = url.match(/[?&]v=([^&#]+)/);
+  if (match) return `https://www.youtube.com/embed/${match[1]}`;
+  match = url.match(/youtu\.be\/([^/?#]+)/);
+  if (match) return `https://www.youtube.com/embed/${match[1]}`;
+  return url;
+};
+
+const getProvider = (url) => {
+  if (!url) return 'Live Class';
+  if (url.includes('youtube.com') || url.includes('youtu.be')) return 'YouTube';
+  if (url.includes('drive.google.com')) return 'Google Drive';
+  return 'Live Class';
+};
+
 const staticLessons = [
   {
     id: 1,
@@ -1017,7 +1045,7 @@ export default function LMSView() {
                 </div>
                 <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800">
                   <iframe
-                    src={activeRecordedVideo.videoUrl}
+                    src={getYoutubeEmbedUrl(activeRecordedVideo.videoUrl)}
                     title={activeRecordedVideo.title}
                     className="w-full h-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -1044,18 +1072,20 @@ export default function LMSView() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {videoSection.items.map((session) => {
                     const videoLocked = videoSection.premium && !hasPaidAccess;
+                    const videoThumbnail = session.thumbnail || getYoutubeThumbnail(session.videoUrl) || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800';
+                    const providerLabel = getProvider(session.videoUrl);
                     return (
                       <div key={session.id} className="bg-slate-800 border border-slate-700 p-6 rounded-3xl space-y-4 flex flex-col justify-between hover:border-[#FFFF00] transition-all overflow-hidden">
 
                         {/* THUMBNAIL PREVIEW (HANYA 1 TOMBOL PLAY DI TENGAH TERSEDIA) */}
-                        {session.thumbnail && (
+                        {videoThumbnail && (
                           <div
                             onClick={() => handlePlayVideo(session, videoSection.premium)}
                             className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 -mt-2 -mx-2 cursor-pointer group"
                             title="Klik untuk memutar video"
                           >
                             <img
-                              src={session.thumbnail}
+                              src={videoThumbnail}
                               alt={session.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               onError={(e) => {
@@ -1068,7 +1098,7 @@ export default function LMSView() {
                               </div>
                             </div>
                             <span className="absolute top-2 left-2 px-2.5 py-1 rounded-md bg-slate-950/80 text-[10px] font-black text-lime uppercase border border-slate-700">
-                              {session.provider === 'youtube' ? 'YouTube' : session.provider === 'gdrive' ? 'Google Drive' : 'Live Class'}
+                              {providerLabel}
                             </span>
                           </div>
                         )}
