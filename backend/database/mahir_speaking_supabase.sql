@@ -212,6 +212,47 @@ begin
   end loop;
 end $$;
 
+-- ---------- SAFE USER REGISTRATION ----------
+create or replace function public.register_user_secure(
+  p_full_name varchar,
+  p_username varchar,
+  p_email varchar,
+  p_whatsapp varchar,
+  p_password varchar,
+  p_role varchar,
+  p_avatar text
+)
+returns table (
+  user_id bigint,
+  status_code varchar
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id bigint;
+begin
+  if exists (select 1 from public.users where lower(email) = lower(p_email)) then
+    return query select 0::bigint, 'EMAIL_EXISTS'::varchar;
+    return;
+  end if;
+
+  if exists (select 1 from public.users where lower(username) = lower(p_username)) then
+    return query select 0::bigint, 'USERNAME_EXISTS'::varchar;
+    return;
+  end if;
+
+  insert into public.users (
+    full_name, username, email, whatsapp, password, role, avatar, package_id, xp, points, streak
+  ) values (
+    p_full_name, p_username, p_email, p_whatsapp, p_password, p_role, p_avatar, 1, 0, 0, 0
+  ) returning id into v_user_id;
+
+  return query select v_user_id, 'SUCCESS'::varchar;
+end;
+$$;
+
 -- ---------- SAFE XP TRANSACTION ----------
 -- Signature tetap cocok dengan backend lama. Nilai XP dari client diabaikan;
 -- hadiah diambil dari lessons.xp_reward agar user tidak bisa memalsukan XP.
