@@ -413,7 +413,10 @@ export async function initSeedData() {
           ('Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)', 'Mr.Alfada Naufal', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/dvgZkm1xWPE'),
           ('Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)', 'Ms. Deasy Puspawati', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/09R8_2nJtjg'),
           ('Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)', 'Ms. Ade Ihdinayah', '90 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/JGwWNGJdvx8'),
-          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg')
+          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg'),
+          ('Belajar English via Lagu: \"Count On Me\" - Bruno Mars', 'Mr. James', '45 Menit', 'Basic Level', 'https://www.youtube.com/embed/6k8cpUkKK4c'),
+          ('Belajar English via Lagu: \"Love Yourself\" - Justin Bieber', 'Ms. Deasy Puspawati', '50 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/OYhXJaE4WcI'),
+          ('Belajar English via Lagu: \"Someone Like You\" - Adele', 'Ms. Ade Ihdinayah', '60 Menit', 'Advance Level', 'https://www.youtube.com/embed/hLQl3WQQoQ0')
         `);
       } else {
         await query(`
@@ -422,7 +425,10 @@ export async function initSeedData() {
           ('Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)', 'Mr.Alfada Naufal', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/dvgZkm1xWPE'),
           ('Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)', 'Ms. Deasy Puspawati', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/09R8_2nJtjg'),
           ('Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)', 'Ms. Ade Ihdinayah', '90 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/JGwWNGJdvx8'),
-          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg')
+          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg'),
+          ('Belajar English via Lagu: \"Count On Me\" - Bruno Mars', 'Mr. James', '45 Menit', 'Basic Level', 'https://www.youtube.com/embed/6k8cpUkKK4c'),
+          ('Belajar English via Lagu: \"Love Yourself\" - Justin Bieber', 'Ms. Deasy Puspawati', '50 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/OYhXJaE4WcI'),
+          ('Belajar English via Lagu: \"Someone Like You\" - Adele', 'Ms. Ade Ihdinayah', '60 Menit', 'Advance Level', 'https://www.youtube.com/embed/hLQl3WQQoQ0')
         `);
       }
     }
