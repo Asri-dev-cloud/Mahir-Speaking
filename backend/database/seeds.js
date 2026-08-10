@@ -144,6 +144,7 @@ export async function initSeedData() {
           lesson_id INTEGER NOT NULL,
           completed INTEGER DEFAULT 0,
           score INTEGER DEFAULT 0,
+          xp_earned INTEGER DEFAULT 0,
           completed_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `);

@@ -88,6 +88,7 @@ create table if not exists public.user_progress (
   lesson_id bigint not null references public.lessons(id) on delete cascade,
   completed boolean not null default false,
   score integer not null default 0 check (score between 0 and 100),
+  xp_earned integer not null default 0 check (xp_earned >= 0),
   completed_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -266,30 +267,32 @@ begin
 
   if coalesce(v_completed, false) then
     update public.user_progress
-       set score = greatest(v_old_score, greatest(0, least(100, p_score)))
-     where id = v_progress_id;
+       set score = greatest(v_old_score, greatest(0, least(100, p_score))),
+           xp_earned = greatest(xp_earned, coalesce(p_xp_reward, 0))
+      where id = v_progress_id;
 
     update public.users
-       set xp = (select coalesce(count(*), 0) * 5 from public.user_progress where user_id = p_user_id and completed = true)
-     where id = p_user_id
-    returning xp, points, streak into v_xp, v_points, v_streak;
+       set xp = (select coalesce(sum(xp_earned), 0) from public.user_progress where user_id = p_user_id and completed = true)
+      where id = p_user_id
+     returning xp, points, streak into v_xp, v_points, v_streak;
 
     return query select v_progress_id, v_xp, v_points, v_streak, 'ALREADY_COMPLETED'::varchar;
     return;
   end if;
 
   insert into public.user_progress
-    (user_id, lesson_id, completed, score, completed_at)
+    (user_id, lesson_id, completed, score, xp_earned, completed_at)
   values
-    (p_user_id, p_lesson_id, true, greatest(0, least(100, p_score)), now())
+    (p_user_id, p_lesson_id, true, greatest(0, least(100, p_score)), coalesce(p_xp_reward, 0), now())
   on conflict (user_id, lesson_id) do update
     set completed = true,
         score = greatest(public.user_progress.score, excluded.score),
+        xp_earned = greatest(public.user_progress.xp_earned, excluded.xp_earned),
         completed_at = now()
   returning id into v_progress_id;
 
   update public.users
-     set xp = (select coalesce(count(*), 0) * 5 from public.user_progress where user_id = p_user_id and completed = true)
+     set xp = (select coalesce(sum(xp_earned), 0) from public.user_progress where user_id = p_user_id and completed = true)
     where id = p_user_id
   returning xp, points, streak into v_xp, v_points, v_streak;
 

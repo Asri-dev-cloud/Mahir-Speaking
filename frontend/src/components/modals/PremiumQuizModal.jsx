@@ -924,7 +924,7 @@ export default function PremiumQuizModal({ selectedLesson, closeLesson, finishLe
     if (quizAnswers[idx] === q.ans) correctCount++;
   });
   const calculatedScore = Math.round((correctCount / questionsList.length) * 100);
-  const earnedXp = 5; // Setiap kuis bernilai 5 XP secara mutlak
+  const earnedXp = correctCount * 5; // 1 soal benar = 5 XP
 
   const handleSelectAnswer = (optionIdx) => {
     if (quizSubmitted) return;

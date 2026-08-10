@@ -61,8 +61,7 @@ router.post('/complete-lesson', verifyToken, async (req, res) => {
   try {
     const { lesson_id, score, xp_earned } = req.body;
     const userId = req.user.id;
-
-    const addXp = 5;
+    const addXp = xp_earned !== undefined ? Number(xp_earned) : 5;
 
     // Jalankan Stored Procedure / Transaksi Aman kelulusan materi & kuis
     const result = await dbCompleteLesson(userId, lesson_id, score || 100, addXp);
@@ -71,7 +70,7 @@ router.post('/complete-lesson', verifyToken, async (req, res) => {
       success: true,
       message: result.status_code === 'ALREADY_COMPLETED' 
         ? `Lesson score updated! Current highscore: ${score}%`
-        : `Lesson completed! +5 XP earned! ✨`,
+        : `Lesson completed! +${addXp} XP earned! ✨`,
       xp: result.new_xp,
       points: result.new_points,
       streak: result.new_streak

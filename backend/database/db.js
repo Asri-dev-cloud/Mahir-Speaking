@@ -476,21 +476,25 @@ export const dbCompleteLesson = async (
       Number(existingProgress[0].score || 0),
       Number(score || 0)
     );
+    const highestXp = Math.max(
+      Number(existingProgress[0].xp_earned || 0),
+      Number(xpReward || 0)
+    );
 
     await query(
       `
         UPDATE user_progress
-        SET score = ?
+        SET score = ?, xp_earned = ?
         WHERE user_id = ?
           AND lesson_id = ?
       `,
-      [highestScore, userId, lessonId]
+      [highestScore, highestXp, userId, lessonId]
     );
 
     await query(
       `
         UPDATE users
-        SET xp = (SELECT COALESCE(COUNT(*), 0) * 5 FROM user_progress WHERE user_id = ? AND completed = 1)
+        SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = 1)
         WHERE id = ?
       `,
       [userId, userId]
@@ -523,11 +527,12 @@ export const dbCompleteLesson = async (
           user_id,
           lesson_id,
           completed,
-          score
+          score,
+          xp_earned
         )
-        VALUES (?, ?, 1, ?)
+        VALUES (?, ?, 1, ?, ?)
       `,
-      [userId, lessonId, score]
+      [userId, lessonId, score, xpReward]
     );
 
     progressId = progressResult.lastID;
@@ -538,11 +543,12 @@ export const dbCompleteLesson = async (
         SET
           completed = 1,
           score = ?,
+          xp_earned = ?,
           completed_at = CURRENT_TIMESTAMP
         WHERE user_id = ?
           AND lesson_id = ?
       `,
-      [score, userId, lessonId]
+      [score, xpReward, userId, lessonId]
     );
 
     progressId = existingProgress[0].id;
@@ -551,7 +557,7 @@ export const dbCompleteLesson = async (
   await query(
     `
       UPDATE users
-      SET xp = (SELECT COALESCE(COUNT(*), 0) * 5 FROM user_progress WHERE user_id = ? AND completed = 1)
+      SET xp = (SELECT COALESCE(SUM(xp_earned), 0) FROM user_progress WHERE user_id = ? AND completed = 1)
       WHERE id = ?
     `,
     [userId, userId]

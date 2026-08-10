@@ -70,8 +70,8 @@ export default function QuizView() {
       // Quiz Complete
       setIsCompleted(true);
       
-      // Calculate totalXp earned (each quiz is worth exactly 5 XP)
-      const totalXp = 5;
+      // Calculate totalXp earned (each correct answer is worth 5 XP)
+      const totalXp = newScore * 5;
       
       // Optimistic update to match LMSView logic
       if (user) {
@@ -81,7 +81,7 @@ export default function QuizView() {
           ...user,
           xp: isAlreadyCompleted
             ? (user.xp || 0)
-            : (user.xp || 0) + 5,
+            : (user.xp || 0) + totalXp,
           completed_units: nextCompleted
         };
         updateUserProfile(updatedUser);
@@ -97,7 +97,7 @@ export default function QuizView() {
         const res = await courseService.completeLesson({
           lesson_id: 1,
           score: Math.round((newScore / quizQuestions.length) * 100),
-          xp_earned: 5
+          xp_earned: totalXp
         });
         if (res.success && res.xp !== undefined && user) {
           // Sinkronisasi dengan XP terbaru dari database cloud
@@ -191,7 +191,7 @@ export default function QuizView() {
               {Math.round((score / quizQuestions.length) * 100)}%
             </div>
             <div className="text-xs font-bold text-amber-800 pt-1">
-              ⚡ Earned +5 XP!
+              ⚡ Earned +{score * 5} XP!
             </div>
           </div>
 
