@@ -188,7 +188,10 @@ router.get('/leads', async (req, res) => {
 
 router.put('/leads/:id/status', async (req, res) => {
   try {
-    await query(`UPDATE placement_test_leads SET status = ?, updated_at = NOW() WHERE id = ?`, [req.body.status, req.params.id]);
+    const updateQuery = dbType === 'postgres'
+      ? `UPDATE placement_test_leads SET status = ?, updated_at = NOW() WHERE id = ?`
+      : `UPDATE placement_test_leads SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`;
+    await query(updateQuery, [req.body.status, req.params.id]);
     res.json({ success: true, message: 'Status lead diperbarui.' });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Gagal memperbarui lead.' });
@@ -217,7 +220,11 @@ router.post('/quizzes', async (req, res) => {
   const quizzes = Array.isArray(req.body.quizzes) ? req.body.quizzes : [];
   try {
     for (const item of quizzes) {
-      await query(`INSERT INTO quizzes (lesson_id, question, options, correct_answer, xp_reward, created_by) VALUES (?, ?, ?::jsonb, ?, ?, ?)`, [item.lesson_id, item.question, JSON.stringify(item.options || []), item.correct_answer, item.xp_reward || 20, req.user.id]);
+      if (dbType === 'postgres') {
+        await query(`INSERT INTO quizzes (lesson_id, question, options, correct_answer, xp_reward, created_by) VALUES (?, ?, ?::jsonb, ?, ?, ?)`, [item.lesson_id, item.question, JSON.stringify(item.options || []), item.correct_answer, item.xp_reward || 20, req.user.id]);
+      } else {
+        await query(`INSERT INTO quizzes (lesson_id, question, options, correct_answer, xp_reward) VALUES (?, ?, ?, ?, ?)`, [item.lesson_id, item.question, JSON.stringify(item.options || []), item.correct_answer, item.xp_reward || 20]);
+      }
     }
     res.status(201).json({ success: true, count: quizzes.length, message: `${quizzes.length} kuis berhasil ditambahkan.` });
   } catch (err) {
@@ -247,8 +254,23 @@ router.get('/modules', async (req, res) => {
 router.post('/modules', async (req, res) => {
   const { title, type, size, badge, desc, fileUrl } = req.body;
   try {
-    const rows = await query(`INSERT INTO modules (title, type, file_size, badge, description, file_url, created_by) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id, title, type, file_size AS size, badge, description AS "desc", file_url AS "fileUrl", created_at`, [title, type || 'PDF Document', size || null, badge || 'Official Modul', desc || null, fileUrl, req.user.id]);
-    res.status(201).json({ success: true, module: rows[0], message: 'Modul berhasil ditambahkan.' });
+    if (dbType === 'postgres') {
+      const rows = await query(`INSERT INTO modules (title, type, file_size, badge, description, file_url, created_by) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id, title, type, file_size AS size, badge, description AS "desc", file_url AS "fileUrl", created_at`, [title, type || 'PDF Document', size || null, badge || 'Official Modul', desc || null, fileUrl, req.user.id]);
+      res.status(201).json({ success: true, module: rows[0], message: 'Modul berhasil ditambahkan.' });
+    } else {
+      const insertResult = await query(`INSERT INTO modules (title, type, file_size, badge, description, file_url, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`, [title, type || 'PDF Document', size || null, badge || 'Official Modul', desc || null, fileUrl, req.user.id]);
+      const createdModule = {
+        id: insertResult.lastID,
+        title,
+        type: type || 'PDF Document',
+        size: size || null,
+        badge: badge || 'Official Modul',
+        desc: desc || null,
+        fileUrl,
+        created_at: new Date().toISOString()
+      };
+      res.status(201).json({ success: true, module: createdModule, message: 'Modul berhasil ditambahkan.' });
+    }
   } catch (err) {
     console.error('Save module error:', err);
     res.status(500).json({ success: false, message: 'Gagal menyimpan modul.' });
@@ -276,8 +298,23 @@ router.get('/recorded-videos', async (req, res) => {
 router.post('/recorded-videos', async (req, res) => {
   const { title, tutor, duration, level, videoUrl, thumbnail } = req.body;
   try {
-    const rows = await query(`INSERT INTO recorded_videos (title, tutor, duration, level, video_url, thumbnail, created_by) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id, title, tutor, duration, level, video_url AS "videoUrl", thumbnail, created_at`, [title, tutor || null, duration || null, level || 'All Levels', videoUrl, thumbnail || null, req.user.id]);
-    res.status(201).json({ success: true, video: rows[0], message: 'Video berhasil ditambahkan.' });
+    if (dbType === 'postgres') {
+      const rows = await query(`INSERT INTO recorded_videos (title, tutor, duration, level, video_url, thumbnail, created_by) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id, title, tutor, duration, level, video_url AS "videoUrl", thumbnail, created_at`, [title, tutor || null, duration || null, level || 'All Levels', videoUrl, thumbnail || null, req.user.id]);
+      res.status(201).json({ success: true, video: rows[0], message: 'Video berhasil ditambahkan.' });
+    } else {
+      const insertResult = await query(`INSERT INTO recorded_videos (title, tutor, duration, level, video_url, thumbnail, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`, [title, tutor || null, duration || null, level || 'All Levels', videoUrl, thumbnail || null, req.user.id]);
+      const createdVideo = {
+        id: insertResult.lastID,
+        title,
+        tutor: tutor || null,
+        duration: duration || null,
+        level: level || 'All Levels',
+        videoUrl,
+        thumbnail: thumbnail || null,
+        created_at: new Date().toISOString()
+      };
+      res.status(201).json({ success: true, video: createdVideo, message: 'Video berhasil ditambahkan.' });
+    }
   } catch (err) {
     console.error('Save video error:', err);
     res.status(500).json({ success: false, message: 'Gagal menyimpan video.' });

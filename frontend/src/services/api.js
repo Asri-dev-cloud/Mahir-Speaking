@@ -269,6 +269,12 @@ export const userService = {
     }
     return res;
   },
+  submitPlacementLead: async (leadData) => {
+    return apiFetch('/users/placement-lead', {
+      method: 'POST',
+      body: JSON.stringify(leadData)
+    });
+  }
 };
 
 export const courseService = {
@@ -280,6 +286,8 @@ export const courseService = {
   getCourseById: (id) => apiFetch(`/courses/${id}`),
   completeLesson: (data) => apiFetch('/courses/complete-lesson', { method: 'POST', body: JSON.stringify(data) }),
   uploadLesson: (data) => apiFetch('/courses/upload-lesson', { method: 'POST', body: JSON.stringify(data) }),
+  getModules: () => apiFetch('/users/modules'),
+  getRecordedVideos: () => apiFetch('/users/recorded-videos'),
 };
 
 export const packageService = {

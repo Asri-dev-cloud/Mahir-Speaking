@@ -140,7 +140,7 @@ create table if not exists public.placement_test_leads (
   email varchar(255),
   level_target varchar(30),
   recommended_level varchar(30),
-  jadwal_trial timestamptz,
+  jadwal_trial varchar(100),
   catatan text,
   status varchar(40) not null default 'Belum Dihubungi',
   created_at timestamptz not null default now(),
@@ -268,8 +268,10 @@ begin
        set score = greatest(v_old_score, greatest(0, least(100, p_score)))
      where id = v_progress_id;
 
-    select xp, points, streak into v_xp, v_points, v_streak
-    from public.users where id = p_user_id;
+    update public.users
+       set xp = (select coalesce(count(*), 0) * 5 from public.user_progress where user_id = p_user_id and completed = true)
+     where id = p_user_id
+    returning xp, points, streak into v_xp, v_points, v_streak;
 
     return query select v_progress_id, v_xp, v_points, v_streak, 'ALREADY_COMPLETED'::varchar;
     return;
@@ -286,7 +288,7 @@ begin
   returning id into v_progress_id;
 
   update public.users
-     set xp = xp + coalesce(p_xp_reward, v_reward)
+     set xp = (select coalesce(count(*), 0) * 5 from public.user_progress where user_id = p_user_id and completed = true)
     where id = p_user_id
   returning xp, points, streak into v_xp, v_points, v_streak;
 

@@ -182,7 +182,8 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pt-3 pb-16 space-y-12">
+    <div className="w-full min-h-screen bg-gradient-to-b from-[#87CEFA] via-white to-white py-8">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-12">
 
       {/* 🌟 Header Halaman Pricing */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
@@ -458,9 +459,9 @@ export default function PricingPage() {
             <MessageCircle className="w-4 h-4" />
             <span>Konsultasi WA Gratis</span>
           </a>
-        </div>
       </div>
-
     </div>
+  </div>
+</div>
   );
 }

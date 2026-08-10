@@ -716,7 +716,7 @@ export default function AdminPortal() {
   // -------------------------------------------------------------
   if (!user || !isAdmin) {
     return (
-      <div className="min-h-[85vh] flex items-center justify-center p-4 relative overflow-hidden bg-slate-950">
+      <div className="min-h-[85vh] flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-b from-[#87CEFA] via-white to-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rose-900/20 via-slate-950 to-slate-950" />
 
         <div className="max-w-md w-full bg-slate-900/90 backdrop-blur-2xl border-2 border-rose-500/30 rounded-4xl p-8 shadow-2xl space-y-6 relative z-10 text-white text-center">
@@ -761,7 +761,7 @@ export default function AdminPortal() {
   // 🟢 SCREEN 2: MAIN DASHBOARD PORTAL ADMIN MASTER
   // -------------------------------------------------------------
   return (
-    <div className="admin-portal-wrapper min-h-screen bg-gradient-to-br from-[#87CEFA] via-[#dff4ff] to-[#f5fbff] text-slate-900 font-sans">
+    <div className="admin-portal-wrapper min-h-screen bg-gradient-to-b from-[#87CEFA] via-white to-white text-slate-900 font-sans">
       <style>{`
         .admin-portal-main .bg-slate-900\/60,
         .admin-portal-main .bg-slate-900\/80 { background: #ffffff !important; }

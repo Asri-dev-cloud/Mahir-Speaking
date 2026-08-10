@@ -487,6 +487,15 @@ export const dbCompleteLesson = async (
       [highestScore, userId, lessonId]
     );
 
+    await query(
+      `
+        UPDATE users
+        SET xp = (SELECT COALESCE(COUNT(*), 0) * 5 FROM user_progress WHERE user_id = ? AND completed = 1)
+        WHERE id = ?
+      `,
+      [userId, userId]
+    );
+
     const users = await query(
       `
         SELECT xp, points, streak
@@ -542,14 +551,10 @@ export const dbCompleteLesson = async (
   await query(
     `
       UPDATE users
-      SET
-        xp = xp + ?
+      SET xp = (SELECT COALESCE(COUNT(*), 0) * 5 FROM user_progress WHERE user_id = ? AND completed = 1)
       WHERE id = ?
     `,
-    [
-      Number(xpReward !== undefined ? xpReward : 50),
-      userId,
-    ]
+    [userId, userId]
   );
 
   const updatedUsers = await query(

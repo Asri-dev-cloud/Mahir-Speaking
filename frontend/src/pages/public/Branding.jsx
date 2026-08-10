@@ -90,7 +90,8 @@ const galleryActivities = [
     image: "/g.jpeg",
     description: "Fokus melatih rasa percaya diri siswa secara personal.",
     color: "#0362C0",
-    label: "Mentorship"
+    label: "Mentorship",
+    category: "mentorship"
   },
   {
     id: 2,
@@ -98,7 +99,8 @@ const galleryActivities = [
     image: "/h.jpeg",
     description: "Kolaborasi aktif bertukar opini menggunakan bahasa Inggris sehari-hari.",
     color: "#FFA715",
-    label: "Live Class"
+    label: "Live Class",
+    category: "class"
   },
   {
     id: 3,
@@ -106,7 +108,8 @@ const galleryActivities = [
     image: "/i.jpeg",
     description: "Membangun rasa berani berdialog di lingkungan yang sangat suportif.",
     color: "#12B886",
-    label: "Community"
+    label: "Community",
+    category: "community"
   },
   {
     id: 4,
@@ -114,7 +117,8 @@ const galleryActivities = [
     image: "/j.jpeg",
     description: "Mempersiapkan bekal interview kerja dan cara presentasi yang meyakinkan.",
     color: "#7457E8",
-    label: "Workshop"
+    label: "Workshop",
+    category: "workshop"
   },
   {
     id: 5,
@@ -122,7 +126,8 @@ const galleryActivities = [
     image: "/k.jpeg",
     description: "Bedah intonasi dan pengucapan agar terdengar natural layaknya native speaker.",
     color: "#0362C0",
-    label: "Speaking Drill"
+    label: "Speaking Drill",
+    category: "class"
   },
   {
     id: 6,
@@ -130,7 +135,8 @@ const galleryActivities = [
     image: "/l.jpeg",
     description: "Apresiasi atas konsistensi dan keberanian melangkah dari nol.",
     color: "#FFA715",
-    label: "Student Moment"
+    label: "Student Moment",
+    category: "community"
   }
 ];
 
@@ -144,27 +150,27 @@ const categories = [
 
 const mentors = [
   {
-    name: "Ms. Era Purike",
-    role: "Senior Speaking Mentor",
-    focus: "One-on-One Private Speaking & Confidence",
-    bio: "Pengalaman 6+ tahun membimbing ratusan siswa mengatasi rasa takut bicara, memperlancar kelancaran presentasi, dan wawancara kerja.",
-    image: "/mo.png",
+    name: "Mr.Alfada Naufal",
+    role: "Mahir Speaking",
+    focus: "Daily Learning & Interactive Conversation",
+    bio: "Mendampingi praktik percakapan harian, grammar yang aplikatif, serta pembentukan kebiasaan berkomunikasi aktif.",
+    image: "/alfa.jpg",
     skills: ["Private 1-on-1", "Public Speaking", "Confidence Building"]
   },
   {
     name: "Ms. Deasy Puspawati",
-    role: "English Tutor Specialist",
-    focus: "Daily Learning & Interactive Conversation",
-    bio: "Spesialis dalam membedah percakapan harian, grammar for speaking yang aplikatif, serta pembentukan kebiasaan berkomunikasi aktif.",
-    image: "/ma.png",
+    role: "Mahir Speaking",
+    focus: "One-on-One Private Speaking & Confidence",
+    bio: "Pengalaman 10+ tahun membimbing ratusan siswa, mahasiswa, pekerja mengatasi rasa takut bicara, memperlancar kelancaran presentasi, dan wawancara kerja.",
+    image: "/deasy.jpg",
     skills: ["Daily Practice", "Grammar Drills", "Interactive Class"]
   },
   {
-    name: "Ms. Ade Ihdinayah",
-    role: "Pronunciation & Accent Coach",
+    name: "Mr.Garry Wilson",
+    role: "Mahir Speaking",
     focus: "Pronunciation, Intonation & Accent Clarity",
-    bio: "Pakar pelafalan dan penekanan kata (stressing) agar pengucapan siswa terdengar jelas, natural, dan mudah dipahami native speaker.",
-    image: "/mi.png",
+    bio: "•	Penutus asli yang menjadi partner agar peserta berani bicara, terdengar jelas, natural, mudah dipahami.",
+    image: "/garry.jpg ",
     skills: ["Phonetics", "Native Accent", "Speech Rhythm"]
   },
 ];
@@ -228,7 +234,10 @@ export default function Branding() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
-  const filteredActivities = galleryActivities;
+  const filteredActivities =
+    activeCategory === "all"
+      ? galleryActivities
+      : galleryActivities.filter((activity) => activity.category === activeCategory);
 
   const changeSlide = (direction) => {
     setActiveSlide((current) => {
@@ -247,9 +256,9 @@ export default function Branding() {
   };
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-white text-[#08203C]">
+    <main className="min-h-screen overflow-x-hidden bg-gradient-to-b from-[#87CEFA] via-white to-white text-[#08203C]">
       {/* 1. HERO BRANDING GALLERY */}
-      <section className="relative overflow-hidden bg-[#87CEFA] px-4 pb-7 pt-6 sm:px-8 sm:pb-10 sm:pt-12">
+      <section className="relative overflow-hidden bg-transparent px-4 pb-7 pt-6 sm:px-8 sm:pb-10 sm:pt-12">
         <div className="absolute -left-20 top-8 h-56 w-56 rounded-full bg-white/25 blur-2xl" />
         <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-[#FFFF00]/20 blur-3xl" />
 
@@ -343,8 +352,8 @@ export default function Branding() {
                 aria-label={`Ke slide ${index + 1}`}
                 onClick={() => setActiveSlide(index)}
                 className={`h-2.5 rounded-full transition-all ${activeSlide === index
-                    ? "w-8 bg-[#0362C0]"
-                    : "w-2.5 bg-white/75"
+                  ? "w-8 bg-[#0362C0]"
+                  : "w-2.5 bg-white/75"
                   }`}
               />
             ))}
@@ -352,7 +361,7 @@ export default function Branding() {
         </div>
       </section>
 
-      {/* 2. EDUKASI PROGRAM: FREE LEARNING vs KURSUS INTENSIF (PREMIUM) */}
+      {/* 2. EDUKASI PROGRAM: FREE LEARNING vs KURSUS INTENSIF  */}
       <section className="bg-slate-900 text-white px-4 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-6xl space-y-10">
           <div className="text-center space-y-3 max-w-3xl mx-auto">
@@ -360,7 +369,7 @@ export default function Branding() {
               EDUKASI PROGRAM MAHIR SPEAKING
             </span>
             <h2 className="text-2xl sm:text-4xl font-black text-white leading-tight">
-              Perbedaan <span className="text-[#C6F500]">Free Learning Program</span> vs <span className="text-cyan-400">Kursus Intensif (Premium)</span>
+              Perbedaan <span className="text-[#C6F500]">Program Belajar Gratis</span> vs <span className="text-cyan-400">Kursus Intensif </span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 font-semibold">
               Pahami manfaat dari setiap program agar Anda dapat menentukan pilihan terbaik sesuai target kelancaran bicara Anda.
@@ -373,11 +382,11 @@ export default function Branding() {
             <div className="bg-slate-800 border-2 border-slate-700 p-6 rounded-3xl space-y-5 flex flex-col justify-between">
               <div className="space-y-4">
                 <span className="bg-slate-700 text-slate-200 text-xs font-black px-3 py-1 rounded-full uppercase">
-                  Free Learning Program
+                  Program Belajar Gratis
                 </span>
                 <h3 className="text-xl font-black text-white">Komunitas & Latihan Mandiri</h3>
                 <p className="text-xs text-slate-300 font-semibold leading-relaxed">
-                  Program gratis tanpa biaya bagi umum untuk berkenalan dengan ekosistem latihan Mahir Speaking melalui webinar umum dan latihan kuis interaktif.
+                  Program gratis tanpa biaya bagi umum untuk berkenalan dengan ekosistem latihan Mahir Speaking pertemuan online dan praktik interaktif.
                 </p>
                 <ul className="space-y-2.5 text-xs text-slate-300 font-semibold pt-2 border-t border-slate-700">
                   <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Akses Kuis LMS Interaktif Publik</li>
@@ -402,15 +411,14 @@ export default function Branding() {
               </span>
               <div className="space-y-4">
                 <span className="bg-[#C6F500] text-[#0A1128] text-xs font-black px-3 py-1 rounded-full uppercase">
-                  Program Kursus Intensif (Premium)
+                  Program Kursus Intensif
                 </span>
                 <h3 className="text-xl font-black text-white">Full Mentorship & Guaranteed Fluency</h3>
                 <p className="text-xs text-slate-200 font-semibold leading-relaxed">
                   Pendampingan intensif bersama Mentor Senior, evaluasi bulanan, rekaman materi 24/7, modul lengkap, & Native Speaker Meeting.
                 </p>
                 <ul className="space-y-2.5 text-xs text-slate-100 font-bold pt-2 border-t border-slate-700">
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Mentorship Mentors Senior (Ms. Era, Ms. Deasy, Ms. Ade)</li>
-                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Sesi Diskusi Native Speaker Meeting</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Mentorship Mentor Berpengalaman</li>
                   <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Diagnostic Placement Test & Personal Roadmap</li>
                   <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Full Rekaman Sesi LMS & E-Book Lengkap</li>
                   <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#C6F500] flex-shrink-0" /> Sertifikat Kelulusan Resmi & Progress Report</li>
@@ -432,8 +440,8 @@ export default function Branding() {
               <thead>
                 <tr className="border-b border-slate-700 text-slate-300 font-black">
                   <th className="p-3">Fitur Program</th>
-                  <th className="p-3 text-slate-400">Free Learning Program</th>
-                  <th className="p-3 text-[#C6F500]">Program Kursus Intensif (Premium)</th>
+                  <th className="p-3 text-slate-400">Program Belajar Gratis</th>
+                  <th className="p-3 text-[#C6F500]">Program Kursus Intensif </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/60 font-semibold text-slate-200">
@@ -511,7 +519,7 @@ export default function Branding() {
                   rel="noreferrer"
                   className="w-full py-2.5 rounded-xl bg-slate-100 text-slate-900 font-black text-xs text-center block hover:bg-[#0362C0] hover:text-white transition-all border border-slate-200"
                 >
-                  Konsultasi Mentor ➔
+                  Konsultasi Belajar ➔
                 </a>
               </div>
             ))}
@@ -572,6 +580,22 @@ export default function Branding() {
             </p>
           </div>
 
+          <div className="-mx-4 mt-7 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => setActiveCategory(category.id)}
+                className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-extrabold transition ${activeCategory === category.id
+                    ? "bg-[#0362C0] text-[#FFFF00] shadow-md"
+                    : "border border-[#0362C0]/15 bg-white text-[#42617F] hover:border-[#0362C0]/40"
+                  }`}
+              >
+                {category.label}
+              </button>
+            ))}
+          </div>
+
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredActivities.map((item, index) => (
               <button
@@ -579,14 +603,14 @@ export default function Branding() {
                 type="button"
                 onClick={() => setSelectedPhoto(item)}
                 className={`group overflow-hidden rounded-[24px] bg-white text-left shadow-[0_12px_35px_rgba(8,32,60,0.08)] ring-1 ring-[#0362C0]/10 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(3,98,192,0.15)] ${index === 0 && filteredActivities.length > 2
-                    ? "sm:row-span-2"
-                    : ""
+                  ? "sm:row-span-2"
+                  : ""
                   }`}
               >
                 <div
                   className={`relative overflow-hidden ${index === 0 && filteredActivities.length > 2
-                      ? "h-64 sm:h-[420px]"
-                      : "h-56"
+                    ? "h-64 sm:h-[420px]"
+                    : "h-56"
                     }`}
                 >
                   <img
@@ -629,8 +653,8 @@ export default function Branding() {
               <article
                 key={quote.tag}
                 className={`rounded-[22px] border p-5 ${index === 1
-                    ? "border-[#FFFF00] bg-[#FFFF00] text-[#08203C]"
-                    : "border-white/20 bg-white/10"
+                  ? "border-[#FFFF00] bg-[#FFFF00] text-[#08203C]"
+                  : "border-white/20 bg-white/10"
                   }`}
               >
                 <Star

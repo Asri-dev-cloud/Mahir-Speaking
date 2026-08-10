@@ -70,9 +70,8 @@ export default function QuizView() {
       // Quiz Complete
       setIsCompleted(true);
       
-      // Calculate totalXp earned based on score (matching results screen formula)
-      const correctCount = newScore;
-      const totalXp = Math.max(5, correctCount * 5);
+      // Calculate totalXp earned (each quiz is worth exactly 5 XP)
+      const totalXp = 5;
       
       // Optimistic update to match LMSView logic
       if (user) {
@@ -82,7 +81,7 @@ export default function QuizView() {
           ...user,
           xp: isAlreadyCompleted
             ? (user.xp || 0)
-            : (user.xp || 0) + totalXp,
+            : (user.xp || 0) + 5,
           completed_units: nextCompleted
         };
         updateUserProfile(updatedUser);
@@ -98,7 +97,7 @@ export default function QuizView() {
         const res = await courseService.completeLesson({
           lesson_id: 1,
           score: Math.round((newScore / quizQuestions.length) * 100),
-          xp_earned: totalXp
+          xp_earned: 5
         });
         if (res.success && res.xp !== undefined && user) {
           // Sinkronisasi dengan XP terbaru dari database cloud
@@ -138,43 +137,46 @@ export default function QuizView() {
 
           {/* Options */}
           <div className="space-y-3">
-            {quizQuestions[currentQuestionIndex].options.map((option, idx) => (
+            {quizQuestions[currentQuestionIndex].options.map((option, index) => (
               <button
-                key={idx}
-                onClick={() => handleSelectOption(idx)}
-                className={`w-full p-4 rounded-2xl border text-left font-semibold text-sm transition-all flex items-center justify-between ${selectedOption === idx
-                    ? 'bg-brand/10 border-brand text-brand ring-2 ring-brand/30'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-brand'
-                  }`}
+                key={index}
+                onClick={() => handleSelectOption(index)}
+                className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center justify-between font-semibold text-sm ${
+                  selectedOption === index
+                    ? 'border-brand bg-brand-50/50 text-slate-900'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                }`}
               >
                 <span>{option}</span>
-                <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs font-bold ${selectedOption === idx ? 'border-brand bg-brand text-white' : 'border-slate-300'
-                  }`}>
-                  {String.fromCharCode(65 + idx)}
+                <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  selectedOption === index
+                    ? 'border-brand bg-brand text-white'
+                    : 'border-slate-300'
+                }`}>
+                  {selectedOption === index && <span className="w-2 h-2 rounded-full bg-white" />}
                 </span>
               </button>
             ))}
           </div>
 
-          {/* Action Button */}
-          <button
-            onClick={handleNextQuestion}
-            disabled={selectedOption === null}
-            className={`w-full py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${selectedOption !== null
-                ? 'bg-brand text-electric shadow-glow hover:bg-brand-600 cursor-pointer'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
-          >
-            <span>{currentQuestionIndex + 1 === quizQuestions.length ? 'Submit Quiz & Calculate Score' : 'Next Question'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          {/* Footer Controls */}
+          <div className="flex items-center justify-end pt-4 border-t border-slate-200">
+            <button
+              onClick={handleNextQuestion}
+              disabled={selectedOption === null}
+              className="px-8 py-3.5 rounded-xl bg-brand text-electric font-bold text-xs shadow-glow hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+            >
+              {currentQuestionIndex + 1 === quizQuestions.length ? 'Finish Quiz' : 'Next Question'}
+            </button>
+          </div>
 
         </div>
       ) : (
         /* Quiz Complete Results */
-        <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-white text-center space-y-6 bg-white shadow-glass">
-          <div className="w-20 h-20 rounded-full bg-amber-100 text-amberIcon flex items-center justify-center mx-auto shadow-goldGlow">
-            <Trophy className="w-10 h-10" />
+        <div className="glass-panel p-8 rounded-3xl border border-white shadow-glass text-center space-y-6">
+
+          <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+            <CheckCircle className="w-10 h-10 stroke-[2.5]" />
           </div>
 
           <div className="space-y-2">
@@ -189,7 +191,7 @@ export default function QuizView() {
               {Math.round((score / quizQuestions.length) * 100)}%
             </div>
             <div className="text-xs font-bold text-amber-800 pt-1">
-              ⚡ Earned +{Math.max(5, score * 5)} XP!
+              ⚡ Earned +5 XP!
             </div>
           </div>
 

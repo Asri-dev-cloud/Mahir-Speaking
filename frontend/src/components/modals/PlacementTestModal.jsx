@@ -1,6 +1,7 @@
 // 🎯 Modal Placement Test Mahir Speaking: Biar tau level kemampuan English-mu super akurat & slay! ✨
 import React, { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { userService } from '../../services/api';
 import {
   X,
   CheckCircle2,
@@ -197,6 +198,18 @@ export default function PlacementTestModal({ isOpen, onClose }) {
     } catch (error) {
       console.warn('Data placement test tidak dapat disimpan di perangkat ini.', error);
     }
+
+    // Save to backend database
+    userService.submitPlacementLead({
+      nama: leadFormData.nama.trim(),
+      noWa: leadFormData.noWa.replace(/[^0-9]/g, ''),
+      levelTarget: leadFormData.levelTarget,
+      recommendedLevel,
+      jadwalTrial: leadFormData.jadwalTrial,
+      catatan: leadFormData.catatan
+    }).catch(err => {
+      console.error('Error submitting placement lead to server:', err);
+    });
 
     setPlacementStep(3);
   };

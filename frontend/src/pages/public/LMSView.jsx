@@ -441,83 +441,6 @@ const lessons = (() => {
   });
 })();
 
-const recordedSessions = [
-  {
-    id: 1,
-    title: "Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)",
-    tutor: "Ms. Era Purike",
-    duration: "90 Menit",
-    level: "Basic Level",
-    videoUrl: "https://www.youtube.com/embed/dvgZkm1xWPE",
-    thumbnail: "https://img.youtube.com/vi/dvgZkm1xWPE/hqdefault.jpg",
-    provider: "youtube",
-    date: "12 Juli 2026"
-  },
-  {
-    id: 2,
-    title: "Sesi 2: Daily Conversation & Roleplay (Maroon 5 - Sugar MV)",
-    tutor: "Ms. Deasy Puspawati",
-    duration: "90 Menit",
-    level: "Basic Level",
-    videoUrl: "https://www.youtube.com/embed/09R8_2nJtjg",
-    thumbnail: "https://img.youtube.com/vi/09R8_2nJtjg/hqdefault.jpg",
-    provider: "youtube",
-    date: "19 Juli 2026"
-  },
-  {
-    id: 3,
-    title: "Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)",
-    tutor: "Ms. Ade Ihdinayah",
-    duration: "90 Menit",
-    level: "Intermediate Level",
-    videoUrl: "https://www.youtube.com/embed/JGwWNGJdvx8",
-    thumbnail: "https://img.youtube.com/vi/JGwWNGJdvx8/hqdefault.jpg",
-    provider: "youtube",
-    date: "26 Juli 2026"
-  },
-  {
-    id: 4,
-    title: "Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)",
-    tutor: "Native Speaker (Mr. James)",
-    duration: "90 Menit",
-    level: "All Levels",
-    videoUrl: "https://www.youtube.com/embed/hT_nvWreIhg",
-    thumbnail: "https://img.youtube.com/vi/hT_nvWreIhg/hqdefault.jpg",
-    provider: "youtube",
-    date: "2 Agustus 2026"
-  }
-];
-
-const studentDownloads = [
-  {
-    id: 1,
-    title: "E-Book Speaking - Basic Level (A1/A2)",
-    size: "12.4 MB",
-    type: "PDF E-Book",
-    desc: "Modul pembelajaran level Basic untuk melatih kelancaran perkenalan diri dan aktivitas harian.",
-    badge: "Basic Level",
-    fileUrl: "https://drive.google.com/file/d/1bNcTgCgcyMju80MEamH9EhNx115vI2YM/view?usp=drive_link"
-  },
-  {
-    id: 2,
-    title: "E-Book Speaking - Intermediate Level (B1)",
-    size: "15.1 MB",
-    type: "PDF E-Book",
-    desc: "Modul pembelajaran level Intermediate untuk menguasai percakapan profesional dan opini terstruktur.",
-    badge: "Intermediate Level",
-    fileUrl: "https://drive.google.com/file/d/1atDc0w5W1TJ8AvHu7S_WaxP87lIs3-qA/view?usp=drive_link"
-  },
-  {
-    id: 3,
-    title: "E-Book Speaking - Advance Level (B2/C1)",
-    size: "18.7 MB",
-    type: "PDF E-Book",
-    desc: "Modul pembelajaran level Advance untuk persiapan wawancara kerja, negosiasi, dan presentasi bisnis.",
-    badge: "Advance Level",
-    fileUrl: "https://drive.google.com/file/d/157eH9drAwb6N2teVOJWxKCPiTRuf7it4/view?usp=sharing"
-  }
-];
-
 const sectionTabs = [
   ["overview", "Overview", Map],
   ["vocabulary", "Vocabulary", BookOpen],
@@ -562,20 +485,31 @@ export default function LMSView() {
   const [recordingResult, setRecordingResult] = useState("");
   const [activeRecordedVideo, setActiveRecordedVideo] = useState(null);
   const [downloadNotice, setDownloadNotice] = useState(null);
-  const [customDownloads, setCustomDownloads] = useState([]);
-  const [customRecordings, setCustomRecordings] = useState([]);
+  const [dbModules, setDbModules] = useState([]);
+  const [dbVideos, setDbVideos] = useState([]);
 
-  // Sinkronkan XP, streak, points, dan progres dengan database saat LMS dibuka.
   useEffect(() => {
     let active = true;
 
-    const loadLatestUser = async () => {
+    const fetchDbData = async () => {
+      try {
+        const modsRes = await courseService.getModules();
+        if (active && modsRes.success && Array.isArray(modsRes.modules)) {
+          setDbModules(modsRes.modules);
+        }
+        const vidsRes = await courseService.getRecordedVideos();
+        if (active && vidsRes.success && Array.isArray(vidsRes.videos)) {
+          setDbVideos(vidsRes.videos);
+        }
+      } catch (e) {
+        console.error('Gagal mengambil data dari database:', e);
+      }
+
       if (!user) return;
       try {
         const profileRes = await userService.getProfile();
         if (!active || !profileRes.success || !profileRes.user) return;
 
-        // Map completedLessons dari database ke completed_units agar sinkron penuh!
         const completedUnits = Array.isArray(profileRes.completedLessons)
           ? profileRes.completedLessons.map(l => l.lesson_id)
           : [];
@@ -593,38 +527,16 @@ export default function LMSView() {
       }
     };
 
-    loadLatestUser();
+    fetchDbData();
     return () => { active = false; };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (user) setLiveUser(user);
   }, [user]);
 
-  useEffect(() => {
-    const savedMods = localStorage.getItem('mahir_custom_modules');
-    if (savedMods) {
-      try {
-        const parsed = JSON.parse(savedMods);
-        if (Array.isArray(parsed)) setCustomDownloads(parsed);
-      } catch (e) { }
-    }
-    const savedVids = localStorage.getItem('mahir_custom_recordings');
-    if (savedVids) {
-      try {
-        const parsed = JSON.parse(savedVids);
-        if (Array.isArray(parsed)) setCustomRecordings(parsed);
-      } catch (e) { }
-    }
-  }, []);
-
-  const allDownloads = useMemo(() => {
-    return [...customDownloads, ...studentDownloads];
-  }, [customDownloads]);
-
-  const allRecordings = useMemo(() => {
-    return [...customRecordings, ...recordedSessions];
-  }, [customRecordings]);
+  const allDownloads = dbModules;
+  const allRecordings = dbVideos;
 
   const filteredLessons = useMemo(() => {
     if (filter === "ALL") return lessons;
@@ -922,8 +834,8 @@ export default function LMSView() {
                     </div>
                   </div>
 
-                    {/* XP dan Streak dihilangkan atas permintaan pengguna */}
-                  </div>
+                  {/* XP dan Streak dihilangkan atas permintaan pengguna */}
+                </div>
               ) : (
                 <div className="mt-4 p-3 bg-amber-400/20 border border-amber-300/40 rounded-2xl flex items-center justify-between text-xs text-amber-200">
                   <span className="flex items-center gap-2 font-bold">

@@ -38,6 +38,10 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/payments', paymentRoutes);
 
+app.get('/', (req, res) => {
+  res.send('<h1>Mahir Speaking API Server is running.</h1><p>Please open the frontend application at <a href="http://localhost:5173">http://localhost:5173</a>.</p>');
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',

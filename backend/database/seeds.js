@@ -19,6 +19,21 @@ export async function initSeedData() {
 
       // Jalankan seluruh skema SQL
       await query(schemaSql);
+      
+      // Run payment_transactions.sql if exists
+      const payPath = path.join(__dirname, 'payment_transactions.sql');
+      if (fs.existsSync(payPath)) {
+        const paySql = fs.readFileSync(payPath, 'utf8');
+        await query(paySql);
+      }
+
+      // Alter columns to ensure column types are compatible (varchar instead of timestamptz for jadwal_trial)
+      try {
+        await query(`ALTER TABLE public.placement_test_leads ALTER COLUMN jadwal_trial TYPE varchar(100)`);
+      } catch (err) {
+        console.log('Note: Column alter check skipped or already updated:', err.message);
+      }
+
       console.log('✅ [Database] Skema & Stored Procedures PostgreSQL berhasil diinisialisasi!');
 
       // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari cloud Neon Postgres agar leaderboard bersih
@@ -168,6 +183,78 @@ export async function initSeedData() {
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `);
+
+      // 🎯 Tabel Placement Test Leads
+      await query(`
+        CREATE TABLE IF NOT EXISTS placement_test_leads (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          nama TEXT NOT NULL,
+          no_wa TEXT NOT NULL,
+          email TEXT,
+          level_target TEXT,
+          recommended_level TEXT,
+          jadwal_trial TEXT,
+          catatan TEXT,
+          status TEXT DEFAULT 'Belum Dihubungi',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // 💳 Tabel Payment Transactions
+      await query(`
+        CREATE TABLE IF NOT EXISTS payment_transactions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          order_id TEXT UNIQUE NOT NULL,
+          user_id INTEGER NOT NULL,
+          package_code TEXT NOT NULL,
+          package_name TEXT NOT NULL,
+          gross_amount INTEGER NOT NULL,
+          payment_status TEXT DEFAULT 'pending',
+          payment_type TEXT,
+          transaction_id TEXT,
+          snap_token TEXT,
+          midtrans_payload TEXT,
+          paid_at DATETIME,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // 📚 Tabel Modules
+      await query(`
+        CREATE TABLE IF NOT EXISTS modules (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          type TEXT NOT NULL DEFAULT 'PDF Document',
+          file_size TEXT,
+          badge TEXT DEFAULT 'Official Modul',
+          description TEXT,
+          file_url TEXT NOT NULL,
+          storage_path TEXT,
+          is_published INTEGER DEFAULT 1,
+          created_by INTEGER,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // 📹 Tabel Recorded Videos
+      await query(`
+        CREATE TABLE IF NOT EXISTS recorded_videos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          tutor TEXT,
+          duration TEXT,
+          level TEXT DEFAULT 'All Levels',
+          video_url TEXT NOT NULL,
+          thumbnail TEXT,
+          is_published INTEGER DEFAULT 1,
+          created_by INTEGER,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
     }
 
     // 📦 Cek & Semai Paket Langganan Biar User Bisa Belanja
@@ -289,6 +376,54 @@ export async function initSeedData() {
         ('A2', 'Speaking Goal', 'Ucapkan kalimat berikut dengan percaya diri.', 'My goal is to speak English confidently.', 'Tujuan saya adalah berbicara bahasa Inggris dengan percaya diri.'),
         ('A2', 'Weekend Story', 'Jawab pertanyaan berikut dalam bahasa Inggris.', 'Tell me about your weekend.', 'Ceritakan tentang akhir pekanmu.')
       `);
+    }
+
+    // 📚 Semai data modul awal
+    const modulesCount = await query(`SELECT COUNT(*) as count FROM modules`);
+    if (Number(modulesCount[0].count) === 0) {
+      console.log('Nyiapin data modul awal...');
+      if (isPostgres) {
+        await query(`
+          INSERT INTO modules (title, type, file_size, badge, description, file_url)
+          VALUES 
+          ('E-Book Speaking - Basic Level (A1/A2)', 'PDF E-Book', '12.4 MB', 'Basic Level', 'Modul pembelajaran level Basic untuk melatih kelancaran perkenalan diri dan aktivitas harian.', 'https://drive.google.com/file/d/1bNcTgCgcyMju80MEamH9EhNx115vI2YM/view?usp=drive_link'),
+          ('E-Book Speaking - Intermediate Level (B1)', 'PDF E-Book', '15.1 MB', 'Intermediate Level', 'Modul pembelajaran level Intermediate untuk menguasai percakapan profesional dan opini terstruktur.', 'https://drive.google.com/file/d/1atDc0w5W1TJ8AvHu7S_WaxP87lIs3-qA/view?usp=drive_link'),
+          ('E-Book Speaking - Advance Level (B2/C1)', 'PDF E-Book', '18.7 MB', 'Advance Level', 'Modul pembelajaran level Advance untuk persiapan wawancara kerja, negosiasi, dan presentasi bisnis.', 'https://drive.google.com/file/d/157eH9drAwb6N2teVOJWxKCPiTRuf7it4/view?usp=sharing')
+        `);
+      } else {
+        await query(`
+          INSERT INTO modules (title, type, file_size, badge, description, file_url)
+          VALUES 
+          ('E-Book Speaking - Basic Level (A1/A2)', 'PDF E-Book', '12.4 MB', 'Basic Level', 'Modul pembelajaran level Basic untuk melatih kelancaran perkenalan diri dan aktivitas harian.', 'https://drive.google.com/file/d/1bNcTgCgcyMju80MEamH9EhNx115vI2YM/view?usp=drive_link'),
+          ('E-Book Speaking - Intermediate Level (B1)', 'PDF E-Book', '15.1 MB', 'Intermediate Level', 'Modul pembelajaran level Intermediate untuk menguasai percakapan profesional dan opini terstruktur.', 'https://drive.google.com/file/d/1atDc0w5W1TJ8AvHu7S_WaxP87lIs3-qA/view?usp=drive_link'),
+          ('E-Book Speaking - Advance Level (B2/C1)', 'PDF E-Book', '18.7 MB', 'Advance Level', 'Modul pembelajaran level Advance untuk persiapan wawancara kerja, negosiasi, dan presentasi bisnis.', 'https://drive.google.com/file/d/157eH9drAwb6N2teVOJWxKCPiTRuf7it4/view?usp=sharing')
+        `);
+      }
+    }
+
+    // 📹 Semai data video awal
+    const videosCount = await query(`SELECT COUNT(*) as count FROM recorded_videos`);
+    if (Number(videosCount[0].count) === 0) {
+      console.log('Nyiapin data video awal...');
+      if (isPostgres) {
+        await query(`
+          INSERT INTO recorded_videos (title, tutor, duration, level, video_url)
+          VALUES 
+          ('Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)', 'Mr.Alfada Naufal', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/dvgZkm1xWPE'),
+          ('Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)', 'Ms. Deasy Puspawati', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/09R8_2nJtjg'),
+          ('Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)', 'Ms. Ade Ihdinayah', '90 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/JGwWNGJdvx8'),
+          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg')
+        `);
+      } else {
+        await query(`
+          INSERT INTO recorded_videos (title, tutor, duration, level, video_url)
+          VALUES 
+          ('Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)', 'Mr.Alfada Naufal', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/dvgZkm1xWPE'),
+          ('Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)', 'Ms. Deasy Puspawati', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/09R8_2nJtjg'),
+          ('Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)', 'Ms. Ade Ihdinayah', '90 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/JGwWNGJdvx8'),
+          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg')
+        `);
+      }
     }
 
     console.log('Seed data database beres dengan sempurna, slay abis! ✨');

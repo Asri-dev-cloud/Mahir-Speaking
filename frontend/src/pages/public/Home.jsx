@@ -180,7 +180,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="space-y-12 sm:space-y-20 pb-12 overflow-hidden">
+    <div className="space-y-12 sm:space-y-20 pb-12 overflow-hidden bg-gradient-to-b from-[#87CEFA] via-white to-white">
 
       {/* 🚀 SECTION 1: HERO SECTION WITH TAGLINE RESMI & DUAL CTA */}
       <section className="relative pt-2 sm:pt-6 pb-0 w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6">
@@ -275,15 +275,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Partner logos 5.png & 6.png */}
+      {/* Partner logos pelita.png & bms.png */}
       <div className="flex flex-row items-center justify-center gap-6 sm:gap-12 md:gap-16 py-0 !-mt-1 sm:!-mt-2 lg:!-mt-3 !-mb-14 sm:!-mb-22 lg:!-mb-26 max-w-7xl mx-auto px-4 relative z-20 pointer-events-none select-none">
         <img
-          src="/5.png"
+          src="/pelita.png"
           alt="Pelita Batara Media"
           className="h-32 sm:h-52 md:h-64 lg:h-76 w-auto object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
         />
         <img
-          src="/6.png"
+          src="/bms.png"
           alt="Mahir Speaking"
           className="h-32 sm:h-52 md:h-64 lg:h-76 w-auto object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
         />
@@ -523,7 +523,7 @@ export default function Home() {
                 )}
               </button>
               {activeFaq === index && (
-                <div className="px-4 pb-4 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 font-medium">
+                <div className="px-4 pb-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 font-medium">
                   {faq.a}
                 </div>
               )}

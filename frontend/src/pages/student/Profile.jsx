@@ -107,7 +107,8 @@ export default function Profile() {
 
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="w-full min-h-screen bg-gradient-to-b from-[#87CEFA] via-white to-white py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
       {/* Profile Header Card */}
       <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white shadow-glass flex flex-col sm:flex-row items-center gap-6 bg-gradient-to-r from-slate-900 via-brand to-slate-950 text-white">
@@ -257,9 +258,7 @@ export default function Profile() {
           </button>
         </form>
       </div>
-
-
-
     </div>
+  </div>
   );
 }
