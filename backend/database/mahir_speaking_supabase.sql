@@ -30,6 +30,7 @@ create table if not exists public.users (
     check (role in ('student', 'tutor', 'admin')),
   admin_type varchar(30),
   package_id bigint references public.packages(id) on delete set null,
+  package_name varchar(100),
   package_expires timestamptz,
   is_trial boolean not null default false,
   xp integer not null default 0 check (xp >= 0),
