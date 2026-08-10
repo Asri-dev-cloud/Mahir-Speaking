@@ -1397,7 +1397,8 @@ export default function AdminPortal() {
                             filteredUsers.map((u) => {
                               const isExpired = u.package_expires && new Date(u.package_expires) < new Date();
                               const hasActiveSubscription = Boolean(
-                                u.package_expires && new Date(u.package_expires) >= new Date()
+                                (Number(u.package_id || 0) > 1) &&
+                                (!u.package_expires || new Date(u.package_expires) >= new Date())
                               );
 
                               return (
