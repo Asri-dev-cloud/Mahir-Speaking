@@ -1,3 +1,4 @@
+// Komponen AssistantModeSwitcher: Menyediakan tombol navigasi untuk beralih antara mode chat tertulis dan mode latihan suara (voice).
 import React from 'react';
 import { AssistantMode } from '../types/chat';
 import { MessageCircle, Mic } from 'lucide-react';

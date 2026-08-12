@@ -1,4 +1,4 @@
-// 🔐 Route Autentikasi Mahir Speaking: Tempat pendaftaran, login & reset password para pejuang English! ✨
+// Rute Autentikasi Mahir Speaking: Mengatur pendaftaran akun, login, dan pemulihan kata sandi pengguna.
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -7,7 +7,7 @@ import { JWT_SECRET } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// 📝 Endpoint Register User Baru (Auto Happy, Dapet Bonus XP & Point Slay!) 🚀
+// Pendaftaran Pengguna Baru: Menyimpan informasi profil dasar siswa baru.
 router.post('/register', async (req, res) => {
   try {
     const { full_name, username, email, whatsapp, password, role } = req.body;

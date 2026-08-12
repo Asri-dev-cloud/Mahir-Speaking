@@ -1,3 +1,4 @@
+// Komponen PracticeHistory: Menampilkan daftar riwayat latihan berbicara yang pernah dikerjakan oleh pengguna, beserta rincian skor pengucapannya.
 import React, { useState } from 'react';
 import { HistoryItem } from '../types/voice';
 import { ArrowLeft, Trash2, Calendar, ChevronDown, ChevronUp } from 'lucide-react';

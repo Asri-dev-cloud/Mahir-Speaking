@@ -2,22 +2,23 @@ import React from 'react';
 import { Sparkles, Heart, ArrowUpRight, MessageCircle, ShieldCheck, Zap } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
+// Komponen Footer: Menampilkan bagian kaki halaman dengan struktur menu navigasi utama, tingkat kurikulum CEFR, logo, dan hak cipta platform.
 export default function Footer() {
   const { setActiveTab } = useAuth();
 
   return (
     <footer className="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-300 pt-16 pb-28 md:pb-14 border-t-2 border-slate-800 relative overflow-hidden">
 
-      {/* Ambient Glow Effects */}
+      {/* Efek Gradasi Latar Belakang (Ambient Glow) */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand/10 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-lime/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
-        {/* Footer Grid */}
+        {/* Tata Letak Kolom Kaki Halaman (Footer Grid) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-14">
 
-          {/* Col 1: Brand Info (5 cols) */}
+          {/* Kolom 1: Informasi Logo & Deskripsi Brand Singkat */}
           <div className="md:col-span-5 space-y-4">
             <div
               className="flex items-center gap-3 cursor-pointer group w-fit"
@@ -39,7 +40,7 @@ export default function Footer() {
 
           </div>
 
-          {/* Col 2: Navigasi Utama (3 cols) */}
+          {/* Kolom 2: Navigasi Utama */}
           <div className="md:col-span-3 space-y-4">
             <h4 className="font-stinger font-black text-white text-xs uppercase tracking-widest text-lime">
               Navigasi Utama
@@ -73,7 +74,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Level CEFR Kurikulum (4 cols) */}
+          {/* Kolom 3: Level CEFR Kurikulum */}
           <div className="md:col-span-4 space-y-4">
             <h4 className="font-stinger font-black text-white text-xs uppercase tracking-widest text-lime">
               Tingkat Pembelajaran

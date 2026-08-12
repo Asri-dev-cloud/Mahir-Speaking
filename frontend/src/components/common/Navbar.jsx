@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { User, LogOut, BookOpen, Shield } from 'lucide-react';
 
-// 🧭 Komponen Navigasi Utama: Penunjuk Jalan Menuju Keberhasilan Slay! ✨
+// Komponen Navigasi Utama: Menyediakan menu navigasi atas untuk berpindah halaman secara interaktif.
 export default function Navbar() {
   const { user, logout, activeTab, setActiveTab } = useAuth();
 
@@ -11,7 +11,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2">
         <div className="flex items-center justify-between h-11 sm:h-13 gap-3">
 
-          {/* 🚀 Kiri: Logo & Nama Mahir Speaking */}
+          {/* Kiri: Logo dan Nama Mahir Speaking */}
           <div
             className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
             onClick={() => setActiveTab('home')}
@@ -27,7 +27,7 @@ export default function Navbar() {
             </span>
           </div>
 
-          {/* 🎯 Tengah: Tombol Menu Navigasi Super Aesthetic */}
+          {/* Tengah: Tombol Menu Navigasi */}
           <nav className="hidden lg:flex flex-1 justify-center items-center gap-2 text-xs font-black text-slate-700">
             {!user ? (
               <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-full border border-slate-200 shadow-inner">
@@ -53,13 +53,12 @@ export default function Navbar() {
 
                 <button
                   onClick={() => setActiveTab('lms')}
-                  className={`px-4 sm:px-5 py-2 rounded-full transition-all flex items-center gap-1 ${activeTab === 'lms'
+                  className={`px-4 sm:px-5 py-2 rounded-full transition-all ${activeTab === 'lms'
                     ? 'bg-brand text-lime shadow-glow font-black scale-105'
                     : 'hover:text-brand hover:bg-white text-slate-700 font-bold'
                     }`}
                 >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>LMS</span>
+                  LMS & Quiz
                 </button>
 
                 <button
@@ -84,37 +83,42 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-full border border-slate-200 shadow-inner">
-                {(user.role === 'student' || user.role === 'admin') && (
+                <button
+                  onClick={() => setActiveTab('home')}
+                  className={`px-4 py-2 rounded-full transition-all ${activeTab === 'home' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                    }`}
+                >
+                  Home
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('branding')}
+                  className={`px-4 py-2 rounded-full transition-all ${activeTab === 'branding' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                    }`}
+                >
+                  Branding
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('lms')}
+                  className={`px-4 py-2 rounded-full transition-all ${['lms', 'learning-path', 'lesson-view'].includes(activeTab)
+                    ? 'bg-brand text-lime shadow-glow font-black'
+                    : 'hover:text-brand hover:bg-white'
+                    }`}
+                >
+                  LMS & Quiz
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('leaderboard')}
+                  className={`px-4 py-2 rounded-full transition-all ${activeTab === 'leaderboard' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                    }`}
+                >
+                  Leaderboard
+                </button>
+
+                {user.role === 'student' && (
                   <>
-                    <button
-                      onClick={() => setActiveTab('home')}
-                      className={`px-4 py-2 rounded-full transition-all ${activeTab === 'home' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
-                        }`}
-                    >
-                      Home
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('branding')}
-                      className={`px-4 py-2 rounded-full transition-all ${activeTab === 'branding' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
-                        }`}
-                    >
-                      Branding
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('lms')}
-                      className={`px-4 py-2 rounded-full transition-all flex items-center gap-1.5 ${activeTab === 'lms' || activeTab === 'student-dashboard' || activeTab === 'learning-path' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
-                        }`}
-                    >
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>LMS & Progress</span>
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('leaderboard')}
-                      className={`px-4 py-2 rounded-full transition-all ${activeTab === 'leaderboard' || activeTab === 'leaderboard-public' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
-                        }`}
-                    >
-                      Leaderboard
-                    </button>
                     <button
                       onClick={() => setActiveTab('pricing')}
                       className={`px-4 py-2 rounded-full transition-all ${activeTab === 'pricing' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
@@ -152,7 +156,7 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* 👑 Kanan: Profile Avatar & Actions */}
+          {/* Kanan: Profile Avatar & Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
 
             {!user ? (
@@ -165,7 +169,7 @@ export default function Navbar() {
               </button>
             ) : (
               <div className="flex items-center gap-2">
-                {/* 🛡️ Tombol Admin Portal Khusus Mobile (di sebelah kiri profil) */}
+                {/* Tombol Admin Portal Khusus Mobile */}
                 {(user.role === 'admin' || user.email?.toLowerCase() === 'hartiniasri32@gmail.com' || user.admin_type) && (
                   <button
                     onClick={() => setActiveTab('admin-portal')}

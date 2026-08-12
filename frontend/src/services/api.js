@@ -1,8 +1,8 @@
-// 🌐 Base URL API ngambil dari environment variable ya bestie, super fleksibel & anti ribet! ✨
+// Base URL API diambil dari environment variable untuk mendukung konfigurasi lingkungan pengembangan.
 // Trigger build vercel 2
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
-// 🔑 Helper buat ngambil token autentikasi di localStorage biar aman jaya no cap 🛡️
+// Fungsi pembantu untuk mengambil token autentikasi dari localStorage.
 export const getAuthHeader = () => {
   const token = localStorage.getItem('mahir_token');
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -318,7 +318,7 @@ export const leaderboardService = {
   },
 };
 
-// 🤖 Data Awal Latihan Chatbot Mashira AI
+// Data Awal Latihan Chatbot Mashira AI
 const defaultExercises = [
   {
     id: 1,
@@ -578,7 +578,7 @@ export const adminService = {
     return res;
   },
 
-  // 📝 Quizzes Management (Upload CSV / XLSX & Manual)
+  // Manajemen Kuis (Unggah CSV / XLSX & Manual)
   getQuizzes: async () => {
     const res = await apiFetch('/admin/quizzes');
     return { ...res, quizzes: Array.isArray(res.quizzes) ? res.quizzes : [] };
@@ -595,7 +595,7 @@ export const adminService = {
     return apiFetch(`/admin/quizzes/${id}`, { method: 'DELETE' });
   },
 
-  // 📦 Modules Management (PDF, DOC, PPT)
+  // Manajemen Modul (PDF, DOC, PPT)
   getModules: async () => {
     const res = await apiFetch('/admin/modules');
     return { ...res, modules: Array.isArray(res.modules) ? res.modules : [] };
@@ -613,7 +613,7 @@ export const adminService = {
     return apiFetch(`/admin/modules/${id}`, { method: 'DELETE' });
   },
 
-  // 📹 Recorded Class Video Management (YouTube & Google Drive)
+  // Manajemen Rekaman Video Kelas (YouTube & Google Drive)
   getRecordedVideos: async () => {
     const res = await apiFetch('/admin/recorded-videos');
     return { ...res, videos: Array.isArray(res.videos) ? res.videos : [] };
@@ -638,7 +638,7 @@ export const adminService = {
   }
 };
 
-// 🎬 Helper Parser YouTube / GDrive Video & Thumbnail
+// Pembantu Pengurai Video YouTube / Google Drive dan Gambar Mini (Thumbnail)
 export const parseVideoUrl = (url, customThumb = '') => {
   let embedUrl = url;
   let thumbnailUrl = customThumb;

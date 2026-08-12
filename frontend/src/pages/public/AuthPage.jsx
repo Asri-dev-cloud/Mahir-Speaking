@@ -1,3 +1,4 @@
+// Halaman AuthPage: Mengelola proses otentikasi pengguna termasuk masuk (login), daftar akun baru (register), dan tautan lupa kata sandi.
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';

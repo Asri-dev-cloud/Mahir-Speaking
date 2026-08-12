@@ -36,6 +36,7 @@ declare global {
   }
 }
 
+// Hook useSpeechRecognition: Mengelola antarmuka perekaman ucapan (speech-to-text) menggunakan Web Speech API bawaan browser.
 export function useSpeechRecognition() {
   const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
@@ -48,7 +49,7 @@ export function useSpeechRecognition() {
   const startTimeRef = useRef<number | null>(null);
   const isUserStoppingRef = useRef<boolean>(false);
 
-  // Initialize SpeechRecognition on mount
+  // Menginisialisasi modul SpeechRecognition saat komponen pertama kali dipasang (mount).
   useEffect(() => {
     const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -95,7 +96,7 @@ export function useSpeechRecognition() {
         const errType = event.error;
 
         if (errType === 'aborted' && isUserStoppingRef.current) {
-          // User manually stopped, ignore error
+          // Pengguna menghentikan perekaman secara manual, abaikan pesan kesalahan.
           return;
         }
 
@@ -114,7 +115,7 @@ export function useSpeechRecognition() {
             setError('Pengenalan suara mengalami masalah jaringan.');
             break;
           case 'aborted':
-            // Quiet abort
+            // Penghentian tenang.
             break;
           default:
             setError(`Terjadi kesalahan pengenalan suara (${errType}).`);
@@ -143,19 +144,20 @@ export function useSpeechRecognition() {
         try {
           recognitionRef.current.abort();
         } catch {
-          // Ignore
+          // Abaikan
         }
       }
     };
   }, []);
 
+  // Memulai perekaman suara.
   const startListening = useCallback(() => {
     if (!isSupported || !recognitionRef.current) {
       setError('Voice Coach paling baik digunakan melalui Google Chrome atau Microsoft Edge.');
       return;
     }
 
-    if (isListening) return; // Prevent double trigger
+    if (isListening) return; // Mencegah pemicu ganda.
 
     setInterimTranscript('');
     setFinalTranscript('');
@@ -166,7 +168,7 @@ export function useSpeechRecognition() {
     try {
       recognitionRef.current.start();
     } catch {
-      // If already started or transitioning
+      // Jika modul sudah aktif atau sedang transisi.
       try {
         recognitionRef.current.stop();
         setTimeout(() => {
@@ -178,6 +180,7 @@ export function useSpeechRecognition() {
     }
   }, [isSupported, isListening]);
 
+  // Menghentikan perekaman suara.
   const stopListening = useCallback(() => {
     if (!recognitionRef.current || !isListening) return;
 
@@ -185,11 +188,12 @@ export function useSpeechRecognition() {
     try {
       recognitionRef.current.stop();
     } catch {
-      // Force state sync if stop fails
+      // Memaksa penyelarasan status jika proses berhenti gagal.
       setIsListening(false);
     }
   }, [isListening]);
 
+  // Mengembalikan status hook ke keadaan awal.
   const resetState = useCallback(() => {
     if (isListening) {
       stopListening();

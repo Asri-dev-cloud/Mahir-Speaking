@@ -4,7 +4,7 @@ import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get Current User Profile with Package Details
+// Mengambil informasi profil lengkap dari pengguna yang sedang login beserta tingkat paket aktif.
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -44,7 +44,7 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Recalculate XP (strictly matches sum of completed quizzes)
+// Sinkronisasi ulang total XP pengguna berdasarkan riwayat pelajaran yang telah diselesaikan.
 router.post('/add-xp', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -71,7 +71,7 @@ router.post('/add-xp', verifyToken, async (req, res) => {
   }
 });
 
-// Update Profile
+// Memperbarui informasi biodata profil pengguna (nama, whatsapp, dan avatar).
 router.put('/profile', verifyToken, async (req, res) => {
   try {
     const { full_name, whatsapp, avatar } = req.body;
@@ -101,7 +101,7 @@ router.put('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Public: Submit Placement Test Lead
+// Pendaftaran calon siswa baru dari formulir tes penempatan tingkat kemampuan berbicara (placement test).
 router.post('/placement-lead', async (req, res) => {
   try {
     const { nama, noWa, email, levelTarget, recommendedLevel, jadwalTrial, catatan } = req.body;
@@ -134,7 +134,7 @@ router.post('/placement-lead', async (req, res) => {
   }
 });
 
-// Public: Get all modules from database
+// Mengambil daftar dokumen modul belajar resmi yang tersedia untuk dibaca.
 router.get('/modules', async (req, res) => {
   try {
     const modules = await query(`SELECT id, title, type, file_size AS size, badge, description AS "desc", file_url AS "fileUrl", created_at FROM modules ORDER BY id DESC`);

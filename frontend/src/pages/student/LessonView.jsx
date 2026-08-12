@@ -1,3 +1,4 @@
+// Halaman LessonView: Area belajar siswa aktif untuk memutar rekaman video kelas, membaca e-book materi, melakukan perekaman latihan pelafalan suara, serta mencatat materi penting.
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -8,7 +9,7 @@ import {
 export default function LessonView() {
   const { setActiveTab, addXpAndPoints } = useAuth();
   
-  const [activeTabSection, setActiveTabSection] = useState('practice'); // 'video', 'reading', 'practice', 'notes'
+  const [activeTabSection, setActiveTabSection] = useState('practice'); // Mengelola sub-halaman aktif ('video', 'reading', 'practice', 'notes')
   const [isRecording, setIsRecording] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [evaluation, setEvaluation] = useState(null);
@@ -16,10 +17,10 @@ export default function LessonView() {
   const [userNote, setUserNote] = useState('My key note: Practice introducing origin and hobbies with polite intonation.');
   const [savedNoteSuccess, setSavedNoteSuccess] = useState(false);
 
-  // Web Speech API Voice Recorder
+  // Fungsi Perekam Suara (Speech Recognition) berbasis Web Speech API.
   const handleStartRecording = () => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      // Fallback simulation if browser doesn't support WebSpeech Recognition
+      // Fallback jika browser yang digunakan oleh siswa tidak memiliki library pengenalan suara bawaan.
       setIsRecording(true);
       setTranscription('');
       setEvaluation(null);

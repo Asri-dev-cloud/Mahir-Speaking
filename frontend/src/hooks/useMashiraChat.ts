@@ -6,6 +6,7 @@ const STORAGE_CHAT_KEY = 'mashira_chat_history';
 const STORAGE_SESSION_KEY = 'mashira_session_id';
 const MAX_MESSAGES = 100;
 
+// Hook useMashiraChat: Mengelola riwayat percakapan dengan asisten Mashira AI, termasuk sinkronisasi data lokal (localStorage) dan komunikasi ke webhook asisten.
 export function useMashiraChat() {
   const [messages, setMessages] = useState<ChatMessageItem[]>(() => {
     try {
@@ -36,7 +37,7 @@ export function useMashiraChat() {
   const [error, setError] = useState<string | null>(null);
   const [lastFailedMessage, setLastFailedMessage] = useState<string | null>(null);
 
-  // Sync history to localStorage
+  // Menyinkronkan riwayat pesan ke penyimpanan lokal (localStorage) secara otomatis.
   useEffect(() => {
     try {
       if (messages.length > 0) {
@@ -92,12 +93,14 @@ export function useMashiraChat() {
     }
   }, [isSending, sessionId]);
 
+  // Mencoba mengirim kembali pesan terakhir yang sempat gagal dikirim.
   const retryLastMessage = useCallback(() => {
     if (lastFailedMessage) {
       sendMessage(lastFailedMessage);
     }
   }, [lastFailedMessage, sendMessage]);
 
+  // Memulai percakapan baru dengan membersihkan riwayat lama dan menghasilkan ID sesi baru.
   const startNewConversation = useCallback(() => {
     const newId = crypto.randomUUID();
     setSessionId(newId);

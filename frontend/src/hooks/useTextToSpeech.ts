@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+// Hook useTextToSpeech: Mengelola modul pengubahan teks ke ucapan (text-to-speech) menggunakan Web Speech API.
 export function useTextToSpeech() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  // Load voices
+  // Memuat daftar suara yang tersedia di sistem.
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       return;
@@ -29,6 +30,7 @@ export function useTextToSpeech() {
     };
   }, []);
 
+  // Memulai pemutaran suara dari teks.
   const speak = useCallback((
     text: string,
     lang: 'en-US' | 'id-ID' = 'en-US',
@@ -40,7 +42,7 @@ export function useTextToSpeech() {
 
     if (!text.trim()) return;
 
-    // Cancel active playback
+    // Menghentikan pemutaran yang sedang berjalan.
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -81,6 +83,7 @@ export function useTextToSpeech() {
     window.speechSynthesis.speak(utterance);
   }, [voices]);
 
+  // Menghentikan pemutaran suara.
   const stop = useCallback(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();

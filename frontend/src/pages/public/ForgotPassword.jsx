@@ -1,3 +1,4 @@
+// Halaman ForgotPassword: Menyediakan formulir pengiriman tautan pemulihan kata sandi bagi pengguna yang lupa sandinya.
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/api';
@@ -9,6 +10,7 @@ export default function ForgotPassword() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Menangani pengiriman formulir reset kata sandi ke server backend.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -38,6 +40,7 @@ export default function ForgotPassword() {
           <p className="text-xs text-slate-600 font-medium">Enter your registered email address to receive password reset instructions.</p>
         </div>
 
+        {/* Tampilan pesan sukses jika tautan pemulihan kata sandi berhasil dikirim */}
         {submitted ? (
           <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 p-6 rounded-2xl text-center space-y-3">
             <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
@@ -53,6 +56,7 @@ export default function ForgotPassword() {
             </button>
           </div>
         ) : (
+          /* Tampilan formulir input email pendaftaran jika belum melakukan pengiriman */
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase">Registered Email</label>

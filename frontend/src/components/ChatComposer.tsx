@@ -1,3 +1,4 @@
+// Komponen ChatComposer: Area input teks (textarea) untuk menulis pesan percakapan, lengkap dengan batas karakter maksimal.
 import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 

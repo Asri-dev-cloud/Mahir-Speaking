@@ -9,23 +9,23 @@ function generateAIResponse(mode, message) {
   const clean = message.trim();
 
   if (mode === 'grammar') {
-    return `### 🔍 Grammar Analysis & Correction\n\n**Your Input:** "${clean}"\n\n**Improved Version:** "Here is how a native speaker would formulate it: '${clean.replace(/i /g, 'I ')}'."\n\n**Grammar Breakdown:**\n- **Word Choice:** Your expression is understandable!\n- **Fluency Tip:** Try using modal verbs (like *would*, *could*, *should*) for extra politeness in conversational English.\n- **XP Earned:** +10 Fluency Points for practicing grammar!`;
+    return `### Grammar Analysis & Correction\n\n**Your Input:** "${clean}"\n\n**Improved Version:** "Here is how a native speaker would formulate it: '${clean.replace(/i /g, 'I ')}'."\n\n**Grammar Breakdown:**\n- **Word Choice:** Your expression is understandable!\n- **Fluency Tip:** Try using modal verbs (like *would*, *could*, *should*) for extra politeness in conversational English.\n- **XP Earned:** +10 Fluency Points for practicing grammar!`;
   }
 
   if (mode === 'vocab') {
-    return `### 📚 Vocabulary Enhancer & Synonym Booster\n\n**Target Word/Phrase:** "${clean}"\n\n**Advanced Synonyms & Idioms:**\n1. **Sophisticated:** *Elaborate / Articulate*\n2. **Idiomatic:** *On the tip of my tongue*\n3. **Collocation:** *Make a remarkable impression*\n\n**Example Sentence:**\n> *"To speak fluently, one must consistently articulate ideas with clarity."*\n\n**Practice Challenge:** Try using one of these synonyms in your next speaking audio response!`;
+    return `### Vocabulary Enhancer & Synonym Booster\n\n**Target Word/Phrase:** "${clean}"\n\n**Advanced Synonyms & Idioms:**\n1. **Sophisticated:** *Elaborate / Articulate*\n2. **Idiomatic:** *On the tip of my tongue*\n3. **Collocation:** *Make a remarkable impression*\n\n**Example Sentence:**\n> *"To speak fluently, one must consistently articulate ideas with clarity."*\n\n**Practice Challenge:** Try using one of these synonyms in your next speaking audio response!`;
   }
 
   if (mode === 'translator') {
-    return `### 🇮🇩 ⇄ 🇬🇧 Bilingual Translation & Expression Guide\n\n**Source Text:** "${clean}"\n\n**Natural English Translation:**\n> *"Learning English with Mahir Speaking opens up unlimited global career opportunities."*\n\n**Key Vocabulary Items:**\n- *Unlocks* = Membuka / memberikan akses\n- *Global Career* = Karir tingkat dunia\n- *Fluency* = Kelancaran berbicara`;
+    return `### Bilingual Translation & Expression Guide\n\n**Source Text:** "${clean}"\n\n**Natural English Translation:**\n> *"Learning English with Mahir Speaking opens up unlimited global career opportunities."*\n\n**Key Vocabulary Items:**\n- *Unlocks* = Membuka / memberikan akses\n- *Global Career* = Karir tingkat dunia\n- *Fluency* = Kelancaran berbicara`;
   }
 
   if (mode === 'speaking') {
-    return `### 🎙️ Speaking Practice & Pronunciation Guide\n\n**Speaking Challenge Topic:** "${clean}"\n\n**Recommended Speech Structure (PREP Method):**\n1. **Point:** State your main opinion directly.\n2. **Reason:** Explain *why* you hold this view.\n3. **Example:** Share a brief personal experience.\n4. **Point:** Restate your conclusion confidently.\n\n**Pronunciation Focus:**\n- Watch out for the **/θ/** sound in *think*, *three*, and *thorough*.\n- Click the **🔊 Audio Voice Listener** button below to listen to the native pronunciation!`;
+    return `### Speaking Practice & Pronunciation Guide\n\n**Speaking Challenge Topic:** "${clean}"\n\n**Recommended Speech Structure (PREP Method):**\n1. **Point:** State your main opinion directly.\n2. **Reason:** Explain *why* you hold this view.\n3. **Example:** Share a brief personal experience.\n4. **Point:** Restate your conclusion confidently.\n\n**Pronunciation Focus:**\n- Watch out for the **/θ/** sound in *think*, *three*, and *thorough*.\n- Click the **Audio Voice Listener** button below to listen to the native pronunciation!`;
   }
 
   // Default General Conversation
-  return `That's a fantastic point regarding **"${clean}"**! 🌟\n\nIn natural conversation, native English speakers often connect phrases smoothly using linking sounds. For example, instead of pausing between words, blend consonant and vowel sounds together.\n\nHow would you like to continue our conversation? You can ask me to correct your grammar, practice a mock job interview, or expand your vocabulary!`;
+  return `That's a fantastic point regarding **"${clean}"**!\n\nIn natural conversation, native English speakers often connect phrases smoothly using linking sounds. For example, instead of pausing between words, blend consonant and vowel sounds together.\n\nHow would you like to continue our conversation? You can ask me to correct your grammar, practice a mock job interview, or expand your vocabulary!`;
 }
 
 // Send Message to AI Chat

@@ -1,3 +1,4 @@
+// Halaman AIChatView: Area interaktif latihan percakapan chat dengan asisten AI Coach Mashira yang mencakup beberapa mode pembelajaran.
 import React, { useState } from 'react';
 import { useAIChat } from '../../context/AIChatContext';
 import { useAuth } from '../../context/AuthContext';
@@ -15,6 +16,7 @@ export default function AIChatView() {
 
   const [inputMessage, setInputMessage] = useState('');
 
+  // Mengirim pesan input pengguna ke server asisten AI secara asinkron.
   const handleSend = (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;

@@ -4,7 +4,7 @@ import { verifyToken, checkRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// 📂 Ambil semua data latihan (Public / All Users)
+// Mengambil semua data latihan (Tersedia untuk umum).
 router.get('/', async (req, res) => {
   try {
     const rawExercises = await query(`SELECT * FROM exercises ORDER BY id ASC`);
@@ -14,9 +14,7 @@ router.get('/', async (req, res) => {
       title: ex.title,
       instruction: ex.instruction,
       referenceText: ex.referenceText || ex.reference_text || '',
-      translation: ex.translation,
-      created_at: ex.created_at,
-      updated_at: ex.updated_at
+      translation: ex.translation
     }));
     return res.json({ success: true, exercises });
   } catch (err) {
@@ -25,13 +23,13 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 🔒 Buat latihan baru (Khusus Admin)
+// Membuat latihan baru (Khusus Admin).
 router.post('/', verifyToken, checkRole(['admin']), async (req, res) => {
   try {
     const { level, title, instruction, referenceText, translation } = req.body;
 
     if (!level || !title || !instruction || !referenceText || !translation) {
-      return res.status(400).json({ success: false, message: 'Semua field wajib diisi ya bestie!' });
+      return res.status(400).json({ success: false, message: 'Semua field wajib diisi.' });
     }
 
     const { dbType } = await import('../database/db.js');
@@ -44,7 +42,7 @@ router.post('/', verifyToken, checkRole(['admin']), async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Latihan baru berhasil ditambahkan! ✨',
+      message: 'Latihan baru berhasil ditambahkan.',
       exerciseId: result.lastID
     });
   } catch (err) {
@@ -53,14 +51,14 @@ router.post('/', verifyToken, checkRole(['admin']), async (req, res) => {
   }
 });
 
-// 🔒 Update latihan (Khusus Admin)
+// Memperbarui latihan (Khusus Admin).
 router.put('/:id', verifyToken, checkRole(['admin']), async (req, res) => {
   try {
     const exerciseId = req.params.id;
     const { level, title, instruction, referenceText, translation } = req.body;
 
     if (!level || !title || !instruction || !referenceText || !translation) {
-      return res.status(400).json({ success: false, message: 'Semua field wajib diisi ya bestie!' });
+      return res.status(400).json({ success: false, message: 'Semua field wajib diisi.' });
     }
 
     const existing = await query(`SELECT * FROM exercises WHERE id = ?`, [exerciseId]);
@@ -76,14 +74,14 @@ router.put('/:id', verifyToken, checkRole(['admin']), async (req, res) => {
       [level, title, instruction, referenceText, translation, exerciseId]
     );
 
-    return res.json({ success: true, message: 'Latihan berhasil diperbarui! 🚀' });
+    return res.json({ success: true, message: 'Latihan berhasil diperbarui.' });
   } catch (err) {
     console.error('Error updating exercise:', err);
     return res.status(500).json({ success: false, message: 'Failed to update exercise.' });
   }
 });
 
-// 🔒 Hapus latihan (Khusus Admin)
+// Menghapus latihan (Khusus Admin).
 router.delete('/:id', verifyToken, checkRole(['admin']), async (req, res) => {
   try {
     const exerciseId = req.params.id;
@@ -95,7 +93,7 @@ router.delete('/:id', verifyToken, checkRole(['admin']), async (req, res) => {
 
     await query(`DELETE FROM exercises WHERE id = ?`, [exerciseId]);
 
-    return res.json({ success: true, message: 'Latihan berhasil dihapus! 🗑️' });
+    return res.json({ success: true, message: 'Latihan berhasil dihapus.' });
   } catch (err) {
     console.error('Error deleting exercise:', err);
     return res.status(500).json({ success: false, message: 'Failed to delete exercise.' });

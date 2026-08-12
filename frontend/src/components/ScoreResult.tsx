@@ -1,3 +1,4 @@
+// Komponen ScoreResult: Menampilkan hasil detail penilaian skor pengucapan (pelafalan, kelancaran, kelengkapan) setelah melakukan latihan suara.
 import React, { useState, useEffect } from 'react';
 import { ScoringResult } from '../types/voice';
 import { Info, ChevronDown, ChevronUp } from 'lucide-react';

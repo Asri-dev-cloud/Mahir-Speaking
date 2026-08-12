@@ -1,14 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { query } from '../database/db.js';
 
-// 🛡️ Key rahasia JWT, aman jaya diambil dari .env ya bestie~ ✨
+// Kunci rahasia JWT untuk mengamankan sesi token pengguna, diambil dari konfigurasi environment.
 const JWT_SECRET = process.env.JWT_SECRET || 'mahir_speaking_jwt_secret_key_2026';
 
-// 🔐 Middleware Verifikasi Token: Biar yang gak punya akses gak bisa asal nyelonong! 🚫
+// Middleware Verifikasi Token: Memvalidasi token autentikasi pada setiap permintaan akses rute yang dilindungi.
 export const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, message: 'Waduh bestie, kamu harus kirim token dulu ya!' });
+    return res.status(401).json({ success: false, message: 'Akses ditolak. Silakan sertakan token autentikasi yang sah.' });
   }
 
   const token = authHeader.split(' ')[1];
@@ -45,11 +45,11 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
-// 👑 Middleware Cek Role: Khusus pembatas hak akses role user/admin/tutor! 🎯
+// Middleware Pemeriksaan Hak Akses: Membatasi rute khusus bagi pengguna dengan peran tertentu.
 export const checkRole = (allowedRoles) => {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ success: false, message: 'Maaf ya bestie, role kamu belum diizinkan akses fitur ini~' });
+      return res.status(403).json({ success: false, message: 'Akses ditolak. Peran akun Anda tidak memiliki izin untuk mengakses fitur ini.' });
     }
     next();
   };

@@ -1,3 +1,4 @@
+// Halaman PricingPage: Menyediakan opsi paket pendaftaran kelas belajar Bahasa Inggris reguler, semi-private, dan private beserta integrasi pembayaran Midtrans Snap.
 import React, { useEffect, useState } from 'react';
 import { CheckCircle, Sparkles, Shield, Zap, Users, UserCheck, Star, Award, Check, MessageCircle, ArrowRight, BookOpen, Video, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -9,6 +10,7 @@ export default function PricingPage() {
   const [payingPackage, setPayingPackage] = useState('');
   const [paymentError, setPaymentError] = useState('');
 
+  // Menginisialisasi skrip pembayaran Midtrans Snap secara asinkron dari Sandbox atau Production.
   useEffect(() => {
     if (document.getElementById('midtrans-snap-script')) return;
 
@@ -29,6 +31,7 @@ export default function PricingPage() {
   const getPackageCode = (category, levelName) =>
     `${category}_${levelName.toLowerCase().replace(' level', '').replace(/\s+/g, '_')}`;
 
+  // Menangani proses pembayaran Midtrans Snap dengan memverifikasi otorisasi pengguna terlebih dahulu.
   const handleMidtransPayment = async (category, levelName) => {
     if (!user) {
       alert('Silakan masuk atau daftar akun terlebih dahulu sebelum membeli paket.');
@@ -68,7 +71,7 @@ export default function PricingPage() {
     }
   };
 
-  // 💰 Skema Pembiayaan Resmi Mahir Speaking (dari TOR)
+  // Informasi daftar harga, level, durasi pertemuan, dan detail fitur kelas pembelajaran.
   const pricingData = {
     reguler: {
       title: 'Kelas Reguler',

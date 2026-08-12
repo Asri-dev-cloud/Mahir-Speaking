@@ -1,3 +1,4 @@
+// Komponen WordComparison: Membandingkan transkrip kata demi kata yang diucapkan siswa dengan teks referensi asli untuk menganalisis keakuratan pelafalan.
 import React, { useState } from 'react';
 import { WordResult } from '../types/voice';
 import { Check, AlertCircle, Plus, Info, ChevronDown, ChevronUp } from 'lucide-react';

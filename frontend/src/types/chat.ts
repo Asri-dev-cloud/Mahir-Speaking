@@ -1,3 +1,4 @@
+// Definisi Tipe Chatbot (chat): Menyediakan struktur tipe data untuk status asisten AI, data pesan obrolan, serta struktur permintaan/tanggapan webhook.
 export type AssistantMode = 'chat' | 'voice';
 
 export interface ChatMessageItem {

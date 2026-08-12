@@ -1,3 +1,4 @@
+// Komponen SentenceSelector: Menyediakan pilihan kategori level dan kalimat latihan untuk melatih pelafalan bahasa Inggris siswa secara interaktif.
 import React, { useState, useMemo } from 'react';
 import { PracticeItem, LevelType } from '../types/voice';
 import { ChevronLeft, ChevronRight, Volume2, Square, Play } from 'lucide-react';
@@ -120,7 +121,9 @@ export const SentenceSelector: React.FC<SentenceSelectorProps> = ({
                 ? dataList
                 : dataList.filter((i) => i.level === val);
               const firstMatch = filtered.length > 0 ? filtered[0] : undefined;
-              onSelectSentence(firstMatch);
+              if (firstMatch) {
+                onSelectSentence(firstMatch);
+              }
             }}
             className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1 text-xs text-[#0F172A] font-semibold focus:outline-hidden focus:ring-2 focus:ring-[#0F9F95] cursor-pointer"
             aria-label="Pilih Level Latihan"

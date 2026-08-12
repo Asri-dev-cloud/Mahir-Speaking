@@ -1,3 +1,4 @@
+// Konfigurasi koneksi dan kueri database Mahir Speaking. Dibuat simpel dan rapi biar jalannya lancar terus.
 import sqlite3 from "sqlite3";
 import pg from "pg";
 import path from "path";
@@ -17,6 +18,8 @@ let sqliteDb = null;
 /* ============================================================
    KONEKSI DATABASE
 ============================================================ */
+
+// Menghubungkan aplikasi ke database. Menggunakan PostgreSQL jika terkoneksi ke cloud Supabase, atau menggunakan SQLite lokal agar lebih praktis.
 
 const connectionString =
   process.env.SUPABASE_DATABASE_URL ||
@@ -77,6 +80,8 @@ if (connectionString) {
 /* ============================================================
    QUERY HELPER
 ============================================================ */
+
+// Fungsi pembantu untuk menerjemahkan tanda kueri (?) agar formatnya sesuai dengan tipe database yang aktif.
 
 function convertPlaceholders(sql) {
   let parameterNumber = 0;
@@ -183,6 +188,8 @@ export const query = async (sql, params = []) => {
    TES KONEKSI
 ============================================================ */
 
+// Fungsi pengecekan sederhana untuk memastikan koneksi database aman dan siap digunakan.
+
 export const testDatabaseConnection = async () => {
   try {
     if (dbType === "postgres") {
@@ -230,6 +237,8 @@ export const testDatabaseConnection = async () => {
 /* ============================================================
    REGISTRASI USER
 ============================================================ */
+
+// Menyimpan data profil siswa baru yang mendaftar ke database Mahir Speaking.
 
 export const dbRegisterUser = async (
   fullName,
@@ -340,6 +349,8 @@ export const dbRegisterUser = async (
    PEMBELIAN PAKET
 ============================================================ */
 
+// Mencatat transaksi pembelian kelas dan memperbarui akses paket belajar siswa.
+
 export const dbPurchasePackage = async (
   userId,
   packageId,
@@ -433,6 +444,8 @@ export const dbPurchasePackage = async (
 /* ============================================================
    SELESAIKAN LESSON DAN TAMBAH XP
 ============================================================ */
+
+// Mencatat unit kelas yang sudah diselesaikan siswa dan memberikan reward poin XP.
 
 export const dbCompleteLesson = async (
   userId,
@@ -594,6 +607,8 @@ export const dbCompleteLesson = async (
 /* ============================================================
    TUTUP KONEKSI
 ============================================================ */
+
+// Menutup koneksi database dengan rapi sebelum server dinonaktifkan.
 
 export const closeDatabase = async () => {
   if (dbType === "postgres" && pgPool) {

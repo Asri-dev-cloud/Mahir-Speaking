@@ -1,8 +1,10 @@
+// Layanan Webhook Mashira (mashiraWebhook): Menghubungkan aplikasi frontend dengan server asisten chatbot Mashira AI eksternal melalui n8n.
 import { WebhookResponse } from '../types/chat';
 
 const WEBHOOK_URL = 'https://n8n-mstcxw5l5v5x.jkt5.sumopod.my.id/webhook/mahir-speaking-chat';
 const DEFAULT_TIMEOUT_MS = 30000;
 
+// Fungsi utama untuk mengirim pesan obrolan pengguna ke endpoint webhook asisten Mashira AI secara asinkron.
 export async function sendChatMessageToWebhook(
   message: string,
   sessionId: string,
@@ -11,7 +13,7 @@ export async function sendChatMessageToWebhook(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
 
-  // Combine external abort signal if provided
+  // Menggabungkan sinyal pembatalan eksternal jika disediakan.
   if (externalSignal) {
     externalSignal.addEventListener('abort', () => controller.abort());
   }
@@ -49,7 +51,7 @@ export async function sendChatMessageToWebhook(
       throw new Error('Mashira belum bisa menjawab. Silakan coba lagi.');
     }
 
-    // Extract reply with fallback checks as requested
+    // Mengekstrak balasan teks dari webhook dengan penanganan fallback.
     const replyText = data.reply || data.output || data.message;
 
     if (!replyText || typeof replyText !== 'string' || !replyText.trim()) {

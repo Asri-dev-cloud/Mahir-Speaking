@@ -1,3 +1,4 @@
+// Definisi Tipe Latihan Suara (voice): Menyediakan antarmuka tipe data untuk level latihan, hasil skor pengucapan, pencocokan kata, dan riwayat latihan.
 export type LevelType = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 
 export interface PracticeItem {

@@ -4,7 +4,7 @@ import { verifyToken, checkRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all courses
+// Mengambil semua daftar kelas belajar yang tersedia di platform.
 router.get('/', async (req, res) => {
   try {
     const courses = await query(`
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get Course by ID with lessons & quizzes
+// Mengambil rincian kelas belajar berdasarkan ID beserta unit pelajaran dan kuisnya.
 router.get('/:id', async (req, res) => {
   try {
     const courseId = req.params.id;
@@ -37,7 +37,7 @@ router.get('/:id', async (req, res) => {
       [courseId]
     );
 
-    // Fetch quizzes for each lesson
+    // Mengambil data kuis terkait untuk setiap unit pelajaran
     for (let lesson of lessons) {
       const quizzes = await query(`SELECT * FROM quizzes WHERE lesson_id = ?`, [lesson.id]);
       lesson.quizzes = quizzes.map(q => ({
@@ -56,21 +56,21 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Complete a Lesson & Submit Quiz / Award XP
+// Menyelesaikan sebuah materi pelajaran dan mengirimkan hasil kuis untuk memperbarui XP.
 router.post('/complete-lesson', verifyToken, async (req, res) => {
   try {
     const { lesson_id, score, xp_earned } = req.body;
     const userId = req.user.id;
     const addXp = xp_earned !== undefined ? Number(xp_earned) : 5;
 
-    // Jalankan Stored Procedure / Transaksi Aman kelulusan materi & kuis
+    // Jalankan Stored Procedure atau transaksi penyelesaian kuis secara aman
     const result = await dbCompleteLesson(userId, lesson_id, score || 100, addXp);
 
     return res.json({
       success: true,
       message: result.status_code === 'ALREADY_COMPLETED' 
         ? `Lesson score updated! Current highscore: ${score}%`
-        : `Lesson completed! +${addXp} XP earned! ✨`,
+        : `Lesson completed! +${addXp} XP earned!`,
       xp: result.new_xp,
       points: result.new_points,
       streak: result.new_streak
@@ -81,7 +81,7 @@ router.post('/complete-lesson', verifyToken, async (req, res) => {
   }
 });
 
-// Tutor: Create/Upload Lesson
+// Tutor: Menambahkan unit pelajaran baru dan kuis pelengkapnya ke dalam kelas.
 router.post('/upload-lesson', verifyToken, checkRole(['tutor', 'admin']), async (req, res) => {
   try {
     const { course_id, title, video_url, reading_content, target_vocabulary, speaking_prompt, quiz } = req.body;
@@ -107,10 +107,10 @@ router.post('/upload-lesson', verifyToken, checkRole(['tutor', 'admin']), async 
       ]
     );
 
-    // Update total lessons count in course
+    // Memperbarui total jumlah pelajaran dalam kelas
     await query(`UPDATE courses SET total_lessons = total_lessons + 1 WHERE id = ?`, [course_id]);
 
-    // If quiz is provided
+    // Memasukkan data kuis jika dilampirkan
     if (quiz && quiz.question && Array.isArray(quiz.options)) {
       await query(
         `INSERT INTO quizzes (lesson_id, question, options, correct_answer, xp_reward)

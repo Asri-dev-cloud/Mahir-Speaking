@@ -1,3 +1,4 @@
+// Halaman AdminPortal: Dasbor utama untuk administrator platform Mahir Speaking untuk mengelola data siswa, paket langganan, materi pembelajaran, dan laporan transaksi.
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -59,7 +60,7 @@ export default function AdminPortal() {
     { id: 10, name: 'Kelas Private - Advanced Level' }
   ];
 
-  // 📊 State Data Portal
+  // State Data Portal
   const [users, setUsers] = useState([]);
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +79,7 @@ export default function AdminPortal() {
     totalRevenue: 0
   });
 
-  // 📝 State Kuis (CSV/XLSX Upload)
+  // State Kuis (CSV/XLSX Upload)
   const [quizzesList, setQuizzesList] = useState([]);
   const [quizCSVText, setQuizCSVText] = useState('');
   const [manualQuiz, setManualQuiz] = useState({
@@ -93,7 +94,7 @@ export default function AdminPortal() {
     access_type: 'free'
   });
 
-  // 📦 State Modul (PDF, DOC, PPT)
+  // State Modul (PDF, DOC, PPT)
   const [modulesList, setModulesList] = useState([]);
   const [moduleForm, setModuleForm] = useState({
     title: '',
@@ -105,7 +106,7 @@ export default function AdminPortal() {
     access_type: 'subscription'
   });
 
-  // 📹 State Rekaman Sesi Kelas & Video (YouTube / GDrive)
+  // State Rekaman Sesi Kelas & Video (YouTube / GDrive)
   const [recordingsList, setRecordingsList] = useState([]);
   const [videoForm, setVideoForm] = useState({
     title: '',
@@ -117,7 +118,7 @@ export default function AdminPortal() {
     access_type: 'free'
   });
 
-  // 🤖 State Latihan Bot Mashira AI
+  // State Latihan Bot Mashira AI
   const [exercisesList, setExercisesList] = useState([]);
   const [selectedExerciseForEdit, setSelectedExerciseForEdit] = useState(null);
   const [exerciseForm, setExerciseForm] = useState({
@@ -128,7 +129,7 @@ export default function AdminPortal() {
     translation: ''
   });
 
-  // 🪟 State Modals
+  // State Modals
   const [selectedUserForExtend, setSelectedUserForExtend] = useState(null);
   const [extendDays, setExtendDays] = useState(90);
   const [selectedPackageId, setSelectedPackageId] = useState(2);
@@ -151,11 +152,11 @@ export default function AdminPortal() {
     recordings: false
   });
 
-  // 🛡️ Cek Peran Admin berdasarkan Email / Role
+  // Cek Peran Admin berdasarkan Email atau Role
   const isAdmin = user && (user.role === 'admin' || user.email?.toLowerCase() === SENIOR_ADMIN_EMAIL.toLowerCase() || user.admin_type);
   const isSeniorAdmin = user?.email?.toLowerCase() === SENIOR_ADMIN_EMAIL.toLowerCase() || user?.admin_type === 'Senior Admin';
 
-  // 🔄 Fetch Data Pengguna, Leads, Kuis, Modul & Video
+  // Ambil Data Pengguna, Leads, Kuis, Modul, dan Video
   const loadAdminData = async () => {
     setLoading(true);
     try {
@@ -207,7 +208,7 @@ export default function AdminPortal() {
     }
   }, [isAdmin]);
 
-  // 📝 Function Parser CSV untuk Upload Kuis
+  // Fungsi Pengurai CSV untuk Unggah Kuis
   const parseCSVQuizzes = (text) => {
     if (!text || !text.trim()) return [];
     const lines = text.split(/\r\n|\n/);
@@ -426,7 +427,7 @@ export default function AdminPortal() {
     }
   };
 
-  // 🤖 Exercise Handlers
+  // Handler untuk Latihan
   const handleSaveExercise = async (e) => {
     e.preventDefault();
     if (!exerciseForm.title || !exerciseForm.referenceText || !exerciseForm.translation) {
@@ -546,7 +547,7 @@ export default function AdminPortal() {
     }
   };
 
-  // 💬 Kirim Pesan WA Otomatis
+  // Kirim Pesan WhatsApp Otomatis
   const handleOpenWhatsApp = (userTarget) => {
     if (!userTarget.whatsapp) {
       alert('Nomor WhatsApp pengguna belum terdaftar!');
@@ -558,7 +559,7 @@ export default function AdminPortal() {
     );
   };
 
-  // 📅 Perpanjang Paket / Free Trial
+  // Perpanjang Paket atau Free Trial
   const handleSavePackageExtension = async () => {
     if (!selectedUserForExtend) return;
 
@@ -591,7 +592,7 @@ export default function AdminPortal() {
     }
   };
 
-  // ➕ Tambah Admin Asisten Baru
+  // Tambah Admin Asisten Baru
   const handleAddAssistant = async (e) => {
     e.preventDefault();
     if (!newAssistantForm.full_name || !newAssistantForm.email) {
@@ -624,7 +625,7 @@ export default function AdminPortal() {
     }
   };
 
-  // 💬 Kirim Pesan WhatsApp ke Lead Placement Test
+  // Kirim Pesan WhatsApp ke Lead Placement Test
   const handleOpenLeadWhatsApp = (lead) => {
     if (!lead.noWa) {
       alert('Nomor WhatsApp lead tidak valid!');
@@ -636,7 +637,7 @@ export default function AdminPortal() {
     );
   };
 
-  // 🔄 Update Status Lead
+  // Perbarui Status Lead
   const handleUpdateLeadStatus = async (id, newStatus) => {
     const res = await adminService.updateLeadStatus(id, newStatus);
     if (res.success) {
@@ -645,7 +646,7 @@ export default function AdminPortal() {
     }
   };
 
-  // 🗑️ Hapus Data Lead
+  // Hapus Data Lead
   const handleDeleteLead = async (id, nama) => {
     if (window.confirm(`Yakin ingin menghapus data lead ${nama}?`)) {
       const res = await adminService.deleteLead(id);
@@ -656,7 +657,7 @@ export default function AdminPortal() {
     }
   };
 
-  // 🔍 Filter List Pengguna (Dengan fallback array aman)
+  // Menyaring Daftar Pengguna (Dengan cadangan array aman)
   const userList = Array.isArray(users) ? users : [];
   const filteredUsers = userList.filter((u) => {
     if (!u) return false;
@@ -676,7 +677,7 @@ export default function AdminPortal() {
     return matchesSearch && u.role === roleFilter;
   });
 
-  // 🔍 Filter List Placement Leads
+  // Menyaring Daftar Lead Placement Test
   const leadsList = Array.isArray(leads) ? leads : [];
   const filteredLeads = leadsList.filter((l) => {
     if (!l) return false;
@@ -712,7 +713,7 @@ export default function AdminPortal() {
   };
 
   // -------------------------------------------------------------
-  // 🔒 SCREEN 1: LAYAR AKSES DITOLAK JIKA BUKAN AKUN ADMIN
+  // SCREEN 1: LAYAR AKSES DITOLAK JIKA BUKAN AKUN ADMIN
   // -------------------------------------------------------------
   if (!user || !isAdmin) {
     return (
@@ -758,7 +759,7 @@ export default function AdminPortal() {
   }
 
   // -------------------------------------------------------------
-  // 🟢 SCREEN 2: MAIN DASHBOARD PORTAL ADMIN MASTER
+  // SCREEN 2: LAYAR UTAMA DASHBOARD PORTAL ADMIN MASTER
   // -------------------------------------------------------------
   return (
     <div className="admin-portal-wrapper min-h-screen bg-gradient-to-b from-[#87CEFA] via-white to-white text-slate-900 font-sans">
@@ -779,7 +780,7 @@ export default function AdminPortal() {
         .admin-portal-main .text-slate-500 { color: #64748b !important; }
         .admin-portal-main button.bg-\[\#0362C0\],
         .admin-portal-main a.bg-\[\#0362C0\] { color: #ffffff !important; }
-  // 🟢 SCREEN 2: MAIN DASHBOARD
+  /* SCREEN 2: MAIN DASHBOARD */
         .admin-portal-main input,
         .admin-portal-main select,
         .admin-portal-main textarea { background: #ffffff !important; color: #10233f !important; }

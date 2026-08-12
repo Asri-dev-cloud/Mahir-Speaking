@@ -1,14 +1,20 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
 
+// Komponen FloatingWhatsApp: Menampilkan tombol melayang interaktif di pojok bawah halaman untuk memudahkan pengguna menghubungi WhatsApp konsultasi Mahir Speaking.
 export default function FloatingWhatsApp() {
+  // Nomor telepon admin konsultasi Mahir Speaking dalam format kode negara (62).
   const phoneNumber = '6281572120190';
+  
+  // Pesan bawaan yang otomatis terisi saat pengguna dialihkan ke aplikasi WhatsApp.
   const defaultMessage = encodeURIComponent('Halo Mahir Speaking! Saya berminat untuk informasi pendaftaran dan konsultasi program English Speaking.');
+  
+  // Tautan URL dinamis WhatsApp API untuk mengarahkan pengguna ke ruang percakapan.
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
     <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex items-center gap-3">
-      {/* Tooltip Label */}
+      {/* Label Petunjuk Hubungi WA (Tooltip) */}
       <a
         href={whatsappUrl}
         target="_blank"
@@ -19,7 +25,7 @@ export default function FloatingWhatsApp() {
         <span>tanya konsultasi WA (0815-7212-0190)</span>
       </a>
 
-      {/* Floating Button */}
+      {/* Tombol Bulat Melayang dengan Animasi Ping */}
       <a
         href={whatsappUrl}
         target="_blank"

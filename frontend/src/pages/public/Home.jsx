@@ -1,3 +1,4 @@
+// Halaman Home: Halaman utama platform pembelajaran Mahir Speaking, menampilkan penawaran program unggulan, tes penempatan gratis, keunggulan asisten AI, testimony siswa, dan FAQ.
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import PlacementTestModal from "../../components/modals/PlacementTestModal";

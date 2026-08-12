@@ -1,3 +1,4 @@
+// Halaman UploadLesson: Formulir khusus asisten pengajar/tutor untuk mengunggah materi pelajaran baru, video pembelajaran, bahan bacaan, kosakata target, serta kuis pilihan ganda.
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { courseService } from '../../services/api';
@@ -12,7 +13,7 @@ export default function UploadLesson() {
   const [targetVocab, setTargetVocab] = useState('["Fluency", "Articulation", "Intonation"]');
   const [speakingPrompt, setSpeakingPrompt] = useState('');
 
-  // Quiz Builder
+  // Mengelola pembuatan soal kuis pilihan ganda yang melekat pada pelajaran ini.
   const [quizQuestion, setQuizQuestion] = useState('');
   const [opt0, setOpt0] = useState('');
   const [opt1, setOpt1] = useState('');
@@ -23,6 +24,7 @@ export default function UploadLesson() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // Menangani pengiriman data pelajaran baru beserta kuis ke server database.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

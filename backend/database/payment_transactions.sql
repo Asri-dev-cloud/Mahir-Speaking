@@ -1,3 +1,4 @@
+-- Skema Tabel Transaksi Pembayaran Mahir Speaking. Digunakan untuk menyimpan status pembayaran Midtrans.
 CREATE TABLE IF NOT EXISTS public.payment_transactions (
   id BIGSERIAL PRIMARY KEY,
   order_id VARCHAR(100) NOT NULL UNIQUE,
@@ -16,12 +17,15 @@ CREATE TABLE IF NOT EXISTS public.payment_transactions (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Pembuatan Indeks: Digunakan untuk mengoptimalkan pencarian data transaksi berdasarkan ID pengguna.
 CREATE INDEX IF NOT EXISTS idx_payment_transactions_user_id
   ON public.payment_transactions(user_id);
 
+-- Pembuatan Indeks: Digunakan untuk mengoptimalkan pencarian data transaksi berdasarkan status pembayaran.
 CREATE INDEX IF NOT EXISTS idx_payment_transactions_status
   ON public.payment_transactions(payment_status);
 
+-- Konfigurasi Keamanan Baris Data (Row Level Security): Mengamankan tabel transaksi agar hanya dapat diakses melalui otorisasi server-side.
 ALTER TABLE public.payment_transactions ENABLE ROW LEVEL SECURITY;
 
 -- Backend memakai koneksi PostgreSQL server-side. Jangan beri INSERT/UPDATE publik.

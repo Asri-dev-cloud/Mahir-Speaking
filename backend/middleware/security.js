@@ -1,4 +1,4 @@
-// 🛡️ Security Middleware: Proteksi Header HTTP, Deteksi Crawler Jahat & Sanitasi XSS
+// Proteksi Keamanan HTTP: Konfigurasi header keamanan, deteksi bot mencurigakan, dan sanitasi serangan XSS.
 
 // Daftar User-Agent bot/script yang sering dipakai untuk spamming atau scraping
 const BAD_BOT_USER_AGENTS = [
@@ -8,7 +8,7 @@ const BAD_BOT_USER_AGENTS = [
 ];
 
 /**
- * 🔒 Middleware Security Headers: Melindungi dari Clickjacking, Sniffing, dan XSS dasar.
+ * Middleware Keamanan Header: Melindungi aplikasi dari serangan clickjacking, content sniffing, dan XSS.
  */
 export const securityHeaders = (req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
@@ -19,7 +19,7 @@ export const securityHeaders = (req, res, next) => {
 };
 
 /**
- * 🤖 Middleware Bot Filter: Memblokir script crawler, spider, dan library hacking otomatis.
+ * Middleware Penyaringan Bot: Memblokir agen pengguna (User-Agent) berupa skrip otomatis atau alat peretas.
  */
 export const botFilter = (req, res, next) => {
   const userAgent = (req.headers['user-agent'] || '').toLowerCase();
@@ -27,16 +27,16 @@ export const botFilter = (req, res, next) => {
   if (!userAgent) {
     return res.status(403).json({
       success: false,
-      message: 'Akses ditolak: User-Agent tidak boleh kosong ya bestie! 🚫'
+      message: 'Akses ditolak: User-Agent wajib disertakan untuk alasan keamanan.'
     });
   }
 
   const isSuspicious = BAD_BOT_USER_AGENTS.some(bot => userAgent.includes(bot));
   if (isSuspicious) {
-    console.warn(`🛡️ [Security Blocked] IP ${req.headers['x-forwarded-for'] || req.socket.remoteAddress} diblokir. User-Agent: ${userAgent}`);
+    console.warn(`[Security Blocked] IP ${req.headers['x-forwarded-for'] || req.socket.remoteAddress} diblokir. User-Agent: ${userAgent}`);
     return res.status(403).json({
       success: false,
-      message: 'Akses ditolak: Script/Bot terdeteksi oleh sistem pertahanan Mahir Speaking! 🛡️'
+      message: 'Akses ditolak: Permintaan dari perangkat atau skrip otomatis tidak diizinkan.'
     });
   }
 
@@ -44,7 +44,7 @@ export const botFilter = (req, res, next) => {
 };
 
 /**
- * 🧹 Middleware Sanitasi Input (XSS Prevention): Menghilangkan script tag nakal sebelum masuk DB.
+ * Middleware Sanitasi Input: Membersihkan tag html berbahaya dari parameter masukan untuk mencegah serangan XSS.
  */
 export const sanitizeInput = (req, res, next) => {
   const cleanXSS = (val) => {

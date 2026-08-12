@@ -4,7 +4,7 @@ import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all available packages
+// Mengambil semua daftar paket belajar yang tersedia untuk dibeli oleh pengguna.
 router.get('/', async (req, res) => {
   try {
     const packages = await query(`SELECT * FROM packages ORDER BY price ASC`);
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Purchase Package
+// Melakukan pembelian paket belajar baru dan memperbarui profil tingkatan keanggotaan pengguna.
 router.post('/purchase', verifyToken, async (req, res) => {
   try {
     const { package_id, payment_method } = req.body;
@@ -31,7 +31,7 @@ router.post('/purchase', verifyToken, async (req, res) => {
 
     const selectedPkg = pkg[0];
 
-    // Jalankan Stored Procedure / Transaksi Aman pembelian paket
+    // Jalankan Stored Procedure atau transaksi pembelian paket secara aman
     const result = await dbPurchasePackage(userId, package_id, selectedPkg.price, payment_method || 'QRIS');
 
     if (result.status_code === 'USER_NOT_FOUND') {
@@ -52,7 +52,7 @@ router.post('/purchase', verifyToken, async (req, res) => {
   }
 });
 
-// Get user's purchase history
+// Mengambil histori riwayat transaksi pembelian paket dari pengguna yang bersangkutan.
 router.get('/history', verifyToken, async (req, res) => {
   try {
     const history = await query(

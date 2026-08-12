@@ -1,7 +1,7 @@
-// ⏱️ Custom In-Memory Rate Limiter: Hemat Resource & Slay Bebas Bot Brute Force! ✨
+// Pembatasan Akses Kustom (Rate Limiter) dalam Memori: Menjaga stabilitas server dan mencegah serangan brute force.
 const rateLimitStore = new Map();
 
-// Pembersihan berkala memori dari entri kedaluwarsa biar gak memory leak ya bestie~
+// Pembersihan berkala memori dari entri kedaluwarsa secara terjadwal untuk mencegah kebocoran memori.
 setInterval(() => {
   const now = Date.now();
   for (const [key, record] of rateLimitStore.entries()) {
@@ -60,12 +60,12 @@ export const rateLimiter = (options = {}) => {
 export const globalLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000,
   max: 150,
-  message: 'Waduh bestie, pelan-pelan ya! Kamu mengirim terlalu banyak request nih. Coba lagi dalam beberapa menit~ ✨'
+  message: 'Permintaan akses terlalu padat. Mohon tunggu beberapa menit sebelum mencoba kembali.'
 });
 
 // Limiter Khusus Auth (Register, Login, Lupa Password): 15 request / 15 menit (Anti Brute Force & Spam Bot!)
 export const authLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000,
   max: 15,
-  message: 'Keamanan utama! Terlalu banyak percobaan autentikasi dari perangkat ini. Silakan coba lagi 15 menit lagi ya bestie~ 🛡️'
+  message: 'Terlalu banyak percobaan autentikasi dari perangkat ini. Silakan coba kembali dalam 15 menit untuk menjaga keamanan akun Anda.'
 });

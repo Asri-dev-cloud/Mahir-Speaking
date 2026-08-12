@@ -7,7 +7,7 @@ import { query } from './db.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🪴 Fungsi Penyemaian Data Awal Database (Seed Data Bikin DB Slay)
+// Fungsi inisialisasi data awal database (seeding) untuk menyiapkan tabel dan data pengguna awal.
 export async function initSeedData() {
   try {
     const isPostgres = !!(process.env.DATABASE_URL || process.env.POSTGRES_URL);
@@ -39,7 +39,7 @@ export async function initSeedData() {
       // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari cloud Neon Postgres agar leaderboard bersih
       await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'tutor@mahirspeaking.com', 'admin@mahirspeaking.com')`);
     } else {
-      // 🏗️ Bikin Tabel Database Kalo Belum Ada Gais~
+      // Membuat tabel users jika belum terdaftar pada database.
       await query(`
         CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -172,7 +172,7 @@ export async function initSeedData() {
         )
       `);
 
-      // 🤖 Tabel Latihan Bot Mashira AI
+      // Tabel Latihan Bot Mashira AI
       await query(`
         CREATE TABLE IF NOT EXISTS exercises (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -185,7 +185,7 @@ export async function initSeedData() {
         )
       `);
 
-      // 🎯 Tabel Placement Test Leads
+      // Tabel Placement Test Leads
       await query(`
         CREATE TABLE IF NOT EXISTS placement_test_leads (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -202,7 +202,7 @@ export async function initSeedData() {
         )
       `);
 
-      // 💳 Tabel Payment Transactions
+      // Tabel Payment Transactions
       await query(`
         CREATE TABLE IF NOT EXISTS payment_transactions (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -222,7 +222,7 @@ export async function initSeedData() {
         )
       `);
 
-      // 📚 Tabel Modules
+      // Tabel Modules
       await query(`
         CREATE TABLE IF NOT EXISTS modules (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -240,7 +240,7 @@ export async function initSeedData() {
         )
       `);
 
-      // 📹 Tabel Recorded Videos
+      // Tabel Recorded Videos
       await query(`
         CREATE TABLE IF NOT EXISTS recorded_videos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -258,8 +258,8 @@ export async function initSeedData() {
       `);
     }
 
-    // 📦 Cek & Semai Paket Langganan Biar User Bisa Belanja
-    console.log('Nyiapin paket-paket langganan ketche dlu gais...');
+    // Mempersiapkan data paket langganan default pada database.
+    console.log('Nyiapin paket-paket langganan dlu...');
     await query(`DELETE FROM packages`);
     await query(`
       INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
@@ -271,7 +271,7 @@ export async function initSeedData() {
       (5, 'Harga Normal (3 Bulan)', 1500000, '3 months', -1, 24, 'Premium Pro', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "24 Kelas Tatap Muka / 3 bulan", "Bimbingan Intensif IELTS/TOEFL"]')
     `);
 
-    // 👑 Cek & Semai User Awal (Hanya Hartini Asri Senior Admin, Fauzi, dan Cintiani)
+    // Mempersiapkan data akun pengguna awal (Admin Senior, Fauzi, dan Cintiani).
     const usersCount = await query(`SELECT COUNT(*) as count FROM users`);
     if (Number(usersCount[0].count) === 0) {
       console.log('Nyiapin data user awal...');

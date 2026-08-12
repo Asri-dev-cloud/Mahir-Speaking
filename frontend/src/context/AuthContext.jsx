@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService, userService } from '../services/api';
 
-// 🔑 Konteks Autentikasi Pengjaga Gerbang Keamanan App~ 🚪
+// Konteks Autentikasi (AuthContext): Mengelola status otorisasi masuk, token sesi, dan profil pengguna.
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // 💾 Simpan user & activeTab di localStorage agar tidak ter-reset saat refresh page
+  // Menyimpan informasi profil pengguna dan tab aktif ke dalam localStorage agar sesi tetap terjaga saat halaman dimuat ulang.
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('mahir_user');
     if (savedUser) {
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('mahir_token') || null);
   const [loading, setLoading] = useState(true);
 
-  // ✋ Modal Sambutan Tangan Melambai 5 Detik setelah Login/Register
+  // Mengelola status tampilan modal selamat datang yang muncul selama 5 detik setelah proses login.
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [welcomeUserName, setWelcomeUserName] = useState('');
 
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     setActiveTabState(tab);
   };
 
-  // 🔄 Sinkronisasi status profil si user waktu token berubah
+  // Sinkronisasi data profil pengguna dengan server backend setiap kali token otentikasi diperbarui.
   useEffect(() => {
     if (token) {
       userService.getProfile()
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
           if (data.success && data.user) {
             const saved = JSON.parse(localStorage.getItem('mahir_user') || '{}');
             
-            // Map completedLessons dari database ke completed_units agar sinkron penuh!
+            // Menyelaraskan daftar pelajaran yang telah diselesaikan dari database ke state lokal.
             const completedUnits = Array.isArray(data.completedLessons)
               ? data.completedLessons.map(l => l.lesson_id)
               : (saved.completed_units || []);
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  // 🔐 Fungsi Login Pembuka Pintu Masuk
+  // Fungsi Login: Melakukan otentikasi masuk pengguna menggunakan email dan kata sandi.
   const login = async (emailOrCredentials, password) => {
     try {
       const credentials = typeof emailOrCredentials === 'object'
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 📝 Fungsi Registrasi Anggota Baru (Langsung Login Otomatis ke LMS Area)
+  // Fungsi Registrasi: Mendaftarkan akun siswa baru dan langsung masuk ke halaman utama secara otomatis.
   const register = async (userData) => {
     try {
       const data = await authService.register(userData);
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔑 Riset Kata Sandi (Lupa Password)
+  // Fungsi Reset Kata Sandi: Mengajukan pemulihan kata sandi bagi pengguna yang lupa sandinya.
   const resetPassword = async (resetData) => {
     try {
       const data = await authService.resetPassword(resetData);
@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🚪 Pamit Keluar/Logout
+  // Fungsi Logout: Menghapus data autentikasi dari localStorage dan memulihkan aplikasi ke halaman awal.
   const logout = () => {
     localStorage.removeItem('mahir_token');
     localStorage.removeItem('mahir_user');
@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }) => {
     setActiveTab('home');
   };
 
-  // ✏️ Update Profil Pengguna
+  // Memperbarui informasi biodata profil pengguna secara lokal.
   const updateUserProfile = (updatedUser) => {
     setUser(prev => {
       const nextUser = { ...prev, ...updatedUser };
@@ -164,7 +164,7 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  // ✨ Tambah XP Biar Makin Slay di Leaderboard
+  // Menambahkan akumulasi poin XP pengguna secara lokal dan menyinkronkannya ke server backend.
   const addXpAndPoints = async (xp) => {
     let nextXp = 0;
 
@@ -177,7 +177,7 @@ export const AuthProvider = ({ children }) => {
       };
       localStorage.setItem('mahir_user', JSON.stringify(updated));
 
-      // Update juga di list registered users biar sinkron cantik
+      // Menyelaraskan data XP baru ke daftar penyimpanan lokal
       try {
         const registered = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
         const idx = registered.findIndex(u => u.email?.toLowerCase() === prev.email?.toLowerCase());
@@ -192,7 +192,7 @@ export const AuthProvider = ({ children }) => {
       return updated;
     });
 
-    // Kirim pembaruan ke database backend secara asinkron
+    // Mengirim pembaruan data XP ke server database backend secara asinkron
     try {
       const res = await userService.addXp(xp);
       if (res.success && res.xp !== undefined) {
@@ -221,7 +221,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🌐 Login dengan Google Direct OAuth Flow
+  // Otorisasi masuk menggunakan modul integrasi Google OAuth.
   const googleLogin = async (customUser) => {
     const googleUser = customUser || {
       id: 999,

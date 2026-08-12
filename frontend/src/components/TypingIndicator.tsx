@@ -1,3 +1,4 @@
+// Komponen TypingIndicator: Menampilkan animasi tiga titik memantul ketika asisten AI sedang memproses tanggapan (typing).
 import React from 'react';
 
 export const TypingIndicator: React.FC = () => {

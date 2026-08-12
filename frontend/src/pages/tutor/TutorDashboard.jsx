@@ -1,3 +1,4 @@
+// Halaman TutorDashboard: Dasbor utama untuk guru/tutor asisten dalam meninjau daftar kursus yang diampu.
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { courseService } from '../../services/api';
@@ -7,6 +8,7 @@ export default function TutorDashboard() {
   const { user, setActiveTab } = useAuth();
   const [courses, setCourses] = useState([]);
 
+  // Memuat data daftar materi kursus yang terdaftar di database.
   useEffect(() => {
     courseService.getCourses()
       .then(data => {

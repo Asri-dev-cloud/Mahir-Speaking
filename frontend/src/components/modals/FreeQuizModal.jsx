@@ -1,3 +1,4 @@
+// Komponen FreeQuizModal: Modal untuk menampilkan kuis uji coba gratis bagi pengunjung umum.
 import React, { useState } from "react";
 import { ArrowLeft, ChevronRight, CheckCircle2, Award, X } from "lucide-react";
 

@@ -1,3 +1,4 @@
+// Halaman LMSView: Menyediakan panel utama proses belajar mengajar (LMS), kurikulum per level, materi unduhan, rekaman kelas, dan pengerjaan kuis.
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import confetti from "canvas-confetti";
@@ -682,6 +683,7 @@ export default function LMSView() {
   const displayStreak = accountUser ? (accountUser.streak || 0) : 0;
   const displayXp = accountUser ? (accountUser.xp || 0) : 0;
 
+  // Sistem Keamanan dan Hak Akses LMS: Bagian ini merupakan gerbang utama untuk memvalidasi hak akses siswa ke materi premium seperti e-book dan rekaman video kelas. Jika paket belajar siswa telah melewati batas waktu yang ditentukan atau masa uji coba telah habis, sistem akan mengunci akses materi secara otomatis.
   const getSubscriptionStatus = (u) => {
     if (!u) return { isActive: false, name: 'Tamu', expiryDate: null, isTrial: false };
     if (u.role === 'admin' || u.role === 'tutor') {

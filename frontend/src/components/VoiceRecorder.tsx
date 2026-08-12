@@ -1,3 +1,4 @@
+// Komponen VoiceRecorder: Mengelola proses perekaman suara siswa (audio recording) dan memproses pengenalan suara (speech recognition).
 import React, { useState, useEffect } from 'react';
 import { Mic, Volume2, AlertCircle, Check, ArrowLeft, Square, Loader2 } from 'lucide-react';
 

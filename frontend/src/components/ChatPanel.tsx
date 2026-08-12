@@ -1,3 +1,4 @@
+// Komponen ChatPanel: Panel utama area percakapan chat tertulis, menampilkan daftar riwayat pesan obrolan secara kronologis.
 import React, { useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatComposer } from './ChatComposer';

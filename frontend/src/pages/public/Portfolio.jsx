@@ -1,3 +1,4 @@
+// Halaman Portfolio: Menyajikan portofolio keberhasilan alumni, cerita sukses, diagnosis suara, dan tingkat perkembangan kemampuan berbicara bahasa Inggris.
 import React from 'react';
 import { Award, Volume2, Star, CheckCircle2, Mic, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -5,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 export default function Portfolio() {
   const { setActiveTab } = useAuth();
 
+  // Daftar cerita sukses (success stories) siswa alumni untuk memberikan inspirasi dan pembuktian performa.
   const successStories = [
     {
       name: "Rian Pratama",
@@ -35,6 +37,7 @@ export default function Portfolio() {
     }
   ];
 
+  // Memutar contoh sampel rekaman suara bahasa Inggris siswa dengan Web Speech API.
   const playVoiceSample = (text) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();

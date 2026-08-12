@@ -3,6 +3,7 @@ import { query } from '../database/db.js';
 
 const router = express.Router();
 
+// Mengambil daftar peringkat pengguna (leaderboard) berdasarkan jumlah XP dan poin tertinggi.
 router.get('/', async (req, res) => {
   try {
     const leaderboard = await query(`

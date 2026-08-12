@@ -1,3 +1,4 @@
+// Komponen MashiraAvatar: Menampilkan animasi visual avatar asisten Mashira AI yang berubah berdasarkan status (idle, listening, thinking, speaking, dll).
 import React from 'react';
 
 export type MashiraAvatarState = 'idle' | 'listening' | 'thinking' | 'speaking' | 'success' | 'error';

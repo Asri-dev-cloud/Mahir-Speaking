@@ -1,4 +1,4 @@
-// 🎯 Modal Placement Test Mahir Speaking: Biar tau level kemampuan English-mu super akurat & slay! ✨
+// Modal Placement Test Mahir Speaking: Menilai tingkat kemampuan bahasa Inggris siswa secara akurat untuk rekomendasi level kurikulum.
 import React, { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { userService } from '../../services/api';

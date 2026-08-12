@@ -6,6 +6,7 @@ import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Katalog Paket Belajar Mahir Speaking: Bagian ini mengatur durasi aktif paket belajar setelah dilakukan pembayaran oleh siswa (8-10 pertemuan diatur 30 hari, sedangkan 12 pertemuan diatur 60 hari). Mohon ketelitiannya dalam melakukan penyesuaian agar tidak terjadi ketidaksesuaian data.
 const PACKAGE_CATALOG = Object.freeze({
     reguler_basic: { name: 'Kelas Reguler - Basic Level', amount: 350000, packageId: 2, durationDays: 30 },
     reguler_intermediate: { name: 'Kelas Reguler - Intermediate Level', amount: 500000, packageId: 3, durationDays: 30 },

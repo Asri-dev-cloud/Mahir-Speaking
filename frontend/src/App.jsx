@@ -9,7 +9,7 @@ import FloatingWhatsApp from './components/common/FloatingWhatsApp';
 import { FloatingAssistant } from './components/FloatingAssistant';
 import { MashiraAssistant } from './components/MashiraAssistant';
 
-// 🌟 Halaman Publik yang aesthetic nan memanjakan mata gais~ ✨
+// Halaman Publik yang menyediakan informasi umum bagi pengunjung.
 import Home from './pages/public/Home';
 import LMSView from './pages/public/LMSView';
 import Portfolio from './pages/public/Portfolio';
@@ -18,7 +18,7 @@ import Branding from './pages/public/Branding';
 import AuthPage from './pages/public/AuthPage';
 import ForgotPassword from './pages/public/ForgotPassword';
 
-// 🎓 Zona Belajar Para Pejuang Fluency yang Super Slay~ 🚀
+// Halaman Siswa (Student) untuk mengakses materi pelajaran, kuis, latihan percakapan, dan status keanggotaan.
 import LessonView from './pages/student/LessonView';
 import QuizView from './pages/student/QuizView';
 import AIChatView from './pages/student/AIChatView';
@@ -26,22 +26,22 @@ import LeaderboardView from './pages/student/LeaderboardView';
 import MyPackage from './pages/student/MyPackage';
 import Profile from './pages/student/Profile';
 
-// 👨‍🏫 Area Khusus Tentor Ketche nan Idaman, No Cap! 📚
+// Halaman Tutor untuk guru atau pengajar mengunggah pelajaran baru dan mengelola materi.
 import TutorDashboard from './pages/tutor/TutorDashboard';
 import UploadLesson from './pages/tutor/UploadLesson';
 
-// 👑 Portal Khusus Admin Master & Asisten 🛡️
+// Portal khusus administrator sistem.
 import AdminPortal from './pages/admin/AdminPortal';
 
 import WelcomeModal from './components/common/WelcomeModal';
 
-// 🔮 Komponen Utama Pembawa Kebahagiaan Pengguna
+// Komponen Utama untuk merender antarmuka aplikasi.
 function MainContent() {
   const { activeTab } = useAuth();
   const [isAssistantOpen, setIsAssistantOpen] = React.useState(false);
   const floatingButtonRef = React.useRef(null);
 
-  // 🚀 Efek magis biar setiap pindah tab langsung auto-scroll ke paling atas, santuy abis!
+  // Efek samping untuk memastikan halaman digulirkan ke atas setiap kali terjadi perubahan tab aktif.
   React.useEffect(() => {
     const scrollToTop = () => {
       const topAnchor = document.getElementById('top-of-page');
@@ -71,10 +71,10 @@ function MainContent() {
     };
   }, [activeTab]);
 
-  // 🎯 Router manual yang super ringkas & gak bikin pusing kepala
+  // Fungsi pengarah halaman (router manual) untuk menampilkan halaman yang sesuai dengan tab aktif.
   const renderCurrentPage = () => {
     switch (activeTab) {
-      // 🌈 Rute Publik
+      // Halaman Publik
       case 'home': return <Home />;
       case 'lms': return <LMSView />;
       case 'branding': return <Branding />;
@@ -86,7 +86,7 @@ function MainContent() {
       case 'register': return <AuthPage />;
       case 'forgot-password': return <ForgotPassword />;
 
-      // 🎒 Rute Student
+      // Halaman Siswa (Student)
       case 'student-dashboard': return <LMSView />;
       case 'learning-path': return <LMSView />;
       case 'lesson-view': return <LessonView />;
@@ -96,12 +96,12 @@ function MainContent() {
       case 'my-package': return <MyPackage />;
       case 'profile': return <Profile />;
 
-      // 📝 Rute Tutor
+      // Halaman Tutor
       case 'tutor-dashboard': return <TutorDashboard />;
       case 'manage-courses': return <TutorDashboard />;
       case 'upload-lesson': return <UploadLesson />;
 
-      // 🛡️ Rute Dedicated Portal Admin
+      // Portal Khusus Admin
       case 'admin-portal': return <AdminPortal />;
       case 'admin': return <AdminPortal />;
 
@@ -115,7 +115,7 @@ function MainContent() {
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden w-full max-w-full">
       <WelcomeModal />
-      {/* 📌 Anchor penyelamat dari keterpurukan scroll bawah */}
+      {/* Titik jangkar (anchor) untuk proses gulir ke atas halaman */}
       <div id="top-of-page" className="absolute top-0 left-0 w-0 h-0 pointer-events-none" />
       <Navbar />
       <main key={activeTab} className="flex-1 overflow-x-hidden w-full">
@@ -139,7 +139,7 @@ function MainContent() {
   );
 }
 
-// 🧁 Provider Pembungkus Aplikasi Biar Semuanya Tetap Warm & Slay~
+// Provider Pembungkus utama untuk menyalurkan context autentikasi dan percakapan AI ke seluruh aplikasi.
 export default function App() {
   return (
     <AuthProvider>

@@ -1,3 +1,4 @@
+// Halaman Branding: Menyediakan informasi profil lembaga, metode pembelajaran interaktif, dokumentasi kegiatan, serta galeri aktivitas belajar.
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -626,6 +627,7 @@ export default function Branding() {
           </div>
 
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Galeri Dokumentasi Aktivitas: Bagian ini menampilkan foto dokumentasi kegiatan belajar-mengajar tanpa disertai lencana atau teks penjelasan untuk menonjolkan aspek visual yang bersih dan rapi. Saat kursor diarahkan ke foto, akan muncul efek perbesaran gambar serta ikon pembesar. */}
             {galleryActivities.map((item, index) => (
               <button
                 key={item.id}

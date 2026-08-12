@@ -1,12 +1,12 @@
 import { ScoringResult, WordResult } from '../types/voice';
 
 /**
- * Normalizes text for speech comparison:
- * - lowercase
- * - remove punctuation
- * - collapse multiple spaces
- * - trim
- * - split into word array
+ * Menormalisasi teks untuk perbandingan suara:
+ * - Mengubah ke huruf kecil
+ * - Menghapus tanda baca
+ * - Menyederhanakan spasi ganda
+ * - Menghapus spasi di awal dan akhir
+ * - Memecah teks menjadi array kata
  */
 export function normalizeText(text: string): string[] {
   if (!text) return [];
@@ -20,7 +20,7 @@ export function normalizeText(text: string): string[] {
 }
 
 /**
- * Calculates Levenshtein Distance between two strings for fuzzy comparison
+ * Menghitung Jarak Levenshtein antara dua teks untuk pencocokan kata (fuzzy comparison)
  */
 function levenshteinDistance(a: string, b: string): number {
   const matrix: number[][] = [];
@@ -39,9 +39,9 @@ function levenshteinDistance(a: string, b: string): number {
         matrix[i][j] = matrix[i - 1][j - 1];
       } else {
         matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1, // substitution
-          matrix[i][j - 1] + 1,     // insertion
-          matrix[i - 1][j] + 1      // deletion
+          matrix[i - 1][j - 1] + 1, // substitusi
+          matrix[i][j - 1] + 1,     // penyisipan
+          matrix[i - 1][j] + 1      // penghapusan
         );
       }
     }
@@ -51,7 +51,7 @@ function levenshteinDistance(a: string, b: string): number {
 }
 
 /**
- * Word-level alignment using LCS and string similarity
+ * Melakukan penyelarasan tingkat kata menggunakan metode LCS (Longest Common Subsequence) dan kemiripan teks
  */
 export function compareWords(referenceText: string, recognizedText: string): {
   wordResults: WordResult[];
@@ -67,7 +67,7 @@ export function compareWords(referenceText: string, recognizedText: string): {
   const n = refWords.length;
   const m = recWords.length;
 
-  // DP table for LCS
+  // Tabel DP untuk LCS
   const dp: number[][] = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
 
   for (let i = 1; i <= n; i++) {
@@ -80,7 +80,7 @@ export function compareWords(referenceText: string, recognizedText: string): {
     }
   }
 
-  // Backtrack to assemble word results
+  // Melacak kembali (backtrack) untuk menyusun hasil penyelarasan kata
   let i = n;
   let j = m;
   const alignment: { refIndex?: number; recIndex?: number; type: 'match' | 'mismatch' | 'missing' | 'extra' }[] = [];
@@ -91,16 +91,16 @@ export function compareWords(referenceText: string, recognizedText: string): {
       i--;
       j--;
     } else if (i > 0 && j > 0 && dp[i - 1][j - 1] >= dp[i - 1][j] && dp[i - 1][j - 1] >= dp[i][j - 1]) {
-      // Substitution check
+      // Pengecekan substitusi kata
       alignment.unshift({ refIndex: i - 1, recIndex: j - 1, type: 'mismatch' });
       i--;
       j--;
     } else if (i > 0 && (j === 0 || dp[i - 1][j] >= dp[i][j - 1])) {
-      // Omitted word in reference
+      // Kata yang terlewat dalam referensi
       alignment.unshift({ refIndex: i - 1, type: 'missing' });
       i--;
     } else if (j > 0 && (i === 0 || dp[i][j - 1] > dp[i - 1][j])) {
-      // Extra word spoken by user
+      // Kata ekstra yang diucapkan oleh pengguna
       alignment.unshift({ recIndex: j - 1, type: 'extra' });
       j--;
     }
@@ -117,13 +117,13 @@ export function compareWords(referenceText: string, recognizedText: string): {
       });
       matchedCount++;
     } else if (item.type === 'mismatch' && item.recIndex !== undefined && item.refIndex !== undefined) {
-      // Check distance: if very close, count as partial/mismatch
+      // Periksa jarak: jika sangat dekat, anggap sebagai kecocokan parsial
       const recWord = recWords[item.recIndex];
       const refWord = refWords[item.refIndex];
       const dist = levenshteinDistance(refWord, recWord);
 
       if (dist <= 1 && refWord.length > 3) {
-        // Close enough
+        // Cukup dekat
         wordResults.push({
           word: recWord,
           status: 'green'
@@ -156,7 +156,7 @@ export function compareWords(referenceText: string, recognizedText: string): {
 }
 
 /**
- * Calculates complete speech score breakdown
+ * Menghitung rincian skor pengucapan secara lengkap (pelafalan, kelengkapan, dan kelancaran)
  */
 export function calculateScores(
   referenceText: string,
@@ -182,47 +182,47 @@ export function calculateScores(
 
   const { wordResults, matchedCount } = compareWords(referenceText, recognizedText);
 
-  // 1. Pronunciation Estimate (0 - 100)
-  // Ratio of correctly pronounced words against recognized words and reference
+  // 1. Perkiraan Skor Pelafalan (Pronunciation) (0 - 100)
+  // Rasio kata yang diucapkan dengan benar dibandingkan total kata
   const maxWordCount = Math.max(refWords.length, recWords.length);
   const pronunciationRaw = (matchedCount / maxWordCount) * 100;
   const pronunciationScore = Math.min(100, Math.max(0, Math.round(pronunciationRaw)));
 
-  // 2. Completeness (0 - 100)
-  // Percentage of reference words spoken
+  // 2. Skor Kelengkapan (Completeness) (0 - 100)
+  // Persentase jumlah kata referensi yang berhasil diucapkan
   const completenessRaw = (matchedCount / refWords.length) * 100;
   const completenessScore = Math.min(100, Math.max(0, Math.round(completenessRaw)));
 
-  // 3. Fluency Estimate (0 - 100)
-  // Calculate Words Per Minute
+  // 3. Perkiraan Skor Kelancaran (Fluency) (0 - 100)
+  // Menghitung jumlah kata per menit (Words Per Minute / WPM)
   const safeDurationMinutes = Math.max(durationSeconds, 1) / 60;
   const wordsPerMinute = Math.round(recWords.length / safeDurationMinutes);
 
-  let fluencyScore = 80; // default baseline
+  let fluencyScore = 80; // Nilai dasar bawaan
 
-  // Beginner target pace: 70 - 130 WPM
+  // Rentang WPM target tingkat pemula: 70 - 130 WPM
   if (wordsPerMinute >= 70 && wordsPerMinute <= 130) {
     fluencyScore = 95 - Math.abs(wordsPerMinute - 95) * 0.2;
   } else if (wordsPerMinute < 70) {
     fluencyScore = Math.max(30, 90 - (70 - wordsPerMinute) * 1.2);
   } else {
-    // Too fast (>130 WPM)
+    // Terlalu cepat (>130 WPM)
     fluencyScore = Math.max(40, 90 - (wordsPerMinute - 130) * 0.8);
   }
 
-  // Penalty if duration is extremely short relative to word count or zero
+  // Penalti jika durasi sangat singkat dibandingkan jumlah kata
   if (durationSeconds < 0.8) {
     fluencyScore = Math.min(fluencyScore, 40);
   }
 
   fluencyScore = Math.min(100, Math.max(0, Math.round(fluencyScore)));
 
-  // 4. Overall Score
-  // 45% pronunciation estimate, 30% completeness, 25% fluency estimate
+  // 4. Skor Keseluruhan (Overall Score)
+  // Bobot: 45% pelafalan, 30% kelengkapan, 25% kelancaran
   const overallRaw = (pronunciationScore * 0.45) + (completenessScore * 0.30) + (fluencyScore * 0.25);
   const overallScore = Math.min(100, Math.max(0, Math.round(overallRaw)));
 
-  // Feedback mapping
+  // Penentuan umpan balik (feedback)
   let feedback = '';
   if (overallScore >= 85) {
     feedback = 'Bagus! Ucapanmu sudah jelas dan lengkap.';

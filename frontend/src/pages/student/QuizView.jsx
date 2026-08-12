@@ -1,3 +1,4 @@
+// Halaman QuizView: Halaman interaktif bagi siswa untuk menguji pemahaman materi pembelajaran lewat kuis pilihan ganda.
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useAuth } from '../../context/AuthContext';
@@ -12,6 +13,7 @@ export default function QuizView() {
   const [score, setScore] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  // Daftar pertanyaan kuis pilihan ganda beserta jawaban benar dan penjelasannya.
   const quizQuestions = [
     {
       id: 1,

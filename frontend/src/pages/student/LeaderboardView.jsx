@@ -1,3 +1,4 @@
+// Halaman LeaderboardView: Menampilkan peringkat global peringkat keaktifan siswa (global leaderboard) berdasarkan akumulasi XP dan pencapaian mingguan.
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { leaderboardService } from "../../services/api";

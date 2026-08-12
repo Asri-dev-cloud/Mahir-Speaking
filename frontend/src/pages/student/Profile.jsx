@@ -1,3 +1,4 @@
+// Halaman Profile: Menyediakan formulir pembaruan biodata siswa (nama, whatsapp, avatar, goal speaking, bio) serta menampilkan status keanggotaan.
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { userService } from '../../services/api';
@@ -42,6 +43,7 @@ export default function Profile() {
 
   const currentUser = profile || user;
 
+  // Status Keanggotaan dan Format Tanggal: Bagian ini berfungsi untuk menampilkan rincian paket aktif serta tanggal kedaluwarsa siswa secara dinamis. Perhitungan dilakukan dengan metode proteksi kesalahan (try-catch) agar halaman profil tidak mengalami kegagalan sistem saat memuat data.
   const getSubscriptionStatus = (u) => {
     if (!u) return { isActive: false, name: 'Tamu', expiryDate: null, isTrial: false };
     if (u.role === 'admin' || u.role === 'tutor') {

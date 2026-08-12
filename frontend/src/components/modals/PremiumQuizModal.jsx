@@ -1,3 +1,4 @@
+// Komponen PremiumQuizModal: Modal untuk menampilkan kuis bagi siswa aktif/langganan premium.
 import React, { useState } from "react";
 import { ArrowLeft, ChevronRight, CheckCircle2, Award, X, Sparkles } from "lucide-react";
 

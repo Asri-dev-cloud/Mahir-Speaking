@@ -4,10 +4,10 @@ import { verifyToken, checkRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Apply Admin check to all admin routes
+// Memastikan hak akses admin (verifyToken & checkRole) diterapkan ke semua rute di bawah ini.
 router.use(verifyToken, checkRole(['admin']));
 
-// Platform Analytics Dashboard
+// Mengambil ringkasan analitik dasbor platform (total pengguna, siswa, pengajar, kelas, dsb).
 router.get('/analytics', async (req, res) => {
   try {
     const totalUsers = await query(`SELECT COUNT(*) as count FROM users`);
@@ -59,7 +59,7 @@ router.get('/analytics', async (req, res) => {
   }
 });
 
-// Manage Users - Get list & update user role/package
+// Mengelola Pengguna: Mendapatkan seluruh daftar pengguna beserta rincian tingkat keanggotaannya.
 router.get('/users', async (req, res) => {
   try {
     const users = await query(`
@@ -114,12 +114,12 @@ router.put('/users/:id', async (req, res) => {
   }
 });
 
-// Add Assistant Admin to DB (upgrades existing user to admin role/admin_type)
+// Menambahkan Admin Asisten ke Database (meningkatkan role pengguna yang ada menjadi admin asisten).
 router.post('/assistants', async (req, res) => {
   const { email } = req.body;
   const emailLower = (email || '').trim().toLowerCase();
   try {
-    // Check if user exists
+    // Memeriksa apakah akun pengguna terdaftar
     const existing = await query('SELECT id, full_name, role FROM users WHERE LOWER(email) = ?', [emailLower]);
     if (!existing || existing.length === 0) {
       return res.status(400).json({
@@ -159,7 +159,7 @@ router.post('/assistants', async (req, res) => {
   }
 });
 
-// Manage Packages - Update package prices / limits
+// Mengelola Paket Belajar: Memperbarui rincian harga paket, batas harian AI, sesi tutor, dan badge.
 router.put('/packages/:id', async (req, res) => {
   try {
     const { name, price, ai_daily_limit, tutor_sessions, badge } = req.body;

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
+// Komponen WelcomeModal: Menampilkan modal selamat datang pop-up interaktif selama 5 detik setelah pengguna berhasil login.
 export default function WelcomeModal() {
   const { showWelcomeModal, welcomeUserName, closeWelcomeModal } = useAuth();
   const timerRef = useRef(null);
@@ -19,7 +20,7 @@ export default function WelcomeModal() {
 
   if (!showWelcomeModal) return null;
 
-  // Bersihkan nama dari tanda kurung seperti (Admin Senior)
+  // Mengeliminasi gelar admin di dalam kurung dari nama lengkap pengguna.
   const cleanName = welcomeUserName ? welcomeUserName.replace(/\s*\([^)]*\)/g, '').trim() : 'Mahirians';
 
   return (
@@ -31,19 +32,19 @@ export default function WelcomeModal() {
         onClick={(e) => e.stopPropagation()}
         className="bg-slate-900/95 text-white rounded-3xl p-6 sm:p-8 text-center max-w-sm w-full border border-slate-700/80 shadow-2xl space-y-4 relative overflow-hidden"
       >
-        {/* Indikator Garis Tipis 5 Detik */}
+        {/* Indikator waktu sisa tampilan modal (5 detik) */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-slate-800">
           <div className="bg-lime h-full animate-progress-5s" />
         </div>
 
-        {/* Tangan Melambai 👋 (Super Besar & Tanpa Lingkaran/Buletan) */}
+        {/* Tangan melambai animasi */}
         <div className="flex justify-center pt-4 pb-2">
           <span className="animate-wave-hand inline-block origin-bottom-right text-8xl sm:text-9xl select-none drop-shadow-xl">
             👋
           </span>
         </div>
 
-        {/* Teks Ringkas & Minimalis */}
+        {/* Pesan penyambutan */}
         <div className="space-y-1">
           <h2 className="font-stinger font-extrabold text-xl sm:text-2xl text-white">
             Halo, {cleanName}! 👋
@@ -53,7 +54,7 @@ export default function WelcomeModal() {
           </p>
         </div>
 
-        {/* Petunjuk Tutup Modal */}
+        {/* Panduan untuk menutup modal */}
         <div className="pt-1 text-[11px] text-slate-400 font-medium">
           Klik di mana saja untuk menutup
         </div>

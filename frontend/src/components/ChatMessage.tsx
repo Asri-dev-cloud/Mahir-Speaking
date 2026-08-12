@@ -1,3 +1,4 @@
+// Komponen ChatMessage: Menampilkan balon obrolan individu (dari pengguna maupun asisten AI) beserta tombol pemutar suara (text-to-speech).
 import React, { useMemo } from 'react';
 import { ChatMessageItem } from '../types/chat';
 import { Volume2, Square, Mic } from 'lucide-react';

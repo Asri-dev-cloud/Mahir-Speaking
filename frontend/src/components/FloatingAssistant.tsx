@@ -1,10 +1,11 @@
+// Komponen FloatingAssistant: Tombol melayang berbentuk mikrofon di bagian pojok bawah halaman untuk membuka asisten interaktif Mashira.
 import React from 'react';
 import { Mic } from 'lucide-react';
 
 interface FloatingAssistantProps {
   isOpen: boolean;
   onToggle: () => void;
-  buttonRef?: React.RefObject<HTMLButtonElement | null>;
+  buttonRef?: React.Ref<HTMLButtonElement>;
   hasWhatsAppBelow?: boolean;
 }
 

@@ -1,3 +1,4 @@
+// Halaman MyPackage: Halaman pengelola status langganan, melihat riwayat pembayaran, dan memperbarui paket aktif siswa.
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -13,6 +14,7 @@ export default function MyPackage() {
   const [loading, setLoading] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
+  // Memuat data daftar paket yang tersedia dan riwayat transaksi pengguna dari server.
   useEffect(() => {
     packageService.getPackages()
       .then(data => {
@@ -32,6 +34,7 @@ export default function MyPackage() {
     setShowCheckoutModal(true);
   };
 
+  // Memproses simulasi/pembelian paket secara langsung ke server.
   const handleCompletePayment = async () => {
     if (!selectedPkg) return;
     setLoading(true);
