@@ -74,12 +74,12 @@ const activities = [
   },
   {
     id: 6,
-    title: "Student Celebration",
-    category: "community",
-    label: "Student Moment",
-    image: "/f.jpeg",
+    title: "Motivation",
+    category: "class",
+    label: "Motivation",
+    image: "/k.jpeg",
     description:
-      "Merayakan setiap progres kecil yang membuat siswa semakin percaya diri.",
+      "Motivasi yang membangun kepercayaan diri peserta untuk tidak mudah menyerah sebelum meraih keberhasilan.",
     color: "#FFA715",
   },
 ];
