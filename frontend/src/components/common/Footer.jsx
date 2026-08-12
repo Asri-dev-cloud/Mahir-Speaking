@@ -35,7 +35,10 @@ export default function Footer() {
             </div>
 
             <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-sm">
-              Platform ekosistem pembelajaran Bahasa Inggris terdepan yang dirancang untuk melatih kelancaran percakapan alami, kurikulum 4 level CEFR, dan bimbingan interaktif.
+              Platform pembelajaran Bahasa Inggris yang dirancang untuk melatih kelancaran
+              percakapan alami, berbasis kekuatan (potensi) unik personal. Berorientasi untuk
+              hasil belajar yang lebih efektif dan menyenangkan, dengan kurikulum 6 level CEFR
+              dan bimbingan intensif.
             </p>
 
           </div>

@@ -246,15 +246,15 @@ export default function Home() {
     },
     {
       q: "Apakah ada tes awal kemampuan (Placement Test)?",
-      a: "Ya! Kami menyediakan Placement Test & Diagnostic Diagnostic gratis untuk memetakan level awal Anda (Basic, Intermediate, atau Advanced) sehingga kelas yang Anda ikuti tepat sasaran.",
+      a: "Ya! Kami menyediakan Placement Test & Diagnostic gratis untuk memetakan level awal Anda (Basic, Intermediate, atau Advanced) sehingga kelas yang Anda ikuti tepat sasaran.",
     },
     {
-      q: "Berapa target pendaftaran siswa per bulan?",
-      a: "Mahir Speaking menargetkan 50 leads/siswa baru per bulan dengan pelayanan intensif dan kualitas mentoring kelas kecil yang terjaga.",
+      q: "Bagaimana cara mendaftarkelas intensif?",
+      a: "Untuk mendaftar kelas intensif, silakan klik tombol 'Daftar Kelas Intensif' di halaman ini, lengkapi formulir pendaftaran, dan tim kami akan segera menghubungi Anda melalui WhatsApp.",
     },
     {
       q: "Apakah ada nomor WhatsApp Business resmi?",
-      a: "Ya, nomor WhatsApp Business resmi Mahir Speaking adalah 0858-6117-1129 yang dapat Anda hubungi 24/7 melalui tombol melayang di pojok kanan bawah.",
+      a: "Ya, nomor WhatsApp resmi Mahir Speaking adalah +62 815-7212-0190 yang dapat Anda hubungi melalui tombol melayang di pojok kanan bawah.",
     }
   ];
 
@@ -263,13 +263,13 @@ export default function Home() {
     const theme = themes[index % themes.length];
     const style = themeStyles[theme];
     return (
-      <div 
+      <div
         key={cluster.code}
         className={`group relative bg-white border-2 ${style.border} ${style.glow} rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-start transition-all duration-300 hover:-translate-y-2 overflow-hidden shadow-sm h-full`}
       >
         {/* Top Accent Line */}
         <div className={`absolute top-0 inset-x-0 h-1.5 ${style.lineColor}`} />
-        
+
         {/* Corner Ambient Glow */}
         <div className={`absolute top-0 right-0 w-24 h-24 ${style.bg} rounded-bl-full pointer-events-none transition-all duration-500 group-hover:scale-110`} />
 
@@ -336,7 +336,12 @@ export default function Home() {
 
               {/* Subtitle */}
               <p className="text-slate-700 text-xs sm:text-base font-bold max-w-md leading-relaxed">
-                Platform bimbingan Bahasa Inggris terpadu bersama Mentor Senior & Native Speaker. Bangun keberanian bicaramu dari nol sampai siap bersaing secara internasional.
+                Platform bimbingan Bahasa Inggris terpadu bersama Supportive Tutor, Mentor
+                Experienced & Native Speaker, yang dirancang agar dapat digunakan semua
+                kalangan warga Indonesia. Kami siap membantu peserta berani bicara Bahasa
+                Inggris dengan memahami cara belajar yang sesuai dengan kekuatan
+                unik dirinya. Bangun keberanian bicaramu dari nol sampai siap bersaing secara
+                global.
               </p>
 
               {/* DUAL CALL TO ACTION (CTA) UTAMA */}
@@ -521,12 +526,13 @@ export default function Home() {
         />
       </div>
 
-      {/* 🤝 SECTION 1C: TENTANG MAHIR SPEAKING X P3 */}
+      {/* 🤝 SECTION 1C: Mahir speaking (MS)
+X Pelita Potensi Project (P3) */}
       <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 !mt-3 sm:!mt-6">
         <div className="text-center space-y-4 max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 bg-brand/10 text-brand-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-brand-200 shadow-sm">
             <Users className="w-4 h-4" />
-            <span>KOLABORASI EKSKLUSIF</span>
+            <span>KOLABORASI MITRA</span>
           </div>
           <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
             Tentang <span className="bg-gradient-to-r from-emerald-600 to-brand-600 bg-clip-text text-transparent">Mahir Speaking x P3</span>
@@ -535,8 +541,9 @@ export default function Home() {
             Bukan Sekadar Kursus: Temukan Potensimu, Kuasai Bahasa Inggrisnya
           </p>
           <p className="text-slate-600 text-sm sm:text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
-            Bahasa Inggris bukan cuma buat lulus ujian, tapi alat buat buka peluang dan komunikasi global. 
-            <strong className="text-slate-900 font-extrabold"> MS × P3</strong> gabungin keberanian bicara (<span className="text-brand-600 font-bold">Mahir Speaking</span>) sama pemetaan kekuatan diri (<span className="text-emerald-600 font-bold">Pelita Potensi Project</span>).
+            Bahasa Inggris bukan hanya untuk lulus ujian, tapi alat untuk membuka
+            peluang dan komunikasi global.
+            <strong className="text-slate-900 font-extrabold"> MS × P3</strong> Menggabungkan keberanian bicara (<span className="text-brand-600 font-bold">dengan</span>) pemetaan kekuatan diri. (<span className="text-emerald-600 font-bold"></span>).
           </p>
         </div>
 
@@ -547,18 +554,18 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-bl-full pointer-events-none transition-all duration-300 group-hover:scale-110"></div>
             <div className="space-y-4 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center text-red-500 font-bold shrink-0">
-                  <X className="w-5 h-5 stroke-[3]" />
+                <div className="w-10 h-10 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center text-red-500 font-black text-lg shrink-0">
+                  1
                 </div>
                 <span className="font-mono text-xs font-black tracking-widest text-red-500 uppercase">
-                  1. Masalahnya
+                  Masalahnya
                 </span>
               </div>
-              
+
               <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
                 Belajar Kaku & Salah Arah
               </h3>
-              
+
               <p className="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed">
                 Capek belajar pakai cara teoritis yang sama buat semua orang? Wajar kalau kamu sering bingung, takut salah bicara, dan hilang arah karier.
               </p>
@@ -570,20 +577,23 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-24 h-24 bg-lime/10 rounded-bl-full pointer-events-none transition-all duration-300 group-hover:scale-110"></div>
             <div className="space-y-4 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-lime/20 border border-lime/30 flex items-center justify-center text-lime font-bold shrink-0">
-                  <Lightbulb className="w-5 h-5 text-lime fill-lime/10" />
+                <div className="w-10 h-10 rounded-2xl bg-lime/20 border border-lime/30 flex items-center justify-center text-lime font-black text-lg shrink-0">
+                  2
                 </div>
                 <span className="font-mono text-xs font-black tracking-widest text-lime uppercase">
-                  2. Solusinya
+                  Solusinya
                 </span>
               </div>
-              
+
               <h3 className="font-sans font-black text-xl sm:text-2xl text-white leading-tight">
                 Pendekatan 8 Cluster ST30
               </h3>
-              
+
               <p className="text-slate-300 text-xs sm:text-sm font-semibold leading-relaxed">
-                Kami bantu kenali gaya belajar alamimu berbasis karakter kognitif & afektif. Kamu belajar speaking praktis yang pas dengan tipe bakat unikmu.
+                Kami bantu kenali gaya belajar
+                alamimu berbasis karakter kognitif,
+                afektif dan perilaku. Kamu akan belajar
+                Speaking praktis yang pas dengan tipe bakat unikmu.
               </p>
             </div>
           </div>
@@ -593,29 +603,29 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full pointer-events-none transition-all duration-300 group-hover:scale-110"></div>
             <div className="space-y-4 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold shrink-0">
-                  <Zap className="w-5 h-5 text-emerald-600" />
+                <div className="w-10 h-10 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-600 font-black text-lg shrink-0">
+                  3
                 </div>
                 <span className="font-mono text-xs font-black tracking-widest text-emerald-600 uppercase">
-                  3. Dampaknya
+                  Dampaknya
                 </span>
               </div>
-              
+
               <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
                 Masa Depan Lebih Jelas
               </h3>
-              
+
               <p className="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed">
-                Nggak cuma bikin kamu "Berani Bicara, Siap Berkarya," tapi juga mendampingi sampai kamu nemuin arah karier terbaik: "Find Your Career with Your Strengths."
+                Nggak cuma bikin kamu "Berani Bicara, Siap Berkarya," tapi juga mendampingi sampai kamu nemuin arah karier terarah: "Find Your Career with Your Strengths."
               </p>
             </div>
           </div>
         </div>
 
-              <div className="relative bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-glow border-2 border-brand-500">
+        <div className="relative bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-glow border-2 border-brand-500">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(198,245,0,0.15),transparent_50%)] pointer-events-none"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
-          
+
           <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
             <div className="space-y-2 shrink-0">
               <span className="font-mono text-xs font-black tracking-widest text-lime uppercase bg-slate-950/40 px-3 py-1.5 rounded-full border border-lime/30 flex items-center gap-1.5 w-fit">
@@ -624,10 +634,10 @@ export default function Home() {
               </span>
               <h3 className="font-sans font-black text-2xl sm:text-3xl text-white">
                 3 Hasil Utama yang <br className="hidden sm:inline" />
-                Bakal Kamu Dapat:
+                Bakal Kamu Dapat
               </h3>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
               {/* Hasil 1 */}
               <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
@@ -639,11 +649,11 @@ export default function Home() {
                     Percaya Diri
                   </h4>
                   <p className="text-slate-100 text-xs font-semibold leading-relaxed">
-                    Lancar speaking dalam situasi sehari-hari & kerja.
+                    Lancar speaking dalam situasi sehari-hari, di sekolah, juga di dunia kerja.
                   </p>
                 </div>
               </div>
- 
+
               {/* Hasil 2 */}
               <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
                 <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
@@ -654,11 +664,11 @@ export default function Home() {
                     Kenal Potensi
                   </h4>
                   <p className="text-slate-100 text-xs font-semibold leading-relaxed">
-                    Paham bakat dominan lewat Talents Mapping.
+                    Paham bakat alami dan dominan lewat Talents Mapping.
                   </p>
                 </div>
               </div>
- 
+
               {/* Hasil 3 */}
               <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
                 <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
@@ -669,7 +679,7 @@ export default function Home() {
                     Career Action Plan
                   </h4>
                   <p className="text-slate-100 text-xs font-semibold leading-relaxed">
-                    Punya panduan langkah karier yang jelas (termasuk remote work).
+                    Rencana Karier (biar konsisten b.Indonesai dg 2 result yg lain)
                   </p>
                 </div>
               </div>
@@ -689,7 +699,8 @@ export default function Home() {
             Daftar 8 Cluster Besar <span className="bg-gradient-to-r from-brand-600 to-emerald-600 bg-clip-text text-transparent">ST-30</span>
           </h2>
           <p className="text-slate-600 text-sm sm:text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
-            Temukan karakter unikmu dan gaya belajar alamimu berbasis kognitif & afektif untuk melejitkan karier dan kemampuan bicaramu.
+            Temukan karakter unikmu dan gaya belajar alamimu berbasis kognitif, afektif, dan
+            perilaku untuk melejitkan studi, karier dan kemampuan bicara global.
           </p>
         </div>
 
@@ -706,13 +717,14 @@ export default function Home() {
               <span>EVALUASI BAKAT & POTENSI</span>
             </span>
             <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
-              Yuk, Kenali Dirimu Lebih Dalam!
+
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm font-semibold max-w-xl mx-auto md:ml-auto md:mr-0">
-              Temukan secara lengkap 30 potensi kekuatan (ST-30) dan rancang peta karier masa depanmu yang terbaik.
+              Temukan karakter unikmu dan gaya belajar alamimu berbasis kognitif, afektif, dan
+              perilaku untuk melejitkan studi, karier dan kemampuan bicara global.
             </p>
           </div>
-          
+
           <a
             href="https://talentsmapping.id/"
             target="_blank"
