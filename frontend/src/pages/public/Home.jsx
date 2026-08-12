@@ -191,7 +191,7 @@ export default function Home() {
 
   const curriculumData = {
     basic: {
-      title: "Level Basic (Beginner Level)",
+      title: "Level Basic (Beginner)",
       badge: "Fondasi Utama & Keberanian Bicara",
       badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
       target: "Berani berbicara Bahasa Inggris tanpa rasa canggung, menguasai frasa harian dasar, serta pengucapan yang jelas.",
@@ -249,7 +249,7 @@ export default function Home() {
       a: "Ya! Kami menyediakan Placement Test & Diagnostic gratis untuk memetakan level awal Anda (Basic, Intermediate, atau Advanced) sehingga kelas yang Anda ikuti tepat sasaran.",
     },
     {
-      q: "Bagaimana cara mendaftarkelas intensif?",
+      q: "Bagaimana cara mendaftar kelas intensif?",
       a: "Untuk mendaftar kelas intensif, silakan klik tombol 'Daftar Kelas Intensif' di halaman ini, lengkapi formulir pendaftaran, dan tim kami akan segera menghubungi Anda melalui WhatsApp.",
     },
     {
@@ -538,10 +538,7 @@ X Pelita Potensi Project (P3) */}
             <span className="bg-gradient-to-r from-emerald-600 to-brand-600 bg-clip-text text-transparent">Mahir speaking (MS) X Pelita Potensi Project (P3)</span>
           </h2>
           <p className="text-brand-600 font-extrabold text-sm sm:text-base uppercase tracking-wider">
-            Bukan Sekadar Kursus: Temukan Potensimu, Kuasai Bahasa Inggrisnya
-          </p>
-          <p className="text-slate-600 text-sm sm:text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
-            Bahasa Inggris bukan hanya untuk lulus ujian, tapi alat untuk membuka peluang dan komunikasi global.MS × P3 menggabungkan keberanian bicara dengan pemetaan kekuatan diri.
+            Temukan Kekuatanmu, Pilih Aktivitas Belajar Unik, dan Kuasai Bahasa Inggrisnya
           </p>
         </div>
 
@@ -696,10 +693,6 @@ X Pelita Potensi Project (P3) */}
           <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
             Daftar 8 Cluster Besar <span className="bg-gradient-to-r from-brand-600 to-emerald-600 bg-clip-text text-transparent">ST-30</span>
           </h2>
-          <p className="text-slate-600 text-sm sm:text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
-            Temukan karakter unikmu dan gaya belajar alamimu berbasis kognitif, afektif, dan
-            perilaku untuk melejitkan studi, karier dan kemampuan bicara global.
-          </p>
         </div>
 
         {/* Bento Card Grid (Responsive) */}
@@ -753,11 +746,9 @@ X Pelita Potensi Project (P3) */}
             <span>RINCIAN MATERI PER LEVEL • CEFR COMPLIANT</span>
           </div>
           <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900">
-            Kurikulum & Target Belajar Per Level
+            Target Belajar Per Level
           </h2>
-          <p className="text-slate-600 text-xs sm:text-base font-bold">
-            Setiap level dirancang secara sistematis dari pemula hingga profesional.
-          </p>
+
         </div>
 
         {/* Level Tabs (Basic | Intermediate | Advanced) */}
