@@ -469,6 +469,109 @@ const lessons = (() => {
   });
 })();
 
+const fallbackDownloads = [
+  {
+    id: 1,
+    title: "E-Book Speaking - Basic Level (A1/A2)",
+    badge: "Basic Level",
+    size: "12.4 MB",
+    type: "PDF E-Book",
+    desc: "Modul pembelajaran level Basic untuk melatih kelancaran perkenalan diri dan aktivitas harian.",
+    fileUrl: "https://drive.google.com/file/d/1bNcTgCgcyMju80MEamH9EhNx115vI2YM/view?usp=drive_link"
+  },
+  {
+    id: 2,
+    title: "E-Book Speaking - Intermediate Level (B1)",
+    badge: "Intermediate Level",
+    size: "15.1 MB",
+    type: "PDF E-Book",
+    desc: "Modul pembelajaran level Intermediate untuk menguasai percakapan profesional dan opini terstruktur.",
+    fileUrl: "https://drive.google.com/file/d/1atDc0w5W1TJ8AvHu7S_WaxP87lIs3-qA/view?usp=drive_link"
+  },
+  {
+    id: 3,
+    title: "E-Book Speaking - Advance Level (B2/C1)",
+    badge: "Advance Level",
+    size: "18.7 MB",
+    type: "PDF E-Book",
+    desc: "Modul pembelajaran level Advance untuk persiapan wawancara kerja, negosiasi, dan presentasi bisnis.",
+    fileUrl: "https://drive.google.com/file/d/157eH9drAwb6N2teVOJWxKCPiTRuf7it4/view?usp=sharing"
+  }
+];
+
+const fallbackVideos = [
+  {
+    id: 1,
+    title: "Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)",
+    level: "Basic Level",
+    date: "10 Agt 2026",
+    tutor: "Mr.Alfada Naufal",
+    duration: "90 Menit",
+    videoUrl: "https://www.youtube.com/embed/dvgZkm1xWPE",
+    thumbnail: "https://img.youtube.com/vi/dvgZkm1xWPE/mqdefault.jpg"
+  },
+  {
+    id: 2,
+    title: "Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)",
+    level: "Basic Level",
+    date: "08 Agt 2026",
+    tutor: "Ms. Deasy Puspawati",
+    duration: "90 Menit",
+    videoUrl: "https://www.youtube.com/embed/09R8_2nJtjg",
+    thumbnail: "https://img.youtube.com/vi/09R8_2nJtjg/mqdefault.jpg"
+  },
+  {
+    id: 3,
+    title: "Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)",
+    level: "Intermediate Level",
+    date: "06 Agt 2026",
+    tutor: "Ms. Ade Ihdinayah",
+    duration: "90 Menit",
+    videoUrl: "https://www.youtube.com/embed/JGwWNGJdvx8",
+    thumbnail: "https://img.youtube.com/vi/JGwWNGJdvx8/mqdefault.jpg"
+  },
+  {
+    id: 4,
+    title: "Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)",
+    level: "All Levels",
+    date: "04 Agt 2026",
+    tutor: "Native Speaker (Mr. James)",
+    duration: "90 Menit",
+    videoUrl: "https://www.youtube.com/embed/hT_nvWreIhg",
+    thumbnail: "https://img.youtube.com/vi/hT_nvWreIhg/mqdefault.jpg"
+  },
+  {
+    id: 5,
+    title: 'Belajar English via Lagu: "Count On Me" - Bruno Mars',
+    level: "Basic Level",
+    date: "02 Agt 2026",
+    tutor: "Mr. James",
+    duration: "45 Menit",
+    videoUrl: "https://www.youtube.com/embed/6k8cpUkKK4c",
+    thumbnail: "https://img.youtube.com/vi/6k8cpUkKK4c/mqdefault.jpg"
+  },
+  {
+    id: 6,
+    title: 'Belajar English via Lagu: "Love Yourself" - Justin Bieber',
+    level: "Intermediate Level",
+    date: "30 Jul 2026",
+    tutor: "Ms. Deasy Puspawati",
+    duration: "50 Menit",
+    videoUrl: "https://www.youtube.com/embed/OYhXJaE4WcI",
+    thumbnail: "https://img.youtube.com/vi/OYhXJaE4WcI/mqdefault.jpg"
+  },
+  {
+    id: 7,
+    title: 'Belajar English via Lagu: "Someone Like You" - Adele',
+    level: "Advance Level",
+    date: "28 Jul 2026",
+    tutor: "Ms. Ade Ihdinayah",
+    duration: "60 Menit",
+    videoUrl: "https://www.youtube.com/embed/hLQl3WQQoQ0",
+    thumbnail: "https://img.youtube.com/vi/hLQl3WQQoQ0/mqdefault.jpg"
+  }
+];
+
 const sectionTabs = [
   ["overview", "Overview", Map],
   ["vocabulary", "Vocabulary", BookOpen],
@@ -563,8 +666,8 @@ export default function LMSView() {
     if (user) setLiveUser(user);
   }, [user]);
 
-  const allDownloads = dbModules;
-  const allRecordings = dbVideos;
+  const allDownloads = dbModules && dbModules.length > 0 ? dbModules : fallbackDownloads;
+  const allRecordings = dbVideos && dbVideos.length > 0 ? dbVideos : fallbackVideos;
 
   const filteredLessons = useMemo(() => {
     if (filter === "ALL") return lessons;

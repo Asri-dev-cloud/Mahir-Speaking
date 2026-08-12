@@ -43,6 +43,84 @@ import {
   UserCheck
 } from "lucide-react";
 
+const st30Clusters = [
+  {
+    code: "H",
+    name: "Headman",
+    desc: "Aktivitas berinteraksi dengan orang lain dalam rangka mengendalikan, memengaruhi, ataupun mengawasi.",
+    theme: "blue",
+  },
+  {
+    code: "N",
+    name: "Networking",
+    desc: "Aktivitas berinteraksi dengan orang lain dalam rangka bekerja sama, membimbing, melatih, atau mewakili.",
+    theme: "blue",
+  },
+  {
+    code: "S",
+    name: "Servicing",
+    desc: "Aktivitas berinteraksi dengan orang lain dalam rangka merawat, melayani, atau menolong.",
+    theme: "blue",
+  },
+  {
+    code: "Gi",
+    name: "Generating Idea",
+    desc: "Aktivitas individual menggunakan pemikiran terkait intuisi, ide, dan kreativitas.",
+    theme: "green",
+  },
+  {
+    code: "T",
+    name: "Thinking",
+    desc: "Aktivitas individual menggunakan pemikiran logika, fakta, ataupun terkait dengan analisa terhadap angka dan data.",
+    theme: "green",
+  },
+  {
+    code: "R",
+    name: "Reasoning",
+    desc: "Aktivitas individual menggunakan logika untuk mencari atau membuktikan sesuatu.",
+    theme: "green",
+  },
+  {
+    code: "E",
+    name: "Elementary",
+    desc: "Aktivitas individual yang tidak banyak melibatkan olah pikir, namun memerlukan ketekunan, ketelitian, dan biasanya berada di dalam ruangan.",
+    theme: "yellow",
+  },
+  {
+    code: "Te",
+    name: "Technical",
+    desc: "Aktivitas individual yang tidak banyak melibatkan olah pikir, namun memerlukan ketekunan, ketelitian, kegigihan, dan biasanya berada di luar ruangan.",
+    theme: "yellow",
+  }
+];
+
+const themeStyles = {
+  blue: {
+    bg: "bg-blue-50/40",
+    border: "border-slate-100 hover:border-blue-500",
+    badgeBg: "bg-blue-100 text-blue-700",
+    glow: "hover:shadow-[0_15px_30px_rgba(59,130,246,0.12)]",
+    lineColor: "bg-blue-500",
+    textGradient: "from-blue-600 to-indigo-600",
+  },
+  green: {
+    bg: "bg-emerald-50/40",
+    border: "border-slate-100 hover:border-emerald-500",
+    badgeBg: "bg-emerald-100 text-emerald-700",
+    glow: "hover:shadow-[0_15px_30px_rgba(16,185,129,0.12)]",
+    lineColor: "bg-emerald-500",
+    textGradient: "from-emerald-600 to-teal-600",
+  },
+  yellow: {
+    bg: "bg-amber-50/40",
+    border: "border-slate-100 hover:border-amber-500",
+    badgeBg: "bg-amber-100 text-amber-700",
+    glow: "hover:shadow-[0_15px_30px_rgba(245,158,11,0.12)]",
+    lineColor: "bg-amber-500",
+    textGradient: "from-amber-600 to-yellow-600",
+  }
+};
+
 export default function Home() {
   const { setActiveTab, user } = useAuth();
   const [activeFaq, setActiveFaq] = useState(null);
@@ -179,6 +257,41 @@ export default function Home() {
     }
   ];
 
+  const renderClusterCard = (cluster, index) => {
+    const themes = ['blue', 'green', 'yellow'];
+    const theme = themes[index % themes.length];
+    const style = themeStyles[theme];
+    return (
+      <div 
+        key={cluster.code}
+        className={`group relative bg-white border-2 ${style.border} ${style.glow} rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-start transition-all duration-300 hover:-translate-y-2 overflow-hidden shadow-sm h-full`}
+      >
+        {/* Top Accent Line */}
+        <div className={`absolute top-0 inset-x-0 h-1.5 ${style.lineColor}`} />
+        
+        {/* Corner Ambient Glow */}
+        <div className={`absolute top-0 right-0 w-24 h-24 ${style.bg} rounded-bl-full pointer-events-none transition-all duration-500 group-hover:scale-110`} />
+
+        <div className="relative z-10 w-full flex flex-col items-start">
+          {/* Emblem Badge */}
+          <div className={`w-12 h-12 rounded-2xl ${style.badgeBg} flex items-center justify-center font-black text-xl mb-4 border border-white/50 shadow-sm transition-transform duration-300 group-hover:scale-110`}>
+            {cluster.code}
+          </div>
+
+          {/* Title */}
+          <h3 className="font-sans font-black text-lg sm:text-xl text-slate-900 mb-3 tracking-wide uppercase leading-tight">
+            {cluster.name}
+          </h3>
+
+          {/* Description */}
+          <p className="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed">
+            {cluster.desc}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-12 sm:space-y-20 pb-12 overflow-hidden bg-gradient-to-b from-[#87CEFA] via-white to-white">
 
@@ -275,7 +388,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Partner logos pelita.png & bms.png */}
+      {/* Partner logos pelita.png, bms.png & p3.png */}
       <div className="flex flex-row items-center justify-center gap-6 sm:gap-12 md:gap-16 py-0 !-mt-1 sm:!-mt-2 lg:!-mt-3 !-mb-14 sm:!-mb-22 lg:!-mb-26 max-w-7xl mx-auto px-4 relative z-20 pointer-events-none select-none">
         <img
           src="/pelita.png"
@@ -285,6 +398,11 @@ export default function Home() {
         <img
           src="/bms.png"
           alt="Mahir Speaking"
+          className="h-32 sm:h-52 md:h-64 lg:h-76 w-auto object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
+        />
+        <img
+          src="/p3.png"
+          alt="Pelita Potensi Project"
           className="h-32 sm:h-52 md:h-64 lg:h-76 w-auto object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
         />
       </div>
@@ -401,6 +519,218 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 🤝 SECTION 1C: TENTANG MAHIR SPEAKING X P3 */}
+      <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="text-center space-y-4 max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 bg-brand/10 text-brand-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-brand-200 shadow-sm">
+            <Users className="w-4 h-4" />
+            <span>KOLABORASI EKSKLUSIF</span>
+          </div>
+          <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
+            Tentang <span className="bg-gradient-to-r from-emerald-600 to-brand-600 bg-clip-text text-transparent">Mahir Speaking x P3</span>
+          </h2>
+          <p className="text-brand-600 font-extrabold text-sm sm:text-base uppercase tracking-wider">
+            Bukan Sekadar Kursus: Temukan Potensimu, Kuasai Bahasa Inggrisnya
+          </p>
+          <p className="text-slate-600 text-sm sm:text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
+            Bahasa Inggris bukan cuma buat lulus ujian, tapi alat buat buka peluang dan komunikasi global. 
+            <strong className="text-slate-900 font-extrabold"> MS × P3</strong> gabungin keberanian bicara (<span className="text-brand-600 font-bold">Mahir Speaking</span>) sama pemetaan kekuatan diri (<span className="text-emerald-600 font-bold">Pelita Potensi Project</span>).
+          </p>
+        </div>
+
+        {/* Card Grid / 3 Kolom Visual */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12">
+          {/* Card 1: Masalahnya */}
+          <div className="group relative bg-white border-2 border-slate-200 hover:border-red-500 rounded-3xl p-6 sm:p-8 transition-all duration-300 hover:shadow-popout flex flex-col justify-between overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-bl-full pointer-events-none transition-all duration-300 group-hover:scale-110"></div>
+            <div className="space-y-4 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center text-red-500 font-bold shrink-0">
+                  <X className="w-5 h-5 stroke-[3]" />
+                </div>
+                <span className="font-mono text-xs font-black tracking-widest text-red-500 uppercase">
+                  1. Masalahnya ❌
+                </span>
+              </div>
+              
+              <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
+                Belajar Kaku & Salah Arah
+              </h3>
+              
+              <p className="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed">
+                Capek belajar pakai cara teoritis yang sama buat semua orang? Wajar kalau kamu sering bingung, takut salah bicara, dan hilang arah karier.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 2: Solusinya */}
+          <div className="group relative bg-slate-950 border-2 border-slate-800 hover:border-lime rounded-3xl p-6 sm:p-8 transition-all duration-300 hover:shadow-limeGlow flex flex-col justify-between overflow-hidden text-white">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-lime/10 rounded-bl-full pointer-events-none transition-all duration-300 group-hover:scale-110"></div>
+            <div className="space-y-4 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-lime/20 border border-lime/30 flex items-center justify-center text-lime font-bold shrink-0">
+                  <Lightbulb className="w-5 h-5 text-lime fill-lime/10" />
+                </div>
+                <span className="font-mono text-xs font-black tracking-widest text-lime uppercase">
+                  2. Solusinya 💡
+                </span>
+              </div>
+              
+              <h3 className="font-sans font-black text-xl sm:text-2xl text-white leading-tight">
+                Pendekatan 8 Cluster ST30
+              </h3>
+              
+              <p className="text-slate-300 text-xs sm:text-sm font-semibold leading-relaxed">
+                Kami bantu kenali gaya belajar alamimu berbasis karakter kognitif & afektif. Kamu belajar speaking praktis yang pas dengan tipe bakat unikmu.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 3: Dampaknya */}
+          <div className="group relative bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-3xl p-6 sm:p-8 transition-all duration-300 hover:shadow-popout flex flex-col justify-between overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full pointer-events-none transition-all duration-300 group-hover:scale-110"></div>
+            <div className="space-y-4 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold shrink-0">
+                  <Zap className="w-5 h-5 text-emerald-600" />
+                </div>
+                <span className="font-mono text-xs font-black tracking-widest text-emerald-600 uppercase">
+                  3. Dampaknya 🚀
+                </span>
+              </div>
+              
+              <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
+                Masa Depan Lebih Jelas
+              </h3>
+              
+              <p className="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed">
+                Nggak cuma bikin kamu "Berani Bicara, Siap Berkarya," tapi juga mendampingi sampai kamu nemuin arah karier terbaik: "Find Your Career with Your Strengths."
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Banner Ringkas / Callout Box */}
+        <div className="relative bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-glow border-2 border-brand-500">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(198,245,0,0.15),transparent_50%)] pointer-events-none"></div>
+          <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+            <div className="space-y-2 shrink-0">
+              <span className="font-mono text-xs font-black tracking-widest text-lime uppercase bg-slate-950/40 px-3 py-1.5 rounded-full border border-lime/30">
+                RESULTS ORIENTED 🏆
+              </span>
+              <h3 className="font-sans font-black text-2xl sm:text-3xl text-white">
+                3 Hasil Utama yang <br className="hidden sm:inline" />
+                Bakal Kamu Dapat:
+              </h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+              {/* Hasil 1 */}
+              <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center font-bold text-xl shrink-0">
+                  💬
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-black text-sm text-lime uppercase tracking-wider">
+                    Percaya Diri
+                  </h4>
+                  <p className="text-slate-100 text-xs font-semibold leading-relaxed">
+                    Lancar speaking dalam situasi sehari-hari & kerja.
+                  </p>
+                </div>
+              </div>
+
+              {/* Hasil 2 */}
+              <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center font-bold text-xl shrink-0">
+                  🎯
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-black text-sm text-lime uppercase tracking-wider">
+                    Kenal Potensi
+                  </h4>
+                  <p className="text-slate-100 text-xs font-semibold leading-relaxed">
+                    Paham bakat dominan lewat Talents Mapping.
+                  </p>
+                </div>
+              </div>
+
+              {/* Hasil 3 */}
+              <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
+                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center font-bold text-xl shrink-0">
+                  🗺️
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-black text-sm text-lime uppercase tracking-wider">
+                    Career Action Plan
+                  </h4>
+                  <p className="text-slate-100 text-xs font-semibold leading-relaxed">
+                    Punya panduan langkah karier yang jelas (termasuk remote work).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🔮 SECTION 1D: DAFTAR 8 CLUSTER BESAR ST-30 */}
+      <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 bg-brand/10 text-brand-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-brand-200 shadow-sm">
+            <Target className="w-4 h-4 text-brand-600" />
+            <span>TALENTS MAPPING MAP</span>
+          </div>
+          <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
+            Daftar 8 Cluster Besar <span className="bg-gradient-to-r from-brand-600 to-emerald-600 bg-clip-text text-transparent">ST-30</span>
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
+            Temukan karakter unikmu dan gaya belajar alamimu berbasis kognitif & afektif untuk melejitkan karier dan kemampuan bicaramu.
+          </p>
+        </div>
+
+        {/* Bento Card Grid (Responsive) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 pb-8">
+          {st30Clusters.map((cluster, index) => renderClusterCard(cluster, index))}
+        </div>
+
+        {/* CTA Berkesan "Yuk, Kenali Dirimu Lebih Dalam" */}
+        <div className="mt-8 flex flex-col md:flex-row items-end md:items-center justify-end gap-6 text-right w-full">
+          <div className="space-y-1">
+            <span className="text-brand font-black text-xs uppercase tracking-wider block">
+              EVALUASI BAKAT & POTENSI 🎯
+            </span>
+            <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
+              Yuk, Kenali Dirimu Lebih Dalam!
+            </h3>
+            <p className="text-slate-600 text-xs sm:text-sm font-semibold max-w-xl ml-auto">
+              Temukan secara lengkap 30 potensi kekuatan (ST-30) dan rancang peta karier masa depanmu yang terbaik.
+            </p>
+          </div>
+          
+          <a
+            href="https://talentsmapping.id/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-4 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm border-2 border-dark shadow-limeGlow hover:scale-105 hover:bg-lime/90 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 w-full md:w-auto text-center"
+          >
+            <span>Mulai Talents Mapping</span>
+            <ArrowUpRight className="w-4.5 h-4.5 stroke-[3]" />
+          </a>
+        </div>
+
+      </section>
+
+      {/* TICKER RIBBON (PITA MAHIR SPEAKING) - FULL VIEWPORT WIDTH */}
+      <div className="relative z-10 w-full bg-lime border-y-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md mt-12 sm:mt-16">
+        <div className="inline-flex items-center gap-6 font-stinger font-black text-xs sm:text-lg text-dark tracking-widest uppercase animate-pulse">
+          <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
+          <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
+        </div>
+      </div>
 
       {/* 📘 SECTION 2: HALAMAN PROGRAM / CURRICULUMS (DETAIL LEVEL) */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-8">
