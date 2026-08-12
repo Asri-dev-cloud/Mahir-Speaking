@@ -388,25 +388,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Partner logos pelita.png, bms.png & p3.png */}
-      <div className="flex flex-row items-center justify-center gap-6 sm:gap-12 md:gap-16 py-0 !-mt-1 sm:!-mt-2 lg:!-mt-3 !-mb-14 sm:!-mb-22 lg:!-mb-26 max-w-7xl mx-auto px-4 relative z-20 pointer-events-none select-none">
-        <img
-          src="/pelita.png"
-          alt="Pelita Batara Media"
-          className="h-32 sm:h-52 md:h-64 lg:h-76 w-auto object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
-        />
-        <img
-          src="/bms.png"
-          alt="Mahir Speaking"
-          className="h-32 sm:h-52 md:h-64 lg:h-76 w-auto object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
-        />
-        <img
-          src="/p3.png"
-          alt="Pelita Potensi Project"
-          className="h-32 sm:h-52 md:h-64 lg:h-76 w-auto object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
-        />
-      </div>
-
       {/* 🎭 SECTION 1B: PERKENALAN KARAKTER MASHIRA */}
       <section className="relative mx-auto max-w-[1440px] px-2 sm:px-4 lg:px-6">
         <div className="relative bg-gradient-to-br from-slate-900 via-[#0B192C] to-slate-950 backdrop-blur-xl rounded-3xl sm:rounded-4xl border-2 border-slate-700/80 shadow-2xl p-6 sm:p-10 lg:p-14 text-white overflow-hidden">
@@ -520,8 +501,27 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Partner logos pelita.png, bms.png & p3.png */}
+      <div className="flex flex-row items-center justify-center gap-2 sm:gap-8 md:gap-12 lg:gap-16 py-2 sm:py-3 !mt-3 sm:!mt-6 max-w-7xl mx-auto px-4 relative z-20 pointer-events-none select-none">
+        <img
+          src="/pelita.png"
+          alt="Pelita Batara Media"
+          className="h-16 sm:h-36 md:h-48 lg:h-60 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
+        />
+        <img
+          src="/bms.png"
+          alt="Mahir Speaking"
+          className="h-16 sm:h-36 md:h-48 lg:h-60 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
+        />
+        <img
+          src="/p3.png"
+          alt="Pelita Potensi Project"
+          className="h-16 sm:h-36 md:h-48 lg:h-60 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
+        />
+      </div>
+
       {/* 🤝 SECTION 1C: TENTANG MAHIR SPEAKING X P3 */}
-      <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+      <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 !mt-3 sm:!mt-6">
         <div className="text-center space-y-4 max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 bg-brand/10 text-brand-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-brand-200 shadow-sm">
             <Users className="w-4 h-4" />
@@ -698,16 +698,16 @@ export default function Home() {
         </div>
 
         {/* CTA Berkesan "Yuk, Kenali Dirimu Lebih Dalam" */}
-        <div className="mt-8 flex flex-col md:flex-row items-end md:items-center justify-end gap-6 text-right w-full">
+        <div className="mt-8 flex flex-col md:flex-row items-center md:items-center justify-center md:justify-end gap-6 text-center md:text-right w-full">
           <div className="space-y-1">
-            <span className="text-brand font-black text-xs uppercase tracking-wider flex items-center gap-1.5 justify-end">
+            <span className="text-brand font-black text-xs uppercase tracking-wider flex items-center gap-1.5 justify-center md:justify-end">
               <Target className="w-3.5 h-3.5 text-brand" />
               <span>EVALUASI BAKAT & POTENSI</span>
             </span>
             <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
               Yuk, Kenali Dirimu Lebih Dalam!
             </h3>
-            <p className="text-slate-600 text-xs sm:text-sm font-semibold max-w-xl ml-auto">
+            <p className="text-slate-600 text-xs sm:text-sm font-semibold max-w-xl mx-auto md:ml-auto md:mr-0">
               Temukan secara lengkap 30 potensi kekuatan (ST-30) dan rancang peta karier masa depanmu yang terbaik.
             </p>
           </div>
@@ -716,7 +716,7 @@ export default function Home() {
             href="https://talentsmapping.id/"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-4 rounded-2xl bg-lime text-dark font-black text-xs sm:text-sm border-2 border-dark shadow-limeGlow hover:scale-105 hover:bg-lime/90 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 w-full md:w-auto text-center"
+            className="px-6 py-4 rounded-2xl bg-[#FFFF00] text-slate-950 font-black text-xs sm:text-sm border-2 border-dark shadow-md hover:scale-105 hover:bg-yellow-300 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 w-full md:w-auto text-center"
           >
             <span>Mulai Talents Mapping</span>
             <ArrowUpRight className="w-4.5 h-4.5 stroke-[3]" />
