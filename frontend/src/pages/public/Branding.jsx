@@ -66,7 +66,7 @@ const activities = [
     title: "Weekly Speaking Mission",
     category: "class",
     label: "Speaking Mission",
-    image: "/e.jpeg",
+    image: "/r16.png",
     description:
       "Tantangan mingguan singkat agar kebiasaan speaking terus bertumbuh.",
     color: "#0362C0",
@@ -137,6 +137,51 @@ const galleryActivities = [
     color: "#FFA715",
     label: "Student Moment",
     category: "community"
+  },
+  {
+    id: 7,
+    title: "Sesi Praktik Berpasangan",
+    image: "/11.jpg",
+    description: "Praktik dialog langsung antar siswa untuk melatih refleks berbicara.",
+    color: "#12B886",
+    label: "Peer Practice",
+    category: "class"
+  },
+  {
+    id: 8,
+    title: "Mentoring Bersama Native Speaker",
+    image: "/12.jpg",
+    description: "Interaksi santai melatih kebiasaan mendengarkan aksen asli.",
+    color: "#7457E8",
+    label: "Native Session",
+    category: "mentorship"
+  },
+  {
+    id: 9,
+    title: "Kelas Review Mingguan",
+    image: "/13.jpg",
+    description: "Evaluasi bersama atas pencapaian kuis dan tantangan mingguan.",
+    color: "#0362C0",
+    label: "Review Class",
+    category: "class"
+  },
+  {
+    id: 10,
+    title: "Gathering Komunitas Bulanan",
+    image: "/14.jpeg",
+    description: "Aktivitas berkumpul bersama seluruh alumni dan mentor secara kekeluargaan.",
+    color: "#FFA715",
+    label: "Community Event",
+    category: "community"
+  },
+  {
+    id: 11,
+    title: "Simulasi Wawancara Kerja",
+    image: "/15.jpeg",
+    description: "Latihan wawancara terarah menggunakan STAR method untuk persiapan karier.",
+    color: "#7457E8",
+    label: "Career Prep",
+    category: "workshop"
   }
 ];
 
@@ -580,35 +625,19 @@ export default function Branding() {
             </p>
           </div>
 
-          <div className="-mx-4 mt-7 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => setActiveCategory(category.id)}
-                className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-extrabold transition ${activeCategory === category.id
-                    ? "bg-[#0362C0] text-[#FFFF00] shadow-md"
-                    : "border border-[#0362C0]/15 bg-white text-[#42617F] hover:border-[#0362C0]/40"
-                  }`}
-              >
-                {category.label}
-              </button>
-            ))}
-          </div>
-
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredActivities.map((item, index) => (
+            {galleryActivities.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setSelectedPhoto(item)}
-                className={`group overflow-hidden rounded-[24px] bg-white text-left shadow-[0_12px_35px_rgba(8,32,60,0.08)] ring-1 ring-[#0362C0]/10 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(3,98,192,0.15)] ${index === 0 && filteredActivities.length > 2
+                className={`group overflow-hidden rounded-[24px] bg-white text-left shadow-[0_12px_35px_rgba(8,32,60,0.08)] ring-1 ring-[#0362C0]/10 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(3,98,192,0.15)] ${index === 0 && galleryActivities.length > 2
                   ? "sm:row-span-2"
                   : ""
                   }`}
               >
                 <div
-                  className={`relative overflow-hidden ${index === 0 && filteredActivities.length > 2
+                  className={`relative overflow-hidden ${index === 0 && galleryActivities.length > 2
                     ? "h-64 sm:h-[420px]"
                     : "h-56"
                     }`}
@@ -618,22 +647,8 @@ export default function Branding() {
                     alt={item.title}
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061A35]/85 via-transparent to-transparent" />
-                  <span
-                    style={{ backgroundColor: item.color }}
-                    className="absolute left-4 top-4 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-white"
-                  >
-                    {item.label}
-                  </span>
-                  <Maximize2
-                    size={18}
-                    className="absolute right-4 top-4 text-white opacity-0 transition group-hover:opacity-100"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                    <h3 className="text-lg font-black">{item.title}</h3>
-                    <p className="mt-1 text-xs leading-5 text-white/75">
-                      {item.description}
-                    </p>
+                  <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <Maximize2 size={24} className="text-white drop-shadow-md" />
                   </div>
                 </div>
               </button>
@@ -705,12 +720,12 @@ export default function Branding() {
 
       {selectedPhoto && (
         <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-[#061A35]/90 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] grid place-items-center bg-black/90 p-4 backdrop-blur-sm"
           onClick={() => setSelectedPhoto(null)}
           role="presentation"
         >
           <div
-            className="relative w-full max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-2xl"
+            className="relative w-full max-w-4xl overflow-hidden rounded-[28px] bg-transparent shadow-2xl"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -720,36 +735,15 @@ export default function Branding() {
               type="button"
               onClick={() => setSelectedPhoto(null)}
               aria-label="Tutup foto"
-              className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-[#061A35]/75 text-white"
+              className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-black/50 hover:bg-black/75 text-white transition-colors"
             >
               <X size={19} />
             </button>
             <img
               src={selectedPhoto.image}
               alt={selectedPhoto.title}
-              className="max-h-[62vh] w-full object-cover"
+              className="max-h-[85vh] w-full object-contain rounded-2xl mx-auto"
             />
-            <div className="p-5 sm:p-7">
-              <span className="text-[10px] font-black uppercase tracking-[0.16em] text-[#0362C0]">
-                {selectedPhoto.label}
-              </span>
-              <h2 className="mt-1 text-xl font-black sm:text-2xl">
-                {selectedPhoto.title}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                {selectedPhoto.description}
-              </p>
-              <div className="mt-4 flex items-center gap-4 text-xs font-bold text-slate-500">
-                <span className="flex items-center gap-1.5">
-                  <Heart size={15} className="text-[#FFA715]" />
-                  Keep growing
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <MessageCircle size={15} className="text-[#0362C0]" />
-                  Speak with confidence
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       )}
