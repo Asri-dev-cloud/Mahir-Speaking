@@ -7,15 +7,15 @@ import { verifyToken } from '../middleware/auth.js';
 const router = express.Router();
 
 const PACKAGE_CATALOG = Object.freeze({
-    reguler_basic: { name: 'Kelas Reguler - Basic Level', amount: 350000, packageId: 2, durationDays: 90 },
-    reguler_intermediate: { name: 'Kelas Reguler - Intermediate Level', amount: 500000, packageId: 3, durationDays: 90 },
-    reguler_advanced: { name: 'Kelas Reguler - Advanced Level', amount: 750000, packageId: 4, durationDays: 90 },
-    semi_private_basic: { name: 'Kelas Semi Private - Basic Level', amount: 650000, packageId: 5, durationDays: 90 },
-    semi_private_intermediate: { name: 'Kelas Semi Private - Intermediate Level', amount: 850000, packageId: 6, durationDays: 90 },
-    semi_private_advanced: { name: 'Kelas Semi Private - Advanced Level', amount: 1200000, packageId: 7, durationDays: 90 },
-    private_basic: { name: 'Kelas Private - Basic Level', amount: 1200000, packageId: 8, durationDays: 90 },
-    private_intermediate: { name: 'Kelas Private - Intermediate Level', amount: 1500000, packageId: 9, durationDays: 90 },
-    private_advanced: { name: 'Kelas Private - Advanced Level', amount: 2000000, packageId: 10, durationDays: 90 },
+    reguler_basic: { name: 'Kelas Reguler - Basic Level', amount: 350000, packageId: 2, durationDays: 30 },
+    reguler_intermediate: { name: 'Kelas Reguler - Intermediate Level', amount: 500000, packageId: 3, durationDays: 30 },
+    reguler_advanced: { name: 'Kelas Reguler - Advanced Level', amount: 750000, packageId: 4, durationDays: 60 },
+    semi_private_basic: { name: 'Kelas Semi Private - Basic Level', amount: 650000, packageId: 5, durationDays: 30 },
+    semi_private_intermediate: { name: 'Kelas Semi Private - Intermediate Level', amount: 850000, packageId: 6, durationDays: 30 },
+    semi_private_advanced: { name: 'Kelas Semi Private - Advanced Level', amount: 1200000, packageId: 7, durationDays: 60 },
+    private_basic: { name: 'Kelas Private - Basic Level', amount: 1200000, packageId: 8, durationDays: 30 },
+    private_intermediate: { name: 'Kelas Private - Intermediate Level', amount: 1500000, packageId: 9, durationDays: 30 },
+    private_advanced: { name: 'Kelas Private - Advanced Level', amount: 2000000, packageId: 10, durationDays: 60 },
 });
 
 const isProduction = process.env.MIDTRANS_IS_PRODUCTION === 'true';
