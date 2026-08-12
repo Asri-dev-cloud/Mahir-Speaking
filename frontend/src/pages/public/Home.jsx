@@ -535,15 +535,13 @@ X Pelita Potensi Project (P3) */}
             <span>KOLABORASI MITRA</span>
           </div>
           <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
-            Tentang <span className="bg-gradient-to-r from-emerald-600 to-brand-600 bg-clip-text text-transparent">Mahir Speaking x P3</span>
+            <span className="bg-gradient-to-r from-emerald-600 to-brand-600 bg-clip-text text-transparent">Mahir speaking (MS) X Pelita Potensi Project (P3)</span>
           </h2>
           <p className="text-brand-600 font-extrabold text-sm sm:text-base uppercase tracking-wider">
             Bukan Sekadar Kursus: Temukan Potensimu, Kuasai Bahasa Inggrisnya
           </p>
           <p className="text-slate-600 text-sm sm:text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
-            Bahasa Inggris bukan hanya untuk lulus ujian, tapi alat untuk membuka
-            peluang dan komunikasi global.
-            <strong className="text-slate-900 font-extrabold"> MS × P3</strong> Menggabungkan keberanian bicara (<span className="text-brand-600 font-bold">dengan</span>) pemetaan kekuatan diri. (<span className="text-emerald-600 font-bold"></span>).
+            Bahasa Inggris bukan hanya untuk lulus ujian, tapi alat untuk membuka peluang dan komunikasi global.MS × P3 menggabungkan keberanian bicara dengan pemetaan kekuatan diri.
           </p>
         </div>
 
@@ -676,10 +674,10 @@ X Pelita Potensi Project (P3) */}
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-sm text-lime uppercase tracking-wider">
-                    Career Action Plan
+                    Rencana Karier
                   </h4>
                   <p className="text-slate-100 text-xs font-semibold leading-relaxed">
-                    Rencana Karier (biar konsisten b.Indonesai dg 2 result yg lain)
+                    Susun langkah konkret dan strategi terarah untuk capai karier impianmu.
                   </p>
                 </div>
               </div>
@@ -720,8 +718,9 @@ X Pelita Potensi Project (P3) */}
 
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm font-semibold max-w-xl mx-auto md:ml-auto md:mr-0">
-              Temukan karakter unikmu dan gaya belajar alamimu berbasis kognitif, afektif, dan
-              perilaku untuk melejitkan studi, karier dan kemampuan bicara global.
+              Sebelum memulai Bahasa Inggrismu, yuk temukan secara lengkap 30 tipe
+              kekuatanmu dalam 8 aktivitas unik, untuk merancang peta karier masa depan global
+              berdasar asesmen ST-30.
             </p>
           </div>
 
