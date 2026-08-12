@@ -24,12 +24,12 @@ import {
 const activities = [
   {
     id: 1,
-    title: "One-on-One Speaking",
+    title: "Sesi Pendampingan & Onboarding",
     category: "mentorship",
     label: "Mentorship",
     image: "/a.jpeg",
     description:
-      "Sesi personal untuk melatih pelafalan, intonasi, dan rasa percaya diri.",
+      "Sesi personal awal untuk memetakan arah belajar dan membangun komitmen kelancaran bicara.",
     color: "#0362C0",
   },
   {
@@ -39,37 +39,37 @@ const activities = [
     label: "Live Class",
     image: "/b.jpeg",
     description:
-      "Belajar aktif lewat diskusi, role-play, dan speaking challenge bersama.",
+      "Belajar aktif lewat diskusi kelompok, role-play, dan speaking challenge bersama.",
     color: "#FFA715",
   },
   {
     id: 3,
-    title: "English Practice Day",
-    category: "community",
-    label: "Community",
+    title: "Upgrade Skor TOEFL & Speaking",
+    category: "class",
+    label: "TOEFL Prep",
     image: "/c.jpeg",
     description:
-      "Ruang aman untuk berlatih, bertemu teman baru, dan berani berbicara.",
+      "Tingkatkan rasa percaya diri berbicara sekaligus optimalkan pencapaian skor TOEFL secara praktis.",
     color: "#12B886",
   },
   {
     id: 4,
-    title: "Career Speaking Workshop",
-    category: "workshop",
-    label: "Workshop",
+    title: "Online Discussion & Gathering",
+    category: "community",
+    label: "Online Session",
     image: "/d.jpeg",
     description:
-      "Latihan interview, presentasi, dan komunikasi profesional yang aplikatif.",
+      "Keseruan interaksi kelas online bersama peserta dari berbagai daerah untuk melatih refleks komunikasi.",
     color: "#7457E8",
   },
   {
     id: 5,
-    title: "Weekly Speaking Mission",
+    title: "Bimbingan Siswa & Pelajar",
     category: "class",
-    label: "Speaking Mission",
-    image: "/r16.png",
+    label: "School Program",
+    image: "/e.jpeg",
     description:
-      "Tantangan mingguan singkat agar kebiasaan speaking terus bertumbuh.",
+      "Pendampingan interaktif di sekolah untuk menumbuhkan keberanian berbicara bahasa Inggris sejak dini.",
     color: "#0362C0",
   },
   {
@@ -83,6 +83,7 @@ const activities = [
     color: "#FFA715",
   },
 ];
+
 
 const galleryActivities = [
   {
@@ -200,7 +201,7 @@ const mentors = [
     role: "Mahir Speaking",
     focus: "Daily Learning & Interactive Conversation",
     bio: "Mendampingi praktik percakapan harian, grammar yang aplikatif, serta pembentukan kebiasaan berkomunikasi aktif.",
-    image: "/alfa.jpg",
+    image: "/alfa.png",
     skills: ["Private 1-on-1", "Public Speaking", "Confidence Building"]
   },
   {
@@ -208,7 +209,7 @@ const mentors = [
     role: "Mahir Speaking",
     focus: "One-on-One Private Speaking & Confidence",
     bio: "Pengalaman 10+ tahun membimbing ratusan siswa, mahasiswa, pekerja mengatasi rasa takut bicara, memperlancar kelancaran presentasi, dan wawancara kerja.",
-    image: "/deasy.jpg",
+    image: "/deasy.png",
     skills: ["Daily Practice", "Grammar Drills", "Interactive Class"]
   },
   {
@@ -216,7 +217,7 @@ const mentors = [
     role: "Mahir Speaking",
     focus: "Pronunciation, Intonation & Accent Clarity",
     bio: "•	Penutus asli yang menjadi partner agar peserta berani bicara, terdengar jelas, natural, mudah dipahami.",
-    image: "/garry.jpg ",
+    image: "/garry.png ",
     skills: ["Phonetics", "Native Accent", "Speech Rhythm"]
   },
 ];
