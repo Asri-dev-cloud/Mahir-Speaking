@@ -550,7 +550,7 @@ export default function Home() {
                   <X className="w-5 h-5 stroke-[3]" />
                 </div>
                 <span className="font-mono text-xs font-black tracking-widest text-red-500 uppercase">
-                  1. Masalahnya ❌
+                  1. Masalahnya
                 </span>
               </div>
               
@@ -573,7 +573,7 @@ export default function Home() {
                   <Lightbulb className="w-5 h-5 text-lime fill-lime/10" />
                 </div>
                 <span className="font-mono text-xs font-black tracking-widest text-lime uppercase">
-                  2. Solusinya 💡
+                  2. Solusinya
                 </span>
               </div>
               
@@ -596,7 +596,7 @@ export default function Home() {
                   <Zap className="w-5 h-5 text-emerald-600" />
                 </div>
                 <span className="font-mono text-xs font-black tracking-widest text-emerald-600 uppercase">
-                  3. Dampaknya 🚀
+                  3. Dampaknya
                 </span>
               </div>
               
@@ -611,15 +611,15 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Banner Ringkas / Callout Box */}
-        <div className="relative bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-glow border-2 border-brand-500">
+              <div className="relative bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-glow border-2 border-brand-500">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(198,245,0,0.15),transparent_50%)] pointer-events-none"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
           
           <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
             <div className="space-y-2 shrink-0">
-              <span className="font-mono text-xs font-black tracking-widest text-lime uppercase bg-slate-950/40 px-3 py-1.5 rounded-full border border-lime/30">
-                RESULTS ORIENTED 🏆
+              <span className="font-mono text-xs font-black tracking-widest text-lime uppercase bg-slate-950/40 px-3 py-1.5 rounded-full border border-lime/30 flex items-center gap-1.5 w-fit">
+                <Trophy className="w-3.5 h-3.5 text-lime" />
+                <span>RESULTS ORIENTED</span>
               </span>
               <h3 className="font-sans font-black text-2xl sm:text-3xl text-white">
                 3 Hasil Utama yang <br className="hidden sm:inline" />
@@ -630,8 +630,8 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
               {/* Hasil 1 */}
               <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center font-bold text-xl shrink-0">
-                  💬
+                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
+                  <MessageCircle className="w-5 h-5 text-dark stroke-[2.5]" />
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-sm text-lime uppercase tracking-wider">
@@ -642,11 +642,11 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-
+ 
               {/* Hasil 2 */}
               <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center font-bold text-xl shrink-0">
-                  🎯
+                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
+                  <Target className="w-5 h-5 text-dark stroke-[2.5]" />
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-sm text-lime uppercase tracking-wider">
@@ -657,11 +657,11 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-
+ 
               {/* Hasil 3 */}
               <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center font-bold text-xl shrink-0">
-                  🗺️
+                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
+                  <Globe className="w-5 h-5 text-dark stroke-[2.5]" />
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-black text-sm text-lime uppercase tracking-wider">
@@ -700,8 +700,9 @@ export default function Home() {
         {/* CTA Berkesan "Yuk, Kenali Dirimu Lebih Dalam" */}
         <div className="mt-8 flex flex-col md:flex-row items-end md:items-center justify-end gap-6 text-right w-full">
           <div className="space-y-1">
-            <span className="text-brand font-black text-xs uppercase tracking-wider block">
-              EVALUASI BAKAT & POTENSI 🎯
+            <span className="text-brand font-black text-xs uppercase tracking-wider flex items-center gap-1.5 justify-end">
+              <Target className="w-3.5 h-3.5 text-brand" />
+              <span>EVALUASI BAKAT & POTENSI</span>
             </span>
             <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
               Yuk, Kenali Dirimu Lebih Dalam!
