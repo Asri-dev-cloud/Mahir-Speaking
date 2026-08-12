@@ -681,23 +681,29 @@ export default function LMSView() {
   const accountUser = liveUser || user;
   const displayStreak = accountUser ? (accountUser.streak || 0) : 0;
   const displayXp = accountUser ? (accountUser.xp || 0) : 0;
-  const packageName = String(accountUser?.package_name || '').toLowerCase();
-  const packageExpiresAt = accountUser?.package_expires
-    ? new Date(accountUser.package_expires).getTime()
-    : null;
-  const packageIsActiveByExpiry = Number.isFinite(packageExpiresAt) && packageExpiresAt > Date.now();
-  const packageStillActive = !packageExpiresAt || packageExpiresAt > Date.now();
-  const hasPaidAccess = Boolean(
-    accountUser && packageStillActive && (
-      accountUser.role === 'admin' ||
-      accountUser.role === 'tutor' ||
-      packageIsActiveByExpiry ||
-      accountUser.is_paid === true ||
-      accountUser.subscription_status === 'active' ||
-      Number(accountUser.package_id || 0) > 1 ||
-      /pro|premium|intensive|enterprise|berbayar/.test(packageName)
-    )
-  );
+
+  const getSubscriptionStatus = (u) => {
+    if (!u) return { isActive: false, name: 'Tamu', expiryDate: null, isTrial: false };
+    if (u.role === 'admin' || u.role === 'tutor') {
+      return { isActive: true, name: u.role === 'admin' ? 'Administrator' : 'Tutor', expiryDate: null, isTrial: false };
+    }
+    const name = u.package_name || 'Free Trial';
+    const isTrial = Boolean(u.is_trial || u.package_id === 1 || /trial/i.test(name));
+    let expiryDate = null;
+    if (u.package_expires) {
+      expiryDate = new Date(u.package_expires);
+    } else if (u.created_at) {
+      const regDate = new Date(u.created_at);
+      const durationDays = isTrial ? 7 : 30;
+      expiryDate = new Date(regDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+    }
+    const now = new Date();
+    const isActive = expiryDate ? (expiryDate.getTime() > now.getTime()) : false;
+    return { isActive, name, expiryDate, isTrial };
+  };
+
+  const subStatus = getSubscriptionStatus(accountUser);
+  const hasPaidAccess = subStatus.isActive;
 
   const currentLesson =
     lessons.find((lesson) => !completedIds.includes(lesson.id)) ||

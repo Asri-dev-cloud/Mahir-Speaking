@@ -42,6 +42,42 @@ export default function Profile() {
 
   const currentUser = profile || user;
 
+  const getSubscriptionStatus = (u) => {
+    if (!u) return { isActive: false, name: 'Tamu', expiryDate: null, isTrial: false };
+    if (u.role === 'admin' || u.role === 'tutor') {
+      return { isActive: true, name: u.role === 'admin' ? 'Administrator' : 'Tutor', expiryDate: null, isTrial: false };
+    }
+    const name = u.package_name || 'Free Trial';
+    const isTrial = Boolean(u.is_trial || u.package_id === 1 || /trial/i.test(name));
+    let expiryDate = null;
+    if (u.package_expires) {
+      expiryDate = new Date(u.package_expires);
+    } else if (u.created_at) {
+      const regDate = new Date(u.created_at);
+      const durationDays = isTrial ? 7 : 30;
+      expiryDate = new Date(regDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+    }
+    const now = new Date();
+    const isActive = expiryDate ? (expiryDate.getTime() > now.getTime()) : false;
+    return { isActive, name, expiryDate, isTrial };
+  };
+
+  const subStatus = getSubscriptionStatus(currentUser);
+
+  const formatExDate = (dateObj) => {
+    if (!dateObj) return 'Masa aktif tidak terbatas (Lifetime)';
+    try {
+      if (isNaN(dateObj.getTime())) return '-';
+      return dateObj.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return '-';
+    }
+  };
+
   const presetAvatars = ['/ma.png', '/mi.png', '/mo.png', '/mashira chibi.png'];
 
   const handleFileUpload = (e) => {
@@ -136,6 +172,55 @@ export default function Profile() {
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-3">
             <span className="text-xs font-black text-lime bg-slate-900/90 border border-lime/30 px-3.5 py-1.5 rounded-xl">
               ⚡ {currentUser?.xp ?? 0} XP
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Status Keanggotaan & Masa Aktif */}
+      <div className="glass-panel p-6 rounded-3xl border border-white shadow-glass bg-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-brand/10 text-brand flex items-center justify-center font-black text-xl shrink-0">
+            <Award className="w-6 h-6 text-brand" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-stinger font-black text-lg text-slate-900 leading-tight">
+              Status Keanggotaan
+            </h3>
+            <p className="text-xs font-bold text-slate-500">
+              Detail paket aktif dan masa tenggang belajar kamu.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          {/* Badge Paket */}
+          <div className="bg-slate-50 border border-slate-200 p-3 rounded-2xl flex-1 md:flex-initial text-center md:text-left min-w-[120px]">
+            <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+              Paket Aktif
+            </span>
+            <span className="text-xs font-black text-slate-800 block mt-0.5">
+              {subStatus.name}
+            </span>
+          </div>
+
+          {/* Badge Jenis */}
+          <div className="bg-slate-50 border border-slate-200 p-3 rounded-2xl flex-1 md:flex-initial text-center md:text-left min-w-[120px]">
+            <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+              Tipe Paket
+            </span>
+            <span className="text-xs font-black text-brand block mt-0.5">
+              {subStatus.isTrial ? 'Free Trial (Uji Coba)' : 'Premium (Berlangganan)'}
+            </span>
+          </div>
+
+          {/* Badge Kadaluarsa */}
+          <div className="bg-slate-50 border border-slate-200 p-3 rounded-2xl flex-1 md:flex-initial text-center md:text-left min-w-[180px]">
+            <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+              Masa Aktif Hingga
+            </span>
+            <span className="text-xs font-black text-[#0362C0] block mt-0.5">
+              {formatExDate(subStatus.expiryDate)}
             </span>
           </div>
         </div>
