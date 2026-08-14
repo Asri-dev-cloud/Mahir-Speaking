@@ -313,11 +313,7 @@ export default function Branding() {
           {/* Diubah ke max-w-5xl dan ditambahkan flex flex-col items-center */}
           <div className="mx-auto max-w-5xl text-center flex flex-col items-center justify-center w-full">
 
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-4.5 py-2.5 text-xs font-extrabold uppercase tracking-[0.14em] text-[#0362C0] shadow-sm backdrop-blur sm:text-sm">
-              <Camera className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-              Galeri & Branding Mahir Speaking
-            </div>
+
 
             {/* Judul Utama 1 Baris Presisi */}
             <h1 className="mt-5 w-full text-center text-3xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl sm:whitespace-nowrap">
