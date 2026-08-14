@@ -1,15 +1,15 @@
-import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { User, LogOut, BookOpen, Shield } from 'lucide-react';
+import React from 'react'; // import library react
+import { useAuth } from '../../context/AuthContext'; // import hook useAuth dari context AuthContext
+import { User, LogOut, BookOpen, Shield } from 'lucide-react'; // import icon dari lucide-react
 
 // Komponen Navigasi Utama: Menyediakan menu navigasi atas untuk berpindah halaman secara interaktif.
-export default function Navbar() {
-  const { user, logout, activeTab, setActiveTab } = useAuth();
+export default function Navbar() { //deklarasi Komponen Fungsi
+  const { user, logout, activeTab, setActiveTab } = useAuth(); //object destructuring
 
-  return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-2xl border-b border-slate-200/80 shadow-sm transition-all">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2">
-        <div className="flex items-center justify-between h-11 sm:h-13 gap-3">
+  return ( //Mengembalikan JSX yang bakal jadi tampilan HTML di browser.
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-2xl border-b border-slate-200/80 shadow-sm transition-all"> {/* tag header sebagai elemen paling atas dan akan selalu berada di posisi atas saat di scroll*/}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2"> {/* tag div untuk mengatur lebar dan jarak padding*/}
+        <div className="flex items-center justify-between h-11 sm:h-13 gap-3"> {/* tag div untuk mengatur flexbox*/}
 
           {/* Kiri: Logo dan Nama Mahir Speaking */}
           <div
@@ -28,7 +28,7 @@ export default function Navbar() {
           </div>
 
           {/* Tengah: Tombol Menu Navigasi */}
-          <nav className="hidden lg:flex flex-1 justify-center items-center gap-2 text-xs font-black text-slate-700">
+          <nav className="hidden lg:flex flex-1 justify-center items-center gap-2 text-sm font-black text-slate-700">
             {!user ? (
               <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-full border border-slate-200 shadow-inner">
                 <button
@@ -48,7 +48,7 @@ export default function Navbar() {
                     : 'hover:text-brand hover:bg-white text-slate-700 font-bold'
                     }`}
                 >
-                  Branding
+                  Galeri
                 </button>
 
                 <button
@@ -96,7 +96,7 @@ export default function Navbar() {
                   className={`px-4 py-2 rounded-full transition-all ${activeTab === 'branding' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
                     }`}
                 >
-                  Branding
+                  Galeri
                 </button>
 
                 <button
@@ -200,7 +200,7 @@ export default function Navbar() {
                       {user.full_name?.charAt(0) || 'U'}
                     </div>
                   )}
-                  <span className="font-extrabold text-xs text-slate-900 hidden sm:inline group-hover:text-brand transition-colors">
+                  <span className="font-extrabold text-sm text-slate-900 hidden sm:inline group-hover:text-brand transition-colors">
                     {user.full_name}
                   </span>
                 </div>

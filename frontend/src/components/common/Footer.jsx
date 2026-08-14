@@ -34,7 +34,7 @@ export default function Footer() {
               </span>
             </div>
 
-            <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-sm">
+            <p className="text-xs sm:text-sm text-slate-400 font-medium leading-relaxed max-w-sm">
               Platform pembelajaran Bahasa Inggris yang dirancang untuk melatih kelancaran
               percakapan alami, berbasis kekuatan (potensi) unik personal. Berorientasi untuk
               hasil belajar yang lebih efektif dan menyenangkan, dengan kurikulum 6 level CEFR
@@ -56,7 +56,7 @@ export default function Footer() {
               </li>
               <li>
                 <button onClick={() => setActiveTab('branding')} className="hover:text-lime transition-colors flex items-center gap-1.5">
-                  <span>Branding & Metodologi</span>
+                  <span>Galeri & Metodologi</span>
                 </button>
               </li>
               <li>

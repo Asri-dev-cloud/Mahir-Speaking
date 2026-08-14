@@ -385,7 +385,7 @@ export default function Home() {
           </div>
 
           {/* TICKER RIBBON (PITA MAHIR SPEAKING) */}
-          <div className="relative z-10 -mx-4 sm:-mx-8 lg:-mx-12 -mb-4 sm:-mb-8 lg:-mb-12 mt-4 sm:mt-6 bg-lime border-t-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md">
+          <div className="relative z-10 -mx-4 sm:-mx-8 lg:-mx-12 -mb-4 sm:-mb-8 lg:-mb-12 mt-4 sm:mt-6 bg-[#FFFF00] border-t-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md">
             <div className="inline-flex items-center gap-6 font-stinger font-black text-xs sm:text-lg text-dark tracking-widest uppercase animate-pulse">
               <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
               <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
@@ -526,20 +526,28 @@ export default function Home() {
         />
       </div>
 
-      {/* 🤝 SECTION 1C: Mahir speaking (MS)
-X Pelita Potensi Project (P3) */}
+      {/* 🤝 SECTION 1C: Mahir Speaking x Pelita Potensi Project */}
       <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 !mt-3 sm:!mt-6">
-        <div className="text-center space-y-4 max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 bg-brand/10 text-brand-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-brand-200 shadow-sm">
+        <div className="flex flex-col items-center text-center space-y-4 max-w-5xl mx-auto mb-12 w-full">
+
+          {/* Badge Kolaborasi */}
+          <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-purple-200 shadow-sm">
             <Users className="w-4 h-4" />
             <span>KOLABORASI MITRA</span>
           </div>
-          <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
-            <span className="bg-gradient-to-r from-emerald-600 to-brand-600 bg-clip-text text-transparent">Mahir speaking (MS) X Pelita Potensi Project (P3)</span>
+
+          {/* Judul Utama (Warna Ungu) */}
+          <h2 className="w-full font-stinger text-3xl sm:text-5xl font-black leading-tight">
+            <span className="text-[#5C64AB] inline-block">
+              Mahir Speaking x Pelita Potensi Project
+            </span>
           </h2>
-          <p className="text-brand-600 font-extrabold text-sm sm:text-base uppercase tracking-wider">
+
+          {/* Subtitle / Deskripsi */}
+          <p className="w-full text-slate-900 font-extrabold text-xs sm:text-sm md:text-base uppercase tracking-wider">
             Temukan Kekuatanmu, Pilih Aktivitas Belajar Unik, dan Kuasai Bahasa Inggrisnya
           </p>
+
         </div>
 
         {/* Card Grid / 3 Kolom Visual */}
@@ -552,7 +560,7 @@ X Pelita Potensi Project (P3) */}
                 <div className="w-10 h-10 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center text-red-500 font-black text-lg shrink-0">
                   1
                 </div>
-                <span className="font-mono text-xs font-black tracking-widest text-red-500 uppercase">
+                <span className="font-mono text-lg font-black tracking-widest text-red-500 uppercase">
                   Masalahnya
                 </span>
               </div>
@@ -575,7 +583,7 @@ X Pelita Potensi Project (P3) */}
                 <div className="w-10 h-10 rounded-2xl bg-lime/20 border border-lime/30 flex items-center justify-center text-lime font-black text-lg shrink-0">
                   2
                 </div>
-                <span className="font-mono text-xs font-black tracking-widest text-lime uppercase">
+                <span className="font-mono text-lg font-black tracking-widest text-lime uppercase">
                   Solusinya
                 </span>
               </div>
@@ -601,7 +609,7 @@ X Pelita Potensi Project (P3) */}
                 <div className="w-10 h-10 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-600 font-black text-lg shrink-0">
                   3
                 </div>
-                <span className="font-mono text-xs font-black tracking-widest text-emerald-600 uppercase">
+                <span className="font-mono text-lg font-black tracking-widest text-emerald-600 uppercase">
                   Dampaknya
                 </span>
               </div>
@@ -611,87 +619,90 @@ X Pelita Potensi Project (P3) */}
               </h3>
 
               <p className="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed">
-                Nggak cuma bikin kamu "Berani Bicara, Siap Berkarya," tapi juga mendampingi sampai kamu nemuin arah karier terarah: "Find Your Career with Your Strengths."
+                Nggak cuma bikin kamu "Berani Bicara, Siap Berkarya," tapi juga mendampingi kamu nemuin arah belajar dan karier yang jelas, sesuai kekuatanmu.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="relative bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-glow border-2 border-brand-500">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(198,245,0,0.15),transparent_50%)] pointer-events-none"></div>
+        <div className="relative bg-gradient-to-r from-brand-500 via-brand-600 to-brand-700 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-glow border-2 border-brand-500">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_50%)] pointer-events-none"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
 
+
           <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
-            <div className="space-y-2 shrink-0">
-              <span className="font-mono text-xs font-black tracking-widest text-lime uppercase bg-slate-950/40 px-3 py-1.5 rounded-full border border-lime/30 flex items-center gap-1.5 w-fit">
-                <Trophy className="w-3.5 h-3.5 text-lime" />
+
+            {/* Kolom Kiri: Judul & Badge */}
+            <div className="space-y-3 shrink-0">
+              <span className="font-mono text-xs font-black tracking-widest text-white uppercase bg-blue-950/50 px-3.5 py-1.5 rounded-full border border-white/30 flex items-center gap-2 w-fit shadow-sm">
+                <Trophy className="w-3.5 h-3.5 text-white" />
                 <span>RESULTS ORIENTED</span>
               </span>
-              <h3 className="font-sans font-black text-2xl sm:text-3xl text-white">
+              <h3 className="font-sans font-black text-2xl sm:text-3xl text-white leading-snug">
                 3 Hasil Utama yang <br className="hidden sm:inline" />
                 Bakal Kamu Dapat
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              {/* Hasil 1 */}
-              <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
-                  <MessageCircle className="w-5 h-5 text-dark stroke-[2.5]" />
+            {/* Kolom Kanan: 3 Kotak (Warna Kuning Solid Mashira #FFFF00, dengan Icon Box tetap Ungu #5C64AB) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+
+              {/* Kotak 1: Percaya Diri */}
+              <div className="flex gap-4 items-start bg-[#FFFF00] border border-yellow-400 p-5 rounded-2xl transition-all duration-300 shadow-md hover:scale-[1.02]">
+                <div className="w-10 h-10 rounded-xl bg-[#5C64AB] text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-950/50">
+                  <MessageCircle className="w-5 h-5 text-white stroke-[2.5]" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-black text-sm text-lime uppercase tracking-wider">
+                  <h4 className="font-black text-sm text-slate-950 uppercase tracking-wider">
                     Percaya Diri
                   </h4>
-                  <p className="text-slate-100 text-xs font-semibold leading-relaxed">
+                  <p className="text-slate-800 text-xs font-semibold leading-relaxed">
                     Lancar speaking dalam situasi sehari-hari, di sekolah, juga di dunia kerja.
                   </p>
                 </div>
               </div>
 
-              {/* Hasil 2 */}
-              <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
-                  <Target className="w-5 h-5 text-dark stroke-[2.5]" />
+              {/* Kotak 2: Kenal Potensi */}
+              <div className="flex gap-4 items-start bg-[#FFFF00] border border-yellow-400 p-5 rounded-2xl transition-all duration-300 shadow-md hover:scale-[1.02]">
+                <div className="w-10 h-10 rounded-xl bg-[#5C64AB] text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-950/50">
+                  <Target className="w-5 h-5 text-white stroke-[2.5]" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-black text-sm text-lime uppercase tracking-wider">
+                  <h4 className="font-black text-sm text-slate-950 uppercase tracking-wider">
                     Kenal Potensi
                   </h4>
-                  <p className="text-slate-100 text-xs font-semibold leading-relaxed">
+                  <p className="text-slate-800 text-xs font-semibold leading-relaxed">
                     Paham bakat alami dan dominan lewat Talents Mapping.
                   </p>
                 </div>
               </div>
 
-              {/* Hasil 3 */}
-              <div className="flex gap-4 items-start bg-slate-950/30 hover:bg-slate-950/40 border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all duration-300">
-                <div className="w-10 h-10 rounded-xl bg-lime text-dark flex items-center justify-center shrink-0">
-                  <Globe className="w-5 h-5 text-dark stroke-[2.5]" />
+              {/* Kotak 3: Rencana Karier */}
+              <div className="flex gap-4 items-start bg-[#FFFF00] border border-yellow-400 p-5 rounded-2xl transition-all duration-300 shadow-md hover:scale-[1.02]">
+                <div className="w-10 h-10 rounded-xl bg-[#5C64AB] text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-950/50">
+                  <Globe className="w-5 h-5 text-white stroke-[2.5]" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-black text-sm text-lime uppercase tracking-wider">
+                  <h4 className="font-black text-sm text-slate-950 uppercase tracking-wider">
                     Rencana Karier
                   </h4>
-                  <p className="text-slate-100 text-xs font-semibold leading-relaxed">
+                  <p className="text-slate-800 text-xs font-semibold leading-relaxed">
                     Susun langkah konkret dan strategi terarah untuk capai karier impianmu.
                   </p>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       </section>
 
-      {/* 🔮 SECTION 1D: DAFTAR 8 CLUSTER BESAR ST-30 */}
+      {/* 🔮 SECTION 1D: Daftar 8 Cluster ST-30 */}
       <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 bg-brand/10 text-brand-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-brand-200 shadow-sm">
-            <Target className="w-4 h-4 text-brand-600" />
-            <span>TALENTS MAPPING MAP</span>
-          </div>
+
           <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
-            Daftar 8 Cluster Besar <span className="bg-gradient-to-r from-brand-600 to-emerald-600 bg-clip-text text-transparent">ST-30</span>
+            Daftar 8 Cluster <span className="bg-gradient-to-r from-brand-600 to-emerald-600 bg-clip-text text-transparent">ST-30</span>
           </h2>
         </div>
 
@@ -703,17 +714,15 @@ X Pelita Potensi Project (P3) */}
         {/* CTA Berkesan "Yuk, Kenali Dirimu Lebih Dalam" */}
         <div className="mt-8 flex flex-col md:flex-row items-center md:items-center justify-center md:justify-end gap-6 text-center md:text-right w-full">
           <div className="space-y-1">
-            <span className="text-brand font-black text-xs uppercase tracking-wider flex items-center gap-1.5 justify-center md:justify-end">
-              <Target className="w-3.5 h-3.5 text-brand" />
-              <span>EVALUASI BAKAT & POTENSI</span>
+            <span className="text-brand font-black text-sm uppercase tracking-wider flex items-center gap-2 justify-center md:justify-end">
+              <Target className="w-4 h-4 text-brand" />
+              <span>KENALI BAKAT & POTENSI</span>
             </span>
             <h3 className="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight">
 
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm font-semibold max-w-xl mx-auto md:ml-auto md:mr-0">
-              Sebelum memulai Bahasa Inggrismu, yuk temukan secara lengkap 30 tipe
-              kekuatanmu dalam 8 aktivitas unik, untuk merancang peta karier masa depan global
-              berdasar asesmen ST-30.
+              Sebelum memulai Bahasa Inggrismu, yuk temukan secara lengkap 30 tipe kekuatanmu dalam 8 aktivitas unik, untuk merancang arah belajar dan karier global berdasar asesmen ST-30.
             </p>
           </div>
 
@@ -731,7 +740,7 @@ X Pelita Potensi Project (P3) */}
       </section>
 
       {/* TICKER RIBBON (PITA MAHIR SPEAKING) - FULL VIEWPORT WIDTH */}
-      <div className="relative z-10 w-full bg-lime border-y-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md mt-12 sm:mt-16">
+      <div className="relative z-10 w-full bg-sky-200 border-y-4 border-dark py-3.5 overflow-hidden whitespace-nowrap shadow-md mt-12 sm:mt-16">
         <div className="inline-flex items-center gap-6 font-stinger font-black text-xs sm:text-lg text-dark tracking-widest uppercase animate-pulse">
           <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
           <span>MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦ MAHIR SPEAKING ✦</span>
@@ -741,10 +750,7 @@ X Pelita Potensi Project (P3) */}
       {/* 📘 SECTION 2: HALAMAN PROGRAM / CURRICULUMS (DETAIL LEVEL) */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-3 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-brand text-lime text-xs font-black px-4 py-1.5 rounded-full uppercase border border-dark shadow-sm">
-            <BookOpen className="w-4 h-4 text-lime" />
-            <span>RINCIAN MATERI PER LEVEL • CEFR COMPLIANT</span>
-          </div>
+
           <h2 className="font-stinger text-3xl sm:text-5xl font-black text-slate-900">
             Target Belajar Per Level
           </h2>
@@ -807,23 +813,23 @@ X Pelita Potensi Project (P3) */}
           {/* Focus Items Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {curriculumData[activeLevelTab].focusItems.map((item, index) => (
-              <div key={index} className="bg-slate-50 border border-slate-200 p-5 rounded-3xl space-y-2 hover:border-emerald-500 transition-colors">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-black text-xs flex items-center justify-center border border-emerald-300">
+              <div key={index} className="bg-slate-50 border border-slate-200 p-5 rounded-3xl space-y-3 hover:border-emerald-500 transition-colors">
+                <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 font-black text-sm flex items-center justify-center border border-emerald-300">
                   0{index + 1}
                 </div>
-                <h4 className="font-black text-sm text-slate-900">{item.title}</h4>
-                <p className="text-xs text-slate-600 font-semibold leading-relaxed">{item.desc}</p>
+                <h4 className="font-black text-base sm:text-lg text-slate-900">{item.title}</h4>
+                <p className="text-sm text-slate-600 font-semibold leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
           <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs font-extrabold text-slate-600">
-              Ingin konsultasi pemilihan level mana yang paling cocok untuk Anda?
+            <p className="text-sm sm:text-base font-extrabold text-slate-700">
+              Ingin konsultasi pemilihan level mana yang paling cocok untuk mu?
             </p>
             <button
               onClick={() => setShowPlacementModal(true)}
-              className="px-6 py-3 rounded-2xl bg-brand text-lime font-black text-xs hover:bg-dark transition-all border border-dark"
+              className="px-6 py-3.5 rounded-2xl bg-brand text-lime font-black text-sm sm:text-base hover:bg-dark transition-all border border-dark"
             >
               Ikuti Placement Test Gratis ➔
             </button>

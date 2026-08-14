@@ -48,7 +48,7 @@ export default function MobileNav() {
           <span className="text-[10px] tracking-tight">Home</span>
         </button>
 
-        {/* Tab 2: Halaman Branding */}
+        {/* Tab 2: Halaman Galeri */}
         <button
           onClick={() => handleTabClick('branding')}
           className={`flex flex-col items-center gap-0.5 py-1 px-2 transition-all cursor-pointer group ${
@@ -64,7 +64,7 @@ export default function MobileNav() {
           }`}>
             <Layers className="w-4.5 h-4.5 stroke-[2.5]" />
           </div>
-          <span className="text-[10px] tracking-tight">Branding</span>
+          <span className="text-[10px] tracking-tight">Galeri</span>
         </button>
 
         {/* Tab 3: Pembelajaran LMS */}
