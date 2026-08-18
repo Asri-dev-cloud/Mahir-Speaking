@@ -716,7 +716,7 @@ export default function BlogView() {
       {/* 📖 ARTICLE READER MODAL */}
       {selectedPost && (
         <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto"
+          className="fixed inset-0 z-[100] flex justify-center items-start bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto py-8 sm:py-12 custom-scrollbar"
           onClick={() => setSelectedPost(null)}
         >
           <div
@@ -790,7 +790,7 @@ export default function BlogView() {
       {/* ✍️ WRITE ARTICLE MODAL (Admin Portal Popup) */}
       {isAddModalOpen && (
         <div 
-          className="fixed inset-0 z-[110] bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto flex items-center justify-center"
+          className="fixed inset-0 z-[110] bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto flex justify-center items-start py-8 sm:py-12 custom-scrollbar"
           onClick={() => setIsAddModalOpen(false)}
         >
           <div 
