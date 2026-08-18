@@ -716,11 +716,11 @@ export default function BlogView() {
       {/* 📖 ARTICLE READER MODAL */}
       {selectedPost && (
         <div
-          className="fixed inset-0 z-[100] flex justify-center items-start bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto py-8 sm:py-12 custom-scrollbar"
+          className="fixed inset-0 z-[100] bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto py-8 sm:py-12 custom-scrollbar"
           onClick={() => setSelectedPost(null)}
         >
           <div
-            className="relative w-full max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-2xl my-8 cursor-default flex flex-col"
+            className="relative w-full max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-2xl mx-auto my-8 cursor-default flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header image & close button */}
@@ -790,11 +790,11 @@ export default function BlogView() {
       {/* ✍️ WRITE ARTICLE MODAL (Admin Portal Popup) */}
       {isAddModalOpen && (
         <div 
-          className="fixed inset-0 z-[110] bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto flex justify-center items-start py-8 sm:py-12 custom-scrollbar"
+          className="fixed inset-0 z-[110] bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto py-8 sm:py-12 custom-scrollbar"
           onClick={() => setIsAddModalOpen(false)}
         >
           <div 
-            className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col my-8 cursor-default"
+            className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col mx-auto my-8 cursor-default"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}

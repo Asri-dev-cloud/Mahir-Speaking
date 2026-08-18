@@ -20,10 +20,25 @@ export async function initSeedData() {
       // Jalankan seluruh skema SQL
       await query(schemaSql);
 
+      // Cek dan drop tabel blog_likes lama jika tidak memiliki kolom 'id'
+      try {
+        const tableInfo = await query(`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_name = 'blog_likes' AND column_name = 'id'
+        `);
+        if (tableInfo.length === 0) {
+          await query(`DROP TABLE IF EXISTS public.blog_likes CASCADE`);
+        }
+      } catch (err) {
+        console.error('Check/Drop old postgres blog_likes table error:', err.message);
+      }
+
       // Buat tabel blog_likes di PostgreSQL jika belum ada
       await query(`
         CREATE TABLE IF NOT EXISTS public.blog_likes (
-          post_id integer PRIMARY KEY,
+          id SERIAL PRIMARY KEY,
+          post_id integer UNIQUE,
           likes_count integer DEFAULT 0
         )
       `);
@@ -265,10 +280,22 @@ export async function initSeedData() {
         )
       `);
 
+      // Cek dan drop tabel blog_likes lama jika tidak memiliki kolom 'id'
+      try {
+        const tableInfo = await query(`PRAGMA table_info(blog_likes)`);
+        const hasId = tableInfo.some(col => col.name === 'id');
+        if (!hasId) {
+          await query(`DROP TABLE IF EXISTS blog_likes`);
+        }
+      } catch (err) {
+        console.error('Check/Drop old sqlite blog_likes table error:', err.message);
+      }
+
       // Buat tabel blog_likes di SQLite jika belum ada
       await query(`
         CREATE TABLE IF NOT EXISTS blog_likes (
-          post_id INTEGER PRIMARY KEY,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          post_id INTEGER UNIQUE,
           likes_count INTEGER DEFAULT 0
         )
       `);
