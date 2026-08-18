@@ -429,7 +429,7 @@ export default function LeaderboardView() {
                         className="group flex items-center gap-3 p-4 transition hover:bg-[#F4FBFF] md:grid md:grid-cols-[80px_2fr_1fr_1.2fr] md:px-6 md:py-4"
                       >
                         <div
-                          className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm sm:text-base font-black ${rank === 1
+                          className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl text-xs sm:text-sm font-black ${rank === 1
                             ? "bg-[#FFFF00] text-[#0362C0]"
                             : rank === 2
                               ? "bg-[#DDE8F2] text-[#34516D]"
@@ -438,20 +438,20 @@ export default function LeaderboardView() {
                                 : "bg-[#EAF6FF] text-[#0362C0]"
                             }`}
                         >
-                          {isTopThree ? <Medal size={21} /> : `#${rank}`}
+                          {isTopThree ? <Medal size={18} /> : `#${rank}`}
                         </div>
 
                         <div className="flex min-w-0 flex-1 items-center gap-3">
                           <img
                             src={getAvatar(user, rank) || '/ma.png'}
                             alt={user.full_name}
-                            className="h-13 w-13 shrink-0 rounded-2xl border-2 border-[#87CEFA] object-cover"
+                            className="h-12 w-12 shrink-0 rounded-2xl border-2 border-[#87CEFA] object-cover"
                           />
                           <div className="min-w-0">
-                            <h3 className="truncate text-base sm:text-lg font-black text-slate-900">
+                            <h3 className="truncate text-sm sm:text-base font-black text-slate-900">
                               {user.full_name}
                             </h3>
-                            <p className="truncate text-xs sm:text-sm font-semibold text-slate-400">
+                            <p className="truncate text-[10px] sm:text-xs font-semibold text-slate-400">
                               @{user.username}
                             </p>
                           </div>
@@ -459,7 +459,7 @@ export default function LeaderboardView() {
 
                         <div className="hidden md:block">
                           <span
-                            className="rounded-full px-3.5 py-2 text-xs sm:text-sm font-black uppercase tracking-wider border"
+                            className="rounded-full px-3 py-1 text-[10px] sm:text-xs font-black uppercase tracking-wider border"
                             style={{
                               backgroundColor: '#F3E8FF',
                               color: '#7457E8',
@@ -471,8 +471,8 @@ export default function LeaderboardView() {
                         </div>
 
                         <div className="ml-auto text-right">
-                          <p className="flex items-center justify-end gap-1 text-base sm:text-lg font-black text-[#0362C0]">
-                            <Zap size={18} fill="currentColor" />
+                          <p className="flex items-center justify-end gap-1 text-sm sm:text-base font-black text-[#0362C0]">
+                            <Zap size={15} fill="currentColor" />
                             {formatXp(user.xp)}
                           </p>
                         </div>
