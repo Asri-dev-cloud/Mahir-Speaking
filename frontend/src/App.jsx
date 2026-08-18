@@ -17,6 +17,7 @@ import PricingPage from './pages/public/PricingPage';
 import Branding from './pages/public/Branding';
 import AuthPage from './pages/public/AuthPage';
 import ForgotPassword from './pages/public/ForgotPassword';
+import BlogView from './pages/public/BlogView';
 
 // Halaman Siswa (Student) untuk mengakses materi pelajaran, kuis, latihan percakapan, dan status keanggotaan.
 import LessonView from './pages/student/LessonView';
@@ -78,6 +79,7 @@ function MainContent() {
       case 'home': return <Home />;
       case 'lms': return <LMSView />;
       case 'branding': return <Branding />;
+      case 'blog': return <BlogView />;
       case 'portfolio': return <Portfolio />;
       case 'pricing': return <PricingPage />;
       case 'leaderboard-public': return <LeaderboardView />;
@@ -109,7 +111,7 @@ function MainContent() {
     }
   };
 
-  const publicTabs = ['home', 'branding', 'portfolio', 'pricing', 'auth', 'login', 'register', 'forgot-password'];
+  const publicTabs = ['home', 'branding', 'blog', 'portfolio', 'pricing', 'auth', 'login', 'register', 'forgot-password'];
   const isPublicPage = publicTabs.includes(activeTab);
 
   return (

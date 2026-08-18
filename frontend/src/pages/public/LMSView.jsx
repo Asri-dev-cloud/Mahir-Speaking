@@ -477,7 +477,7 @@ const fallbackDownloads = [
     badge: "Basic Level",
     size: "12.4 MB",
     type: "PDF E-Book",
-    desc: "Modul pembelajaran level Basic untuk melatih kelancaran perkenalan diri dan aktivitas harian.",
+    desc: "Modul pembelajaran Basic untuk melatih kelancaran perkenalan diri dan aktivitas harian.",
     fileUrl: "https://drive.google.com/file/d/1bNcTgCgcyMju80MEamH9EhNx115vI2YM/view?usp=drive_link"
   },
   {
@@ -486,7 +486,7 @@ const fallbackDownloads = [
     badge: "Intermediate Level",
     size: "15.1 MB",
     type: "PDF E-Book",
-    desc: "Modul pembelajaran level Intermediate untuk menguasai percakapan profesional dan opini terstruktur.",
+    desc: "Modul pembelajaran Intermediate untuk menguasai percakapan profesional dan opini terstruktur.",
     fileUrl: "https://drive.google.com/file/d/1atDc0w5W1TJ8AvHu7S_WaxP87lIs3-qA/view?usp=drive_link"
   },
   {

@@ -540,7 +540,7 @@ export default function Branding() {
                     <img
                       src={mentor.image}
                       alt={mentor.name}
-                      className="w-16 h-16 rounded-full object-cover border-4 border-[#0362C0]/20 group-hover:scale-105 transition-transform"
+                      className="w-24 h-24 rounded-full object-cover bg-[#7457E8] border-4 border-purple-200 shadow-md group-hover:scale-105 transition-transform"
                     />
                     <div>
                       <span className="bg-[#EAF6FF] text-[#0362C0] text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
@@ -624,9 +624,6 @@ export default function Branding() {
                 Keseruan Belajar & <span className="text-[#0362C0]">Aktivitas Komunitas</span>
               </h2>
             </div>
-            <p className="max-w-md text-sm leading-6 text-slate-600">
-              Intip dokumentasi kegiatan mentoring, kelas interaktif, dan kebersamaan komunitas Mahir Speaking.
-            </p>
           </div>
 
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

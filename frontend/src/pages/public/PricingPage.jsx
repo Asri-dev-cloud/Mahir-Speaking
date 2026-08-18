@@ -379,9 +379,9 @@ export default function PricingPage() {
               <thead>
                 <tr className="border-b-2 border-slate-700 bg-slate-800/80 text-lime font-black">
                   <th className="p-4 rounded-tl-2xl">Kategori Kelas</th>
-                  <th className="p-4">Level Basic (8x Pertemuan)</th>
-                  <th className="p-4">Level Intermediate (10x Pertemuan)</th>
-                  <th className="p-4 rounded-tr-2xl">Level Advanced (12x Pertemuan)</th>
+                  <th className="p-4">Basic (8x Pertemuan)</th>
+                  <th className="p-4">Intermediate (10x Pertemuan)</th>
+                  <th className="p-4 rounded-tr-2xl">Advanced (12x Pertemuan)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800 font-semibold">

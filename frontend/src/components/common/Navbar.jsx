@@ -1,10 +1,11 @@
 import React from 'react'; // import library react
 import { useAuth } from '../../context/AuthContext'; // import hook useAuth dari context AuthContext
-import { User, LogOut, BookOpen, Shield } from 'lucide-react'; // import icon dari lucide-react
+import { User, LogOut, BookOpen, Shield, Menu, X } from 'lucide-react'; // import icon dari lucide-react
 
 // Komponen Navigasi Utama: Menyediakan menu navigasi atas untuk berpindah halaman secara interaktif.
 export default function Navbar() { //deklarasi Komponen Fungsi
   const { user, logout, activeTab, setActiveTab } = useAuth(); //object destructuring
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return ( //Mengembalikan JSX yang bakal jadi tampilan HTML di browser.
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-2xl border-b border-slate-200/80 shadow-sm transition-all"> {/* tag header sebagai elemen paling atas dan akan selalu berada di posisi atas saat di scroll*/}
@@ -72,6 +73,16 @@ export default function Navbar() { //deklarasi Komponen Fungsi
                 </button>
 
                 <button
+                  onClick={() => setActiveTab('blog')}
+                  className={`px-4 sm:px-5 py-2 rounded-full transition-all ${activeTab === 'blog'
+                    ? 'bg-brand text-lime shadow-glow font-black scale-105'
+                    : 'hover:text-brand hover:bg-white text-slate-700 font-bold'
+                    }`}
+                >
+                  Blog
+                </button>
+
+                <button
                   onClick={() => setActiveTab('pricing')}
                   className={`px-4 sm:px-5 py-2 rounded-full transition-all ${activeTab === 'pricing'
                     ? 'bg-brand text-lime shadow-glow font-black scale-105'
@@ -115,6 +126,14 @@ export default function Navbar() { //deklarasi Komponen Fungsi
                     }`}
                 >
                   Leaderboard
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('blog')}
+                  className={`px-4 py-2 rounded-full transition-all ${activeTab === 'blog' ? 'bg-brand text-lime shadow-glow font-black' : 'hover:text-brand hover:bg-white'
+                    }`}
+                >
+                  Blog
                 </button>
 
                 {user.role === 'student' && (
@@ -214,10 +233,80 @@ export default function Navbar() { //deklarasi Komponen Fungsi
                 </button>
               </div>
             )}
+            {/* Hamburger Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-brand transition-colors flex-shrink-0"
+              title="Toggle Menu"
+            >
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
 
         </div>
       </div>
+      {/* Mobile Menu Dropdown */}
+      {isMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-slate-200 shadow-lg animate-fadeIn relative z-40">
+          <nav className="flex flex-col p-4 gap-2 text-sm font-black text-slate-700">
+            <button
+              onClick={() => { setActiveTab('home'); setIsMenuOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all ${activeTab === 'home' ? 'bg-brand/10 text-brand' : 'hover:bg-slate-50'}`}
+            >
+              Home
+            </button>
+            <button
+              onClick={() => { setActiveTab('branding'); setIsMenuOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all ${activeTab === 'branding' ? 'bg-brand/10 text-brand' : 'hover:bg-slate-50'}`}
+            >
+              Galeri
+            </button>
+            <button
+              onClick={() => { setActiveTab('lms'); setIsMenuOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all ${['lms', 'learning-path', 'lesson-view'].includes(activeTab) ? 'bg-brand/10 text-brand' : 'hover:bg-slate-50'}`}
+            >
+              LMS & Quiz
+            </button>
+            <button
+              onClick={() => { setActiveTab(user ? 'leaderboard' : 'leaderboard-public'); setIsMenuOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all ${['leaderboard', 'leaderboard-public'].includes(activeTab) ? 'bg-brand/10 text-brand' : 'hover:bg-slate-50'}`}
+            >
+              Leaderboard
+            </button>
+            <button
+              onClick={() => { setActiveTab('blog'); setIsMenuOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all ${activeTab === 'blog' ? 'bg-brand/10 text-brand' : 'hover:bg-slate-50'}`}
+            >
+              Blog
+            </button>
+            <button
+              onClick={() => { setActiveTab('pricing'); setIsMenuOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all ${activeTab === 'pricing' ? 'bg-brand/10 text-brand' : 'hover:bg-slate-50'}`}
+            >
+              Pricing
+            </button>
+
+            {user && user.role === 'tutor' && (
+              <button
+                onClick={() => { setActiveTab('tutor-dashboard'); setIsMenuOpen(false); }}
+                className={`w-full text-left px-4 py-3 rounded-xl transition-all ${activeTab === 'tutor-dashboard' ? 'bg-brand/10 text-brand' : 'hover:bg-slate-50'}`}
+              >
+                Tutor Dashboard
+              </button>
+            )}
+
+            {user && (user.role === 'admin' || user.email?.toLowerCase() === 'hartiniasri32@gmail.com' || user.admin_type) && (
+              <button
+                onClick={() => { setActiveTab('admin-portal'); setIsMenuOpen(false); }}
+                className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center gap-2 ${activeTab === 'admin-portal' ? 'bg-emerald-50 text-emerald-700' : 'hover:bg-slate-50 text-emerald-600'}`}
+              >
+                <Shield className="w-4 h-4 text-emerald-500" />
+                <span>Admin Portal</span>
+              </button>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

@@ -191,7 +191,6 @@ export default function Home() {
 
   const curriculumData = {
     basic: {
-      title: "Level Basic (Beginner)",
       badge: "Fondasi Utama & Keberanian Bicara",
       badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
       target: "Berani berbicara Bahasa Inggris tanpa rasa canggung, menguasai frasa harian dasar, serta pengucapan yang jelas.",
@@ -206,7 +205,6 @@ export default function Home() {
       ]
     },
     intermediate: {
-      title: "Level Intermediate (Independent Speaker)",
       badge: "Kelancaran Beropini & Public Speaking",
       badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
       target: "Lancar menyampaikan ide, cerita panjang, presentasi terstruktur, serta aktif berdiskusi dalam kelompok.",
@@ -220,7 +218,6 @@ export default function Home() {
       ]
     },
     advanced: {
-      title: "Level Advanced (Professional Speaker)",
       badge: "Business English & Career Excellence",
       badgeColor: "bg-purple-100 text-purple-900 border-purple-300",
       target: "Menguasai komunikasi profesional tingkat tinggi, wawancara kerja internasional, debat bisnis, & presentasi eksekutif.",
@@ -507,41 +504,36 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Badge Kolaborasi */}
+      <div className="flex flex-row items-center justify-center !mt-6 sm:!mt-10 relative z-20">
+        <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-purple-200 shadow-sm">
+          <Users className="w-4 h-4" />
+          <span>KOLABORASI MITRA</span>
+        </div>
+      </div>
+
       {/* Partner logos pelita.png, bms.png & p3.png */}
-      <div className="flex flex-row items-center justify-center gap-2 sm:gap-8 md:gap-12 lg:gap-16 py-2 sm:py-3 !mt-3 sm:!mt-6 max-w-7xl mx-auto px-4 relative z-20 pointer-events-none select-none">
+      <div className="flex flex-row items-center justify-center gap-2 sm:gap-8 md:gap-12 lg:gap-16 py-0 !mt-0 max-w-7xl mx-auto px-4 relative z-20 pointer-events-none select-none">
         <img
           src="/pelita.png"
           alt="Pelita Batara Media"
-          className="h-16 sm:h-36 md:h-48 lg:h-60 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
+          className="h-14 sm:h-28 md:h-36 lg:h-40 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
         />
         <img
           src="/bms.png"
           alt="Mahir Speaking"
-          className="h-16 sm:h-36 md:h-48 lg:h-60 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
+          className="h-14 sm:h-28 md:h-36 lg:h-40 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
         />
         <img
           src="/p3.png"
           alt="Pelita Potensi Project"
-          className="h-16 sm:h-36 md:h-48 lg:h-60 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
+          className="h-14 sm:h-28 md:h-36 lg:h-40 w-auto max-w-[30%] object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105 pointer-events-auto"
         />
       </div>
 
       {/* 🤝 SECTION 1C: Mahir Speaking x Pelita Potensi Project */}
-      <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 !mt-3 sm:!mt-6">
+      <section className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 !mt-0.5 sm:!mt-1">
         <div className="flex flex-col items-center text-center space-y-4 max-w-5xl mx-auto mb-12 w-full">
-
-          {/* Badge Kolaborasi */}
-          <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-purple-200 shadow-sm">
-            <Users className="w-4 h-4" />
-            <span>KOLABORASI MITRA</span>
-          </div>
-
-          {/* Judul Utama (Warna Ungu) */}
-          <h2 className="w-full font-stinger text-3xl sm:text-5xl font-black leading-tight">
-            <span className="text-[#5C64AB] inline-block">
-              Mahir Speaking x Pelita Potensi Project
-            </span>
-          </h2>
 
           {/* Subtitle / Deskripsi */}
           <p className="w-full text-slate-900 font-extrabold text-xs sm:text-sm md:text-base uppercase tracking-wider">
@@ -766,7 +758,7 @@ export default function Home() {
               : 'text-slate-700 hover:bg-white'
               }`}
           >
-            Level Basic
+            Basic
           </button>
 
           <button
@@ -776,7 +768,7 @@ export default function Home() {
               : 'text-slate-700 hover:bg-white'
               }`}
           >
-            Level Intermediate
+            Intermediate
           </button>
 
           <button
@@ -786,7 +778,7 @@ export default function Home() {
               : 'text-slate-700 hover:bg-white'
               }`}
           >
-            Level Advanced
+            Advanced
           </button>
         </div>
 
