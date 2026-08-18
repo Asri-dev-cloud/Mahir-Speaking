@@ -638,6 +638,43 @@ export const adminService = {
   }
 };
 
+export const blogService = {
+  getLikes: async () => {
+    const res = await apiFetch('/users/blog-likes');
+    if (!res.success) {
+      // Offline fallback: load likes from localStorage
+      const savedLikes = localStorage.getItem('mahir_blog_likes_count');
+      return { success: true, likes: savedLikes ? JSON.parse(savedLikes) : [] };
+    }
+    return res;
+  },
+
+  likePost: async (postId, action) => {
+    const res = await apiFetch(`/users/blog-likes/${postId}`, {
+      method: 'POST',
+      body: JSON.stringify({ action })
+    });
+    if (!res.success) {
+      // Offline fallback: save likes count to localStorage
+      const savedLikes = localStorage.getItem('mahir_blog_likes_count');
+      let likes = savedLikes ? JSON.parse(savedLikes) : [];
+      const idx = likes.findIndex(l => l.post_id === postId);
+      let newCount = 0;
+      if (idx === -1) {
+        newCount = action === 'unlike' ? 0 : 1;
+        likes.push({ post_id: postId, likes_count: newCount });
+      } else {
+        const currentCount = likes[idx].likes_count || 0;
+        newCount = action === 'unlike' ? Math.max(0, currentCount - 1) : currentCount + 1;
+        likes[idx].likes_count = newCount;
+      }
+      localStorage.setItem('mahir_blog_likes_count', JSON.stringify(likes));
+      return { success: true, likes_count: newCount };
+    }
+    return res;
+  }
+};
+
 // Pembantu Pengurai Video YouTube / Google Drive dan Gambar Mini (Thumbnail)
 export const parseVideoUrl = (url, customThumb = '') => {
   let embedUrl = url;

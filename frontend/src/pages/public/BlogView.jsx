@@ -1,10 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { 
   Search, 
   Calendar, 
   Clock, 
   BookOpen, 
-  MessageSquare, 
   Heart, 
   X, 
   ArrowRight,
@@ -15,6 +14,7 @@ import {
   Trash2
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { blogService } from "../../services/api";
 
 // Mock blog post data (fallback)
 const DEFAULT_BLOG_POSTS = [
@@ -231,6 +231,27 @@ export default function BlogView() {
   });
   const [likedPosts, setLikedPosts] = useState({});
 
+  useEffect(() => {
+    // Load likes from DB (or localStorage fallback)
+    blogService.getLikes().then((res) => {
+      if (res && res.success && Array.isArray(res.likes)) {
+        const counts = {};
+        res.likes.forEach((item) => {
+          counts[item.post_id] = item.likes_count || 0;
+        });
+        setLikeCounts((prev) => ({ ...prev, ...counts }));
+      }
+    });
+
+    // Load liked status
+    const savedLiked = localStorage.getItem("mahir_blog_liked_posts");
+    if (savedLiked) {
+      try {
+        setLikedPosts(JSON.parse(savedLiked));
+      } catch (e) {}
+    }
+  }, []);
+
   // Add Article Form States
   const [newTitle, setNewTitle] = useState("");
   const [newExcerpt, setNewExcerpt] = useState("");
@@ -268,14 +289,28 @@ export default function BlogView() {
     return filteredPosts.filter((post) => post.id !== featuredPost.id);
   }, [filteredPosts, featuredPost]);
 
-  const handleLike = (postId, e) => {
+  const handleLike = async (postId, e) => {
     e.stopPropagation();
-    if (likedPosts[postId]) {
-      setLikeCounts((prev) => ({ ...prev, [postId]: prev[postId] - 1 }));
-      setLikedPosts((prev) => ({ ...prev, [postId]: false }));
-    } else {
-      setLikeCounts((prev) => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
-      setLikedPosts((prev) => ({ ...prev, [postId]: true }));
+    const isLiked = likedPosts[postId];
+    const action = isLiked ? 'unlike' : 'like';
+
+    const newLiked = { ...likedPosts, [postId]: !isLiked };
+    setLikedPosts(newLiked);
+    localStorage.setItem("mahir_blog_liked_posts", JSON.stringify(newLiked));
+
+    const res = await blogService.likePost(postId, action);
+    if (res && res.success && res.likes_count !== undefined) {
+      setLikeCounts((prev) => ({ ...prev, [postId]: res.likes_count }));
+      setPosts((prevPosts) => {
+        const updated = prevPosts.map((p) => {
+          if (p.id === postId) {
+            return { ...p, likes: res.likes_count };
+          }
+          return p;
+        });
+        localStorage.setItem("mahir_blog_posts", JSON.stringify(updated));
+        return updated;
+      });
     }
   };
 
@@ -550,11 +585,6 @@ export default function BlogView() {
                                   <Heart className={`w-3 h-3 ${likedPosts[post.id] ? "fill-current" : ""}`} />
                                   <span>{likeCounts[post.id] || 0}</span>
                                 </button>
-                                
-                                <div className="flex items-center gap-0.5 text-[11px] text-slate-400 font-bold">
-                                  <MessageSquare className="w-3" />
-                                  <span>{post.commentsCount}</span>
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -750,30 +780,9 @@ export default function BlogView() {
 
             {/* Article Content */}
             <article 
-              className="p-6 sm:p-8 overflow-y-auto max-h-[50vh] prose prose-slate max-w-none text-slate-700 font-medium leading-relaxed"
+              className="p-6 sm:p-8 prose prose-slate max-w-none text-slate-700 font-medium leading-relaxed"
               dangerouslySetInnerHTML={{ __html: selectedPost.content }}
             />
-
-            {/* Mock Comment Section */}
-            <div className="bg-slate-50 p-6 border-t border-slate-100 space-y-4">
-              <h4 className="text-xs font-black uppercase text-slate-900 tracking-wider flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-[#7457E8]" />
-                <span>Komentar ({selectedPost.commentsCount})</span>
-              </h4>
-              
-              {/* Write comment input */}
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center">U</div>
-                <input
-                  type="text"
-                  placeholder="Tulis opini atau pertanyaan Anda..."
-                  className="flex-1 bg-white border border-slate-200 focus:border-[#7457E8] px-4 py-2 rounded-xl text-xs outline-none transition-all"
-                />
-                <button className="px-4 py-2 bg-[#7457E8] hover:bg-[#5C64AB] text-white text-xs font-bold rounded-xl transition-colors">
-                  Kirim
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       )}

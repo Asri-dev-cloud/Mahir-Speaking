@@ -19,6 +19,14 @@ export async function initSeedData() {
 
       // Jalankan seluruh skema SQL
       await query(schemaSql);
+
+      // Buat tabel blog_likes di PostgreSQL jika belum ada
+      await query(`
+        CREATE TABLE IF NOT EXISTS public.blog_likes (
+          post_id integer PRIMARY KEY,
+          likes_count integer DEFAULT 0
+        )
+      `);
       
       // Run payment_transactions.sql if exists
       const payPath = path.join(__dirname, 'payment_transactions.sql');
@@ -254,6 +262,14 @@ export async function initSeedData() {
           created_by INTEGER,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // Buat tabel blog_likes di SQLite jika belum ada
+      await query(`
+        CREATE TABLE IF NOT EXISTS blog_likes (
+          post_id INTEGER PRIMARY KEY,
+          likes_count INTEGER DEFAULT 0
         )
       `);
     }

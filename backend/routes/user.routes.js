@@ -156,4 +156,48 @@ router.get('/recorded-videos', async (req, res) => {
   }
 });
 
+// Public: Get all blog likes
+router.get('/blog-likes', async (req, res) => {
+  try {
+    const likes = await query(`SELECT post_id, likes_count FROM blog_likes`);
+    return res.json({ success: true, likes });
+  } catch (err) {
+    console.error('Fetch blog likes error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to fetch blog likes.' });
+  }
+});
+
+// Public: Add/remove a like for a specific blog post
+router.post('/blog-likes/:id', async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id);
+    if (isNaN(postId)) {
+      return res.status(400).json({ success: false, message: 'Invalid post ID.' });
+    }
+
+    const { action } = req.body; // 'like' or 'unlike'
+
+    const existing = await query(`SELECT likes_count FROM blog_likes WHERE post_id = ?`, [postId]);
+    
+    let newCount = 0;
+    if (existing.length === 0) {
+      newCount = action === 'unlike' ? 0 : 1;
+      await query(`INSERT INTO blog_likes (post_id, likes_count) VALUES (?, ?)`, [postId, newCount]);
+    } else {
+      const currentCount = existing[0].likes_count || 0;
+      if (action === 'unlike') {
+        newCount = Math.max(0, currentCount - 1);
+      } else {
+        newCount = currentCount + 1;
+      }
+      await query(`UPDATE blog_likes SET likes_count = ? WHERE post_id = ?`, [newCount, postId]);
+    }
+
+    return res.json({ success: true, likes_count: newCount });
+  } catch (err) {
+    console.error('Update blog likes error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to update blog likes.' });
+  }
+});
+
 export default router;
