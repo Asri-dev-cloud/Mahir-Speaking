@@ -13,35 +13,44 @@ export async function initSeedData() {
     const isPostgres = !!(process.env.DATABASE_URL || process.env.POSTGRES_URL);
 
     if (isPostgres) {
-      console.log('🏗️ [Database] Menginisialisasi/memperbarui skema & Stored Procedures PostgreSQL...');
-      const schemaPath = path.join(__dirname, 'mahir_speaking_supabase.sql');
-      const schemaSql = fs.readFileSync(schemaPath, 'utf8');
-
-      // Jalankan seluruh skema SQL
-      await query(schemaSql);
-
-      // Cek dan drop tabel blog_likes lama jika tidak memiliki kolom 'id'
+      // Cek apakah database sudah terinisialisasi untuk menghindari concurrent migration/lock di Vercel
+      let isInitialized = false;
       try {
-        const tableInfo = await query(`
-          SELECT column_name 
-          FROM information_schema.columns 
-          WHERE table_name = 'blog_likes' AND column_name = 'id'
-        `);
-        if (tableInfo.length === 0) {
-          await query(`DROP TABLE IF EXISTS public.blog_likes CASCADE`);
-        }
+        await query(`SELECT id FROM public.users LIMIT 1`);
+        isInitialized = true;
       } catch (err) {
-        console.error('Check/Drop old postgres blog_likes table error:', err.message);
+        isInitialized = false;
       }
 
-      // Buat tabel blog_likes di PostgreSQL jika belum ada
-      await query(`
-        CREATE TABLE IF NOT EXISTS public.blog_likes (
-          id SERIAL PRIMARY KEY,
-          post_id integer UNIQUE,
-          likes_count integer DEFAULT 0
-        )
-      `);
+      if (!isInitialized) {
+        console.log('🏗️ [Database] Database kosong. Menginisialisasi skema & Stored Procedures PostgreSQL...');
+        const schemaPath = path.join(__dirname, 'mahir_speaking_supabase.sql');
+        const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+        await query(schemaSql);
+        console.log('✅ [Database] Skema PostgreSQL berhasil diinisialisasi!');
+      } else {
+        console.log('🟢 [Database] Database sudah diinisialisasi. Melewati pemuatan skema SQL utama.');
+      }
+
+      // Cek dan buat tabel blog_likes di PostgreSQL jika belum ada/belum valid
+      try {
+        await query(`SELECT id FROM public.blog_likes LIMIT 1`);
+      } catch (err) {
+        console.log('⚠️ [Database] Tabel blog_likes PostgreSQL belum siap, membuat ulang skema...');
+        try {
+          await query(`DROP TABLE IF EXISTS public.blog_likes CASCADE`);
+          await query(`
+            CREATE TABLE public.blog_likes (
+              id SERIAL PRIMARY KEY,
+              post_id integer UNIQUE,
+              likes_count integer DEFAULT 0
+            )
+          `);
+          console.log('✅ [Database] Tabel public.blog_likes berhasil dibuat!');
+        } catch (createErr) {
+          console.error('❌ [Database] Gagal membuat tabel blog_likes:', createErr.message);
+        }
+      }
       
       // Run payment_transactions.sql if exists
       const payPath = path.join(__dirname, 'payment_transactions.sql');
@@ -280,25 +289,25 @@ export async function initSeedData() {
         )
       `);
 
-      // Cek dan drop tabel blog_likes lama jika tidak memiliki kolom 'id'
+      // Cek dan buat tabel blog_likes di SQLite
       try {
-        const tableInfo = await query(`PRAGMA table_info(blog_likes)`);
-        const hasId = tableInfo.some(col => col.name === 'id');
-        if (!hasId) {
-          await query(`DROP TABLE IF EXISTS blog_likes`);
-        }
+        await query(`SELECT id FROM blog_likes LIMIT 1`);
       } catch (err) {
-        console.error('Check/Drop old sqlite blog_likes table error:', err.message);
+        console.log('⚠️ [Database] Tabel blog_likes SQLite belum siap, membuat ulang skema...');
+        try {
+          await query(`DROP TABLE IF EXISTS blog_likes`);
+          await query(`
+            CREATE TABLE blog_likes (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              post_id INTEGER UNIQUE,
+              likes_count INTEGER DEFAULT 0
+            )
+          `);
+          console.log('✅ [Database] Tabel blog_likes SQLite berhasil dibuat!');
+        } catch (createErr) {
+          console.error('❌ [Database] Gagal membuat tabel blog_likes SQLite:', createErr.message);
+        }
       }
-
-      // Buat tabel blog_likes di SQLite jika belum ada
-      await query(`
-        CREATE TABLE IF NOT EXISTS blog_likes (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          post_id INTEGER UNIQUE,
-          likes_count INTEGER DEFAULT 0
-        )
-      `);
     }
 
     // Mempersiapkan data paket langganan default pada database.
