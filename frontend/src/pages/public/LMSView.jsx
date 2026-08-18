@@ -945,10 +945,6 @@ export default function LMSView() {
 
           <div className="relative grid items-center gap-8 lg:grid-cols-[1.2fr_.8fr]">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-[#FFFF00] px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#0362C0] sm:text-xs">
-                <Sparkles className="h-4 w-4" />
-                LMS STUDENT AREA • MAHIR SPEAKING
-              </div>
               <h1 className="mt-5 max-w-4xl font-stinger text-4xl font-black uppercase leading-[0.94] sm:text-6xl lg:text-7xl">
                 Akses Quizz & <span className="block text-[#FFFF00]">Ruang Belajar Siswa</span>
               </h1>

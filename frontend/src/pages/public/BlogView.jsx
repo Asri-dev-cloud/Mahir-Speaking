@@ -361,11 +361,6 @@ export default function BlogView() {
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
         
         <div className="relative max-w-6xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 bg-purple-500/20 text-purple-300 text-xs font-black px-4 py-1.5 rounded-full uppercase border border-purple-500/30">
-            <BookOpen className="w-4 h-4" />
-            <span>MAHIR SPEAKING JOURNAL</span>
-          </div>
-          
           <h1 className="font-stinger font-black text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-tight">
             Edukasi & <span className="text-cyan-400">Tips Lancar Bicara</span>
           </h1>

@@ -91,7 +91,7 @@ export default function LeaderboardView() {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     // Panggil API Backend /api/leaderboard resmi terlebih dahulu
     leaderboardService.getLeaderboard()
       .then(res => {
@@ -114,7 +114,7 @@ export default function LeaderboardView() {
       let currentUser = null;
       try {
         currentUser = JSON.parse(localStorage.getItem('mahir_user'));
-      } catch (e) {}
+      } catch (e) { }
 
       // Bersihkan user dummy palsu
       let allUsers = savedReg.filter(u => u && u.full_name !== 'Aci Student' && u.full_name !== 'Siswa Google Active' && u.full_name !== 'Fariha Salsabila' && u.full_name !== 'Ira Kusuma' && u.full_name !== 'Pipit Andriani');
@@ -202,15 +202,15 @@ export default function LeaderboardView() {
 
         <div className="relative mx-auto flex max-w-6xl flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/75 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-[#0362C0] shadow-sm backdrop-blur">
-              <Trophy size={15} fill="currentColor" />
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-white/70 bg-white/75 px-5 py-2.5 text-xs sm:text-sm font-black uppercase tracking-[0.14em] text-[#0362C0] shadow-sm backdrop-blur">
+              <Trophy size={18} fill="currentColor" />
               Weekly Hall of Fame
             </div>
-            <h1 className="mt-5 text-3xl font-black leading-[1.03] tracking-tight text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 text-4xl font-black leading-[1.03] tracking-tight text-white sm:text-6xl lg:text-7xl">
               Setiap latihan
               <span className="block text-[#FFFF00]">membawamu naik.</span>
             </h1>
-            <p className="mt-4 max-w-xl text-sm font-semibold leading-6 text-[#083F78] sm:text-base">
+            <p className="mt-4 max-w-xl text-base font-semibold leading-7 text-[#083F78] sm:text-lg">
               Kumpulkan XP dari materi, speaking mission, dan konsistensi
               belajar. Siapa yang akan menjadi juara berikutnya?
             </p>
@@ -221,10 +221,10 @@ export default function LeaderboardView() {
               <>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#0362C0]">
+                    <p className="text-xs sm:text-sm font-black uppercase tracking-[0.16em] text-[#0362C0]">
                       Champion this week
                     </p>
-                    <h2 className="mt-1 text-2xl font-black">
+                    <h2 className="mt-1 text-3xl font-black">
                       {champion.full_name}
                     </h2>
                   </div>
@@ -232,18 +232,18 @@ export default function LeaderboardView() {
                     <Crown size={25} fill="currentColor" />
                   </div>
                 </div>
-                <div className="mt-5 flex items-center gap-3 rounded-2xl bg-[#0362C0] p-3 text-white">
+                <div className="mt-5 flex items-center gap-3.5 rounded-2xl bg-[#0362C0] p-4 text-white">
                   <img
                     src={getAvatar(champion, 1) || '/ma.png'}
                     alt={champion.full_name}
-                    className="h-14 w-14 rounded-2xl border-2 border-[#FFFF00] object-cover"
+                    className="h-16 w-16 rounded-2xl border-2 border-[#FFFF00] object-cover"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-bold text-white/65">
+                    <p className="truncate text-sm font-bold text-white/65">
                       @{champion.username}
                     </p>
-                    <p className="mt-1 flex items-center gap-1.5 text-lg font-black text-[#FFFF00]">
-                      <Zap size={17} fill="currentColor" />
+                    <p className="mt-1 flex items-center gap-1.5 text-xl font-black text-[#FFFF00]">
+                      <Zap size={20} fill="currentColor" />
                       {formatXp(champion.xp)} XP
                     </p>
                   </div>
@@ -294,10 +294,10 @@ export default function LeaderboardView() {
           <section className="relative z-10 -mt-20 px-4 sm:px-8">
             <div className="mx-auto max-w-6xl">
               <div className="mb-7 text-center">
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#0362C0]">
+                <p className="text-xs sm:text-sm font-black uppercase tracking-[0.18em] text-[#0362C0]">
                   Top performers
                 </p>
-                <h2 className="mt-1 text-2xl font-black sm:text-3xl">
+                <h2 className="mt-1 text-3xl font-black sm:text-4xl">
                   Podium Minggu Ini
                 </h2>
               </div>
@@ -325,30 +325,32 @@ export default function LeaderboardView() {
                           <img
                             src={getAvatar(user, rank) || '/ma.png'}
                             alt={user.full_name}
-                            className={`h-20 w-20 rounded-[22px] border-4 ${style.ring} object-cover shadow-md sm:h-28 sm:w-28 sm:rounded-full`}
+                            className={`h-24 w-24 rounded-[22px] border-4 ${style.ring} object-cover shadow-md sm:h-32 sm:w-32 sm:rounded-full`}
                           />
                           <span
-                            className={`absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-black ${style.badge}`}
+                            className={`absolute -bottom-2.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-black ${style.badge}`}
                           >
                             #{rank}
                           </span>
                         </div>
 
                         <div className="min-w-0 flex-1 sm:mt-3">
-                          <h3 className="truncate text-xl font-black">
+                          <h3 className="truncate text-2xl font-black">
                             {user.full_name}
                           </h3>
                           <p
-                            className={`truncate text-xs font-semibold ${rank === 1 ? "text-white/60" : "text-slate-400"
+                            className={`truncate text-sm font-semibold ${rank === 1 ? "text-white/60" : "text-slate-400"
                               }`}
                           >
                             @{user.username}
                           </p>
                           <span
-                            className={`mt-2 inline-block rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider ${rank === 1
-                                ? "bg-white/10 text-[#FFFF00]"
-                                : "bg-[#EAF6FF] text-[#0362C0]"
-                              }`}
+                            className="mt-2 inline-block rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-black uppercase tracking-wider border"
+                            style={{
+                              backgroundColor: '#F3E8FF',
+                              color: '#7457E8',
+                              borderColor: '#E9D5FF'
+                            }}
                           >
                             {user.package_badge || "Starter"}
                           </span>
@@ -359,9 +361,9 @@ export default function LeaderboardView() {
                         className={`relative ml-auto flex shrink-0 flex-col items-end sm:ml-0 sm:mt-5 sm:w-full sm:flex-row sm:items-center sm:justify-between sm:rounded-2xl sm:p-3 ${rank === 1 ? "sm:bg-white/10" : "sm:bg-[#F4FBFF]"
                           }`}
                       >
-                        <p className="flex items-center gap-1 text-lg font-black">
+                        <p className="flex items-center gap-1.5 text-xl sm:text-2xl font-black">
                           <Zap
-                            size={17}
+                            size={20}
                             className={
                               rank === 1 ? "text-[#FFFF00]" : "text-[#0362C0]"
                             }
@@ -381,14 +383,14 @@ export default function LeaderboardView() {
             <div className="mx-auto max-w-6xl">
               <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#0362C0]">
-                    <Sparkles size={15} className="text-[#FFA715]" />
+                  <p className="flex items-center gap-2 text-sm sm:text-base font-black uppercase tracking-[0.16em] text-[#0362C0]">
+                    <Sparkles size={18} className="text-[#FFA715]" />
                     Keep climbing
                   </p>
-                  <h2 className="mt-2 text-2xl font-black sm:text-4xl">
+                  <h2 className="mt-2 text-3xl font-black sm:text-5xl">
                     Peringkat Semua Siswa
                   </h2>
-                  <p className="mt-2 text-sm text-slate-600">
+                  <p className="mt-2 text-base text-slate-600 font-semibold">
                     Ranking diperbarui mengikuti progres belajar terbaru.
                   </p>
                 </div>
@@ -409,61 +411,68 @@ export default function LeaderboardView() {
               </div>
 
               <div className="mt-7 overflow-hidden rounded-[28px] border border-[#0362C0]/10 bg-white shadow-[0_16px_45px_rgba(8,32,60,0.08)]">
-                <div className="hidden grid-cols-[80px_2fr_1fr_1.2fr] border-b border-slate-100 bg-[#EAF6FF] px-6 py-4 text-[10px] font-black uppercase tracking-[0.14em] text-[#42617F] md:grid">
+                <div className="hidden grid-cols-[80px_2fr_1fr_1.2fr] border-b border-slate-100 bg-[#EAF6FF] px-6 py-4 text-xs sm:text-sm font-black uppercase tracking-[0.16em] text-[#42617F] md:grid">
                   <span>Rank</span>
                   <span>Siswa</span>
                   <span>Level</span>
                   <span className="text-right">Total XP</span>
                 </div>
- 
+
                 <div className="divide-y divide-slate-100">
                   {displayRankings.map((user, index) => {
                     const rank = user.rank || index + 1;
                     const isTopThree = rank <= 3;
- 
+
                     return (
                       <article
                         key={user.id || user.username || index}
                         className="group flex items-center gap-3 p-4 transition hover:bg-[#F4FBFF] md:grid md:grid-cols-[80px_2fr_1fr_1.2fr] md:px-6 md:py-4"
                       >
                         <div
-                          className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-black ${rank === 1
-                              ? "bg-[#FFFF00] text-[#0362C0]"
-                              : rank === 2
-                                ? "bg-[#DDE8F2] text-[#34516D]"
-                                : rank === 3
-                                  ? "bg-[#FFF0D2] text-[#9A5700]"
-                                  : "bg-[#EAF6FF] text-[#0362C0]"
+                          className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm sm:text-base font-black ${rank === 1
+                            ? "bg-[#FFFF00] text-[#0362C0]"
+                            : rank === 2
+                              ? "bg-[#DDE8F2] text-[#34516D]"
+                              : rank === 3
+                                ? "bg-[#FFF0D2] text-[#9A5700]"
+                                : "bg-[#EAF6FF] text-[#0362C0]"
                             }`}
                         >
-                          {isTopThree ? <Medal size={17} /> : `#${rank}`}
+                          {isTopThree ? <Medal size={21} /> : `#${rank}`}
                         </div>
- 
+
                         <div className="flex min-w-0 flex-1 items-center gap-3">
                           <img
                             src={getAvatar(user, rank) || '/ma.png'}
                             alt={user.full_name}
-                            className="h-11 w-11 shrink-0 rounded-2xl border-2 border-[#87CEFA] object-cover"
+                            className="h-13 w-13 shrink-0 rounded-2xl border-2 border-[#87CEFA] object-cover"
                           />
                           <div className="min-w-0">
-                            <h3 className="truncate text-sm font-black">
+                            <h3 className="truncate text-base sm:text-lg font-black text-slate-900">
                               {user.full_name}
                             </h3>
-                            <p className="truncate text-[10px] font-semibold text-slate-400">
+                            <p className="truncate text-xs sm:text-sm font-semibold text-slate-400">
                               @{user.username}
                             </p>
                           </div>
                         </div>
- 
+
                         <div className="hidden md:block">
-                          <span className="rounded-full bg-[#EAF6FF] px-3 py-1.5 text-[10px] font-black uppercase text-[#0362C0]">
+                          <span
+                            className="rounded-full px-3.5 py-2 text-xs sm:text-sm font-black uppercase tracking-wider border"
+                            style={{
+                              backgroundColor: '#F3E8FF',
+                              color: '#7457E8',
+                              borderColor: '#E9D5FF'
+                            }}
+                          >
                             {user.package_badge || "Starter"}
                           </span>
                         </div>
- 
+
                         <div className="ml-auto text-right">
-                          <p className="flex items-center justify-end gap-1 text-sm font-black text-[#0362C0] sm:text-base">
-                            <Zap size={15} fill="currentColor" />
+                          <p className="flex items-center justify-end gap-1 text-base sm:text-lg font-black text-[#0362C0]">
+                            <Zap size={18} fill="currentColor" />
                             {formatXp(user.xp)}
                           </p>
                         </div>
@@ -488,7 +497,7 @@ export default function LeaderboardView() {
                 Your turn to shine
               </p>
               <h2 className="mt-1 text-xl font-black sm:text-2xl">
-                Bukan soal langsung jadi nomor satu.
+                Kamu nggak harus jadi nomor satu.
               </h2>
               <p className="mt-1 max-w-xl text-sm leading-6 text-white/70">
                 Naik satu langkah dari dirimu kemarin juga merupakan kemenangan.
@@ -497,7 +506,7 @@ export default function LeaderboardView() {
           </div>
           <div className="flex items-center gap-2 self-start rounded-2xl bg-white/10 px-4 py-3 text-xs font-black text-[#FFFF00] sm:self-center">
             <Award size={18} />
-            Learn • Practise • Speak
+            Learn • Practice • Speak
           </div>
         </div>
       </section>

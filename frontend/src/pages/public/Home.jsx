@@ -41,7 +41,14 @@ import {
   Send,
   X,
   FileText,
-  UserCheck
+  UserCheck,
+  Crown,
+  Brain,
+  Wrench,
+  Share2,
+  HeartHandshake,
+  Search,
+  ClipboardList
 } from "lucide-react";
 
 const st30Clusters = [
@@ -50,48 +57,56 @@ const st30Clusters = [
     name: "Headman",
     desc: "Aktivitas berinteraksi dengan orang lain dalam rangka mengendalikan, memengaruhi, ataupun mengawasi.",
     theme: "blue",
+    icon: Crown
   },
   {
     code: "N",
     name: "Networking",
     desc: "Aktivitas berinteraksi dengan orang lain dalam rangka bekerja sama, membimbing, melatih, atau mewakili.",
     theme: "blue",
+    icon: Share2
   },
   {
     code: "S",
     name: "Servicing",
     desc: "Aktivitas berinteraksi dengan orang lain dalam rangka merawat, melayani, atau menolong.",
     theme: "blue",
+    icon: HeartHandshake
   },
   {
     code: "Gi",
     name: "Generating Idea",
     desc: "Aktivitas individual menggunakan pemikiran terkait intuisi, ide, dan kreativitas.",
     theme: "green",
+    icon: Lightbulb
   },
   {
     code: "T",
     name: "Thinking",
     desc: "Aktivitas individual menggunakan pemikiran logika, fakta, ataupun terkait dengan analisa terhadap angka dan data.",
     theme: "green",
+    icon: Brain
   },
   {
     code: "R",
     name: "Reasoning",
     desc: "Aktivitas individual menggunakan logika untuk mencari atau membuktikan sesuatu.",
     theme: "green",
+    icon: Search
   },
   {
     code: "E",
     name: "Elementary",
     desc: "Aktivitas individual yang tidak banyak melibatkan olah pikir, namun memerlukan ketekunan, ketelitian, dan biasanya berada di dalam ruangan.",
     theme: "yellow",
+    icon: ClipboardList
   },
   {
     code: "Te",
     name: "Technical",
     desc: "Aktivitas individual yang tidak banyak melibatkan olah pikir, namun memerlukan ketekunan, ketelitian, kegigihan, dan biasanya berada di luar ruangan.",
     theme: "yellow",
+    icon: Wrench
   }
 ];
 
@@ -259,6 +274,7 @@ export default function Home() {
     const themes = ['blue', 'green', 'yellow'];
     const theme = themes[index % themes.length];
     const style = themeStyles[theme];
+    const IconComponent = cluster.icon;
     return (
       <div
         key={cluster.code}
@@ -272,8 +288,8 @@ export default function Home() {
 
         <div className="relative z-10 w-full flex flex-col items-start">
           {/* Emblem Badge */}
-          <div className={`w-12 h-12 rounded-2xl ${style.badgeBg} flex items-center justify-center font-black text-xl mb-4 border border-white/50 shadow-sm transition-transform duration-300 group-hover:scale-110`}>
-            {cluster.code}
+          <div className={`w-12 h-12 rounded-2xl ${style.badgeBg} flex items-center justify-center mb-4 border border-white/50 shadow-sm transition-transform duration-300 group-hover:scale-110`}>
+            {IconComponent ? <IconComponent className="w-5 h-5 stroke-[2.2]" /> : cluster.code}
           </div>
 
           {/* Title */}

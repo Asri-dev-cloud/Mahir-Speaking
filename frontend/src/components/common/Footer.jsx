@@ -74,6 +74,11 @@ export default function Footer() {
                   <span>Paket Berlangganan (Pricing)</span>
                 </button>
               </li>
+              <li>
+                <button onClick={() => setActiveTab('blog')} className="hover:text-lime transition-colors flex items-center gap-1.5">
+                  <span>Blog Artikel & Tips</span>
+                </button>
+              </li>
             </ul>
           </div>
 

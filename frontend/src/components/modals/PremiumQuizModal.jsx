@@ -196,7 +196,7 @@ export const premiumQuestionsByUnit = {
     { id: 13, q: "Which sentence places 'usually' correctly?", opts: ["I usually wake up early.", "Usually I am wake up early.", "I wake usually up early.", "I wake up early am usually."], ans: 0, exp: "Frequency adverb biasanya berada sebelum main verb." },
     { id: 14, q: "Complete: 'First, we review vocabulary. ___, we practice the dialogue.'", opts: ["Never", "Then", "Ago", "Yet"], ans: 1, exp: "'Then' menunjukkan kegiatan selanjutnya." },
     { id: 15, q: "What does 'twice a week' mean?", opts: ["Dua minggu sekali", "Setiap dua hari", "Dua kali seminggu", "Dua jam seminggu"], ans: 2, exp: "'Twice' berarti dua kali." },
-    { id: 16, q: "Complete: 'She ___ English every night.'", opts: ["practice", "practise is", "practicing", "practices"], ans: 3, exp: "Subjek 'she' membutuhkan verb-s: 'practices'." },
+    { id: 16, q: "Complete: 'She ___ English every night.'", opts: ["practice", "Practice is", "practicing", "practices"], ans: 3, exp: "Subjek 'she' membutuhkan verb-s: 'practices'." },
     { id: 17, q: "Which phrase is NOT a sequence marker?", opts: ["Usually", "After that", "Next", "Finally"], ans: 0, exp: "'Usually' menyatakan frekuensi, bukan urutan." },
     { id: 18, q: "Complete: 'I have breakfast ___ going to class.'", opts: ["finally", "before", "usually", "next"], ans: 1, exp: "'Before + gerund' menunjukkan satu aktivitas terjadi lebih dahulu." },
     { id: 19, q: "Which answer is logically consistent? 'When do you study?'", opts: ["I study because English.", "I study with a book is.", "I study in the evening.", "I study three people."], ans: 2, exp: "'When' meminta waktu; 'in the evening' menjawabnya." },
