@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(sanitizeInput);
 app.use(globalLimiter);
 
-initSeedData();
+await initSeedData();
 
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', userRoutes);
