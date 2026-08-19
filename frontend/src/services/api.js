@@ -639,6 +639,52 @@ export const adminService = {
 };
 
 export const blogService = {
+  getPosts: async () => {
+    const res = await apiFetch('/users/blog-posts');
+    if (!res.success) {
+      const saved = localStorage.getItem('mahir_blog_posts');
+      return { success: true, posts: saved ? JSON.parse(saved) : [] };
+    }
+    return res;
+  },
+
+  createPost: async (postData) => {
+    const res = await apiFetch('/users/blog-posts', {
+      method: 'POST',
+      body: JSON.stringify(postData)
+    });
+    if (!res.success) {
+      const saved = localStorage.getItem('mahir_blog_posts');
+      let posts = saved ? JSON.parse(saved) : [];
+      const newPost = {
+        ...postData,
+        id: Date.now(),
+        date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+        likes: 0,
+        commentsCount: 0
+      };
+      posts.unshift(newPost);
+      localStorage.setItem('mahir_blog_posts', JSON.stringify(posts));
+      return { success: true, post: newPost };
+    }
+    return res;
+  },
+
+  deletePost: async (postId) => {
+    const res = await apiFetch(`/users/blog-posts/${postId}`, {
+      method: 'DELETE'
+    });
+    if (!res.success) {
+      const saved = localStorage.getItem('mahir_blog_posts');
+      if (saved) {
+        const posts = JSON.parse(saved).filter(p => p.id !== postId);
+        localStorage.setItem('mahir_blog_posts', JSON.stringify(posts));
+      }
+      return { success: true };
+    }
+    return res;
+  },
+
   getLikes: async () => {
     const res = await apiFetch('/users/blog-likes');
     if (!res.success) {

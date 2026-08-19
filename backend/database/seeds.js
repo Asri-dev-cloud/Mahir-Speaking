@@ -78,6 +78,37 @@ export async function initSeedData() {
           console.error('❌ [Database] Gagal membuat tabel alumni_stories:', createErr.message);
         }
       }
+
+      // Cek dan buat tabel blog_posts di PostgreSQL jika belum ada
+      try {
+        await query(`SELECT id FROM public.blog_posts LIMIT 1`);
+      } catch (err) {
+        console.log('⚠️ [Database] Tabel blog_posts PostgreSQL belum siap, membuat skema...');
+        try {
+          await query(`DROP TABLE IF EXISTS public.blog_posts CASCADE`);
+          await query(`
+            CREATE TABLE public.blog_posts (
+              id SERIAL PRIMARY KEY,
+              title TEXT NOT NULL,
+              excerpt TEXT NOT NULL,
+              category VARCHAR(100) NOT NULL,
+              author VARCHAR(255) NOT NULL,
+              author_image TEXT,
+              date VARCHAR(100) NOT NULL,
+              read_time VARCHAR(100),
+              image TEXT NOT NULL,
+              featured BOOLEAN DEFAULT false,
+              likes INTEGER DEFAULT 0,
+              comments_count INTEGER DEFAULT 0,
+              content TEXT NOT NULL,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+          `);
+          console.log('✅ [Database] Tabel public.blog_posts berhasil dibuat!');
+        } catch (createErr) {
+          console.error('❌ [Database] Gagal membuat tabel blog_posts PostgreSQL:', createErr.message);
+        }
+      }
       
       // Run payment_transactions.sql if exists
       const payPath = path.join(__dirname, 'payment_transactions.sql');
@@ -92,6 +123,12 @@ export async function initSeedData() {
       } catch (err) {
         console.log('Note: Column alter check skipped or already updated:', err.message);
       }
+
+      // Pastikan kolom created_at & updated_at ada di recorded_videos & modules untuk PostgreSQL
+      try { await query(`ALTER TABLE public.recorded_videos ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
+      try { await query(`ALTER TABLE public.recorded_videos ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
+      try { await query(`ALTER TABLE public.modules ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
+      try { await query(`ALTER TABLE public.modules ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
 
       console.log('✅ [Database] Skema & Stored Procedures PostgreSQL berhasil diinisialisasi!');
 
@@ -142,6 +179,12 @@ export async function initSeedData() {
       } catch (err) {
         console.error('⚠️ [Database] Gagal migrasi kolom baru di SQLite:', err.message);
       }
+
+      // Pastikan kolom created_at & updated_at ada di recorded_videos & modules untuk SQLite
+      try { await query(`ALTER TABLE recorded_videos ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
+      try { await query(`ALTER TABLE recorded_videos ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
+      try { await query(`ALTER TABLE modules ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
+      try { await query(`ALTER TABLE modules ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP`); } catch (e) {}
 
       await query(`
         CREATE TABLE IF NOT EXISTS packages (
@@ -362,6 +405,37 @@ export async function initSeedData() {
           console.error('❌ [Database] Gagal membuat tabel alumni_stories SQLite:', createErr.message);
         }
       }
+
+      // Cek dan buat tabel blog_posts di SQLite jika belum ada
+      try {
+        await query(`SELECT id FROM blog_posts LIMIT 1`);
+      } catch (err) {
+        console.log('⚠️ [Database] Tabel blog_posts SQLite belum siap, membuat skema...');
+        try {
+          await query(`DROP TABLE IF EXISTS blog_posts`);
+          await query(`
+            CREATE TABLE blog_posts (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT NOT NULL,
+              excerpt TEXT NOT NULL,
+              category TEXT NOT NULL,
+              author TEXT NOT NULL,
+              author_image TEXT,
+              date TEXT NOT NULL,
+              read_time TEXT,
+              image TEXT NOT NULL,
+              featured INTEGER DEFAULT 0,
+              likes INTEGER DEFAULT 0,
+              comments_count INTEGER DEFAULT 0,
+              content TEXT NOT NULL,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+          `);
+          console.log('✅ [Database] Tabel blog_posts SQLite berhasil dibuat!');
+        } catch (createErr) {
+          console.error('❌ [Database] Gagal membuat tabel blog_posts SQLite:', createErr.message);
+        }
+      }
     }
 
     // Mempersiapkan data paket langganan default pada database.
@@ -537,6 +611,72 @@ export async function initSeedData() {
           ('Belajar English via Lagu: \"Someone Like You\" - Adele', 'Ms. Ade Ihdinayah', '60 Menit', 'Advance Level', 'https://www.youtube.com/embed/hLQl3WQQoQ0')
         `);
       }
+    }
+
+    // 📝 Semai data blog_posts awal jika kosong
+    const postsCount = await query(`SELECT COUNT(*) as count FROM ${isPostgres ? 'public.' : ''}blog_posts`);
+    if (Number(postsCount[0].count) === 0) {
+      console.log('Nyiapin data blog posts awal...');
+      const defaultPosts = [
+        {
+          title: "5 Tips Ampuh Mengatasi Rasa Takut & Canggung Saat Bicara Bahasa Inggris",
+          excerpt: "Seringkali kendala utama belajar speaking bukan grammar, melainkan mental block. Simak cara melatih mental dan mengatasinya di sini.",
+          category: "Tips & Trik",
+          author: "Mr. Alfada Naufal",
+          author_image: "/alfa.png",
+          date: "18 Agustus 2026",
+          read_time: "5 Menit Baca",
+          image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800",
+          featured: 1,
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Apakah kamu sering merasa deg-degan, keringat dingin, atau mendadak 'blank' saat harus berbicara Bahasa Inggris di depan umum? Tenang, kamu tidak sendirian. Lebih dari 70% pembelajar bahasa asing mengalami apa yang disebut dengan foreign language anxiety.</p><p class="mb-4">Masalah utama biasanya bukan karena kamu tidak tahu kosakata (vocabulary) atau rumus tata bahasa (grammar), tetapi karena adanya mental block berupa rasa takut dinilai salah, ditertawakan, atau kurang sempurna. Di artikel ini, kita akan membahas 5 tips praktis untuk meruntuhkan tembok ketakutan tersebut.</p><h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">1. Sadari Bahwa Komunikasi Lebih Penting daripada Kesempurnaan</h3><p class="mb-4">Tujuan utama bahasa adalah untuk menyampaikan pesan (message delivery). Selama lawan bicara memahami maksudmu, komunikasi telah sukses dilakukan. Para penutur asli (native speakers) pun sangat memaklumi jika ada kesalahan tata bahasa kecil saat kamu berbicara. Mereka akan lebih menghargai usahamu dalam mengekspresikan diri.</p>`
+        },
+        {
+          title: "Mengenal Metode Shadowing: Cara Praktis Native Speaker Melatih Kelancaran",
+          excerpt: "Bagaimana cara melatih otot lidah agar pelafalan terdengar natural? Shadowing adalah kunci utama yang banyak digunakan oleh poliglot dunia.",
+          category: "Speaking Drill",
+          author: "Ms. Deasy Puspawati",
+          author_image: "/deasy.png",
+          date: "15 Agustus 2026",
+          read_time: "4 Menit Baca",
+          image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800",
+          featured: 0,
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Pernahkah kamu merasa lidahmu kaku saat melafalkan kata-kata Bahasa Inggris? Itu karena otot bicara kita belum terbiasa dengan artikulasi aksen asing. Salah satu metode terbaik untuk melatihnya adalah Shadowing.</p><h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">Apa itu Metode Shadowing?</h3><p class="mb-4">Shadowing dikembangkan oleh Profesor Alexander Arguelles. Cara kerjanya sangat sederhana: kamu memutar klip audio (pidato, podcast, film) berbahasa Inggris, lalu menirukan suara tersebut secara real-time dengan jeda sekian milidetik, layaknya bayangan yang selalu mengikuti objeknya.</p>`
+        },
+        {
+          title: "10 Frasa Slang Bahasa Inggris Populer yang Bikin Kamu Terdengar Lebih Natural",
+          excerpt: "Ingin terdengar lebih santai dan tidak kaku layaknya textbook? Pelajari kumpulan idiom dan slang modern yang sering dipakai sehari-hari.",
+          category: "Vocabulary",
+          author: "Mr. Garry Wilson",
+          author_image: "/garry.png",
+          date: "12 Agustus 2026",
+          read_time: "6 Menit Baca",
+          image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800",
+          featured: 0,
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Pernahkah kamu mengobrol dengan penutur asli dan bingung ketika mereka menggunakan kata-kata yang tidak ada di kamus sekolah? Itulah yang disebut dengan slang atau bahasa gaul.</p>`
+        },
+        {
+          title: "Pentingnya Mengetahui Gaya Belajar Unik (ST30) Sebelum Belajar Speaking",
+          excerpt: "Setiap orang punya karakter kognitif yang berbeda. Mengapa cara belajar speaking konvensional seringkali gagal? Temukan jawabannya di sini.",
+          category: "Metode Belajar",
+          author: "Tim Akademik",
+          author_image: "/MP.png",
+          date: "10 Agustus 2026",
+          read_time: "5 Menit Baca",
+          image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800",
+          featured: 0,
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Mengapa ada siswa yang sangat cepat lancar bicara dengan sering mendengarkan lagu, sementara yang lain baru bisa lancar setelah banyak menulis dan melakukan simulasi roleplay? Jawabannya terletak pada gaya belajar unik masing-masing individu.</p>`
+        }
+      ];
+
+      for (const post of defaultPosts) {
+        await query(
+          `INSERT INTO ${isPostgres ? 'public.' : ''}blog_posts 
+           (title, excerpt, category, author, author_image, date, read_time, image, featured, content) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [post.title, post.excerpt, post.category, post.author, post.author_image, post.date, post.read_time, post.image, post.featured, post.content]
+        );
+      }
+      console.log('✅ Default blog posts seeded successfully!');
     }
 
     console.log('Seed data database beres dengan sempurna, slay abis! ✨');

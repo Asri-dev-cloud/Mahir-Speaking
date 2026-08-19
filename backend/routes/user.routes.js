@@ -241,4 +241,99 @@ router.post('/alumni-stories', async (req, res) => {
   }
 });
 
+// Public: Get all blog posts
+router.get('/blog-posts', async (req, res) => {
+  try {
+    const posts = await query(`
+      SELECT id, title, excerpt, category, author, author_image AS "authorImage",
+             date, read_time AS "readTime", image, featured, likes, comments_count AS "commentsCount", content 
+      FROM blog_posts ORDER BY id DESC
+    `);
+    
+    // Map featured to boolean for React
+    const formatted = posts.map(p => ({
+      ...p,
+      featured: p.featured === 1 || p.featured === true || p.featured === '1'
+    }));
+
+    return res.json({ success: true, posts: formatted });
+  } catch (err) {
+    console.error('Fetch blog posts error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to fetch blog posts.' });
+  }
+});
+
+// Public: Create a new blog post
+router.post('/blog-posts', async (req, res) => {
+  try {
+    const { title, excerpt, category, author, authorImage, readTime, image, featured, content } = req.body;
+    
+    if (!title || !excerpt || !content) {
+      return res.status(400).json({ success: false, message: 'Judul, ringkasan, dan konten wajib diisi.' });
+    }
+
+    const isFeatured = featured ? 1 : 0;
+    
+    if (isFeatured === 1) {
+      // Unfeature other posts
+      await query(`UPDATE blog_posts SET featured = 0`);
+    }
+
+    const result = await query(
+      `INSERT INTO blog_posts 
+       (title, excerpt, category, author, author_image, date, read_time, image, featured, likes, comments_count, content) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)`,
+      [
+        title.trim(),
+        excerpt.trim(),
+        category || 'Tips & Trik',
+        author ? author.trim() : 'Administrator',
+        authorImage || '/MP.png',
+        new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+        readTime || '5 Menit Baca',
+        image || 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800',
+        isFeatured,
+        content.trim()
+      ]
+    );
+
+    const newPost = {
+      id: result.lastID,
+      title,
+      excerpt,
+      category: category || 'Tips & Trik',
+      author: author || 'Administrator',
+      authorImage: authorImage || '/MP.png',
+      date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+      readTime: readTime || '5 Menit Baca',
+      image: image || 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800',
+      featured: isFeatured === 1,
+      likes: 0,
+      commentsCount: 0,
+      content
+    };
+
+    return res.json({ success: true, message: 'Artikel berhasil diterbitkan!', post: newPost });
+  } catch (err) {
+    console.error('Create blog post error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to create blog post.' });
+  }
+});
+
+// Public: Delete a blog post
+router.delete('/blog-posts/:id', async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id);
+    if (isNaN(postId)) {
+      return res.status(400).json({ success: false, message: 'Invalid post ID.' });
+    }
+
+    await query(`DELETE FROM blog_posts WHERE id = ?`, [postId]);
+    return res.json({ success: true, message: 'Artikel berhasil dihapus!' });
+  } catch (err) {
+    console.error('Delete blog post error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to delete blog post.' });
+  }
+});
+
 export default router;

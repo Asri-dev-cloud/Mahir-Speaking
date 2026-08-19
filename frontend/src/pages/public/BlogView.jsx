@@ -255,6 +255,13 @@ export default function BlogView() {
   const [likedPosts, setLikedPosts] = useState({});
 
   useEffect(() => {
+    // Load blog posts from DB
+    blogService.getPosts().then((res) => {
+      if (res && res.success && Array.isArray(res.posts)) {
+        setPosts(res.posts);
+      }
+    });
+
     // Load likes from DB (or localStorage fallback)
     blogService.getLikes().then((res) => {
       if (res && res.success && Array.isArray(res.likes)) {
@@ -315,8 +322,18 @@ export default function BlogView() {
   const [newCategory, setNewCategory] = useState("Tips & Trik");
   const [newReadTime, setNewReadTime] = useState("5 Menit Baca");
   const [newContent, setNewContent] = useState("");
-  const [newImage, setNewImage] = useState("/g.jpeg");
+  const [newImage, setNewImage] = useState("https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800");
   const [newFeatured, setNewFeatured] = useState(false);
+  const [newAuthor, setNewAuthor] = useState("");
+  const [newAuthorImage, setNewAuthorImage] = useState("/MP.png");
+
+  // Sync author info when user changes or modal opens
+  useEffect(() => {
+    if (user) {
+      setNewAuthor(user.full_name || "");
+      setNewAuthorImage(user.avatar || "/MP.png");
+    }
+  }, [user, isAddModalOpen]);
 
   // Registration Form State (Emerald/Green Card in Sidebar)
   const [registrationName, setRegistrationName] = useState("");
@@ -384,62 +401,97 @@ export default function BlogView() {
   };
 
   // Create article action
-  const handleCreatePost = (e) => {
+  const handleCreatePost = async (e) => {
     e.preventDefault();
-    const newPostId = posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 1;
-    const createdPost = {
-      id: newPostId,
+    const postData = {
       title: newTitle,
       excerpt: newExcerpt,
       category: newCategory,
-      author: user ? user.full_name : "Administrator",
-      authorImage: user && user.avatar ? user.avatar : "/MP.png",
-      date: new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      }),
+      author: newAuthor || (user ? user.full_name : "Administrator"),
+      authorImage: newAuthorImage || (user && user.avatar ? user.avatar : "/MP.png"),
       readTime: newReadTime,
       image: newImage,
       featured: newFeatured,
-      likes: 0,
-      commentsCount: 0,
       content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">${newExcerpt}</p>
                 <p class="mb-4">${newContent.replace(/\n/g, "</p><p class='mb-4'>")}</p>`
     };
 
-    let updatedPosts = [...posts];
-    if (newFeatured) {
-      // Unfeature other posts if this one is set as featured
-      updatedPosts = updatedPosts.map(p => ({ ...p, featured: false }));
+    const res = await blogService.createPost(postData);
+    if (res && res.success) {
+      const createdPost = res.post || {
+        ...postData,
+        id: Date.now(),
+        date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+        likes: 0,
+        commentsCount: 0
+      };
+
+      let updatedPosts = [...posts];
+      if (newFeatured) {
+        // Unfeature other posts if this one is set as featured
+        updatedPosts = updatedPosts.map(p => ({ ...p, featured: false }));
+      }
+      updatedPosts = [createdPost, ...updatedPosts];
+
+      setPosts(updatedPosts);
+      // Reload posts from DB to make sure we're fully synced
+      blogService.getPosts().then((r) => {
+        if (r && r.success && Array.isArray(r.posts)) {
+          setPosts(r.posts);
+        }
+      });
+
+      // Reset Form
+      setNewTitle("");
+      setNewExcerpt("");
+      setNewContent("");
+      setNewCategory("Tips & Trik");
+      setNewReadTime("5 Menit Baca");
+      setNewImage("https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800");
+      setNewFeatured(false);
+      setIsAddModalOpen(false);
+    } else {
+      alert("Gagal memposting artikel ke server.");
     }
-    updatedPosts = [createdPost, ...updatedPosts];
+  };
 
-    setPosts(updatedPosts);
-    localStorage.setItem("mahir_blog_posts", JSON.stringify(updatedPosts));
+  const handleAuthorImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewAuthorImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-    // Reset Form
-    setNewTitle("");
-    setNewExcerpt("");
-    setNewContent("");
-    setNewCategory("Tips & Trik");
-    setNewReadTime("5 Menit Baca");
-    setNewImage("/g.jpeg");
-    setNewFeatured(false);
-    setIsAddModalOpen(false);
+  const handleCoverImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Delete article action
-  const handleDeletePost = (postId, e) => {
+  const handleDeletePost = async (postId, e) => {
     e.stopPropagation();
     if (window.confirm("Apakah Anda yakin ingin menghapus artikel ini?")) {
-      const updatedPosts = posts.filter(p => p.id !== postId);
-      setPosts(updatedPosts);
-      localStorage.setItem("mahir_blog_posts", JSON.stringify(updatedPosts));
-      
-      // Close reader modal if the deleted post was open
-      if (selectedPost && selectedPost.id === postId) {
-        setSelectedPost(null);
+      const res = await blogService.deletePost(postId);
+      if (res && res.success) {
+        const updatedPosts = posts.filter(p => p.id !== postId);
+        setPosts(updatedPosts);
+        
+        // Close reader modal if the deleted post was open
+        if (selectedPost && selectedPost.id === postId) {
+          setSelectedPost(null);
+        }
+      } else {
+        alert("Gagal menghapus artikel.");
       }
     }
   };
@@ -951,6 +1003,52 @@ export default function BlogView() {
                   />
                 </div>
 
+                {/* Author Name */}
+                <div className="space-y-1.5">
+                  <label className="font-black text-slate-700 uppercase tracking-wider text-[10px]">Nama Penulis *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nama penulis artikel..."
+                    value={newAuthor}
+                    onChange={(e) => setNewAuthor(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-[#7457E8] font-semibold text-slate-800 bg-slate-50 focus:bg-white transition-all"
+                  />
+                </div>
+
+                {/* Author Photo Profile (Taken from device) */}
+                <div className="space-y-1.5">
+                  <label className="font-black text-slate-700 uppercase tracking-wider text-[10px]">Foto Profil Penulis *</label>
+                  <div className="flex items-center gap-3">
+                    {newAuthorImage ? (
+                      <img
+                        src={newAuthorImage}
+                        alt="Author Avatar Preview"
+                        className="w-10 h-10 rounded-full object-cover border border-slate-300 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-[#0362C0] text-white flex items-center justify-center font-bold text-xs">
+                        {newAuthor ? newAuthor.charAt(0).toUpperCase() : 'A'}
+                      </div>
+                    )}
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAuthorImageUpload}
+                        className="hidden"
+                        id="author-photo-upload-input"
+                      />
+                      <label
+                        htmlFor="author-photo-upload-input"
+                        className="px-3.5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-[#0362C0] hover:text-white transition-all cursor-pointer inline-block border border-slate-700 shadow-sm"
+                      >
+                        Pilih Foto dari Device
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Excerpt */}
                 <div className="space-y-1.5 md:col-span-2">
                   <label className="font-black text-slate-700 uppercase tracking-wider text-[10px]">Ringkasan Pendek (Excerpt) *</label>
@@ -993,23 +1091,33 @@ export default function BlogView() {
                 </div>
 
                 {/* Cover Image Selector */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 md:col-span-2">
                   <label className="font-black text-slate-700 uppercase tracking-wider text-[10px]">Foto Cover Artikel *</label>
-                  <select
-                    value={newImage}
-                    onChange={(e) => setNewImage(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-[#7457E8] font-bold text-slate-800 bg-slate-50 focus:bg-white transition-all"
-                  >
-                    <option value="/g.jpeg">Gallery G (Belajar Sesi Individu)</option>
-                    <option value="/h.jpeg">Gallery H (Diskusi Kelompok)</option>
-                    <option value="/i.jpeg">Gallery I (Speaking Club)</option>
-                    <option value="/j.jpeg">Gallery J (Workshop Professional)</option>
-                    <option value="/k.jpeg">Gallery K (Evaluasi Pelafalan)</option>
-                    <option value="/l.jpeg">Gallery L (Perayaan Progres)</option>
-                    <option value="/m.jpg">Community Event M</option>
-                    <option value="/n.jpg">Global Connection N</option>
-                    <option value="/o.jpg">Flexible Study O</option>
-                  </select>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    {newImage && (
+                      <img
+                        src={newImage}
+                        alt="Cover Preview"
+                        className="w-full sm:w-40 h-24 object-cover rounded-2xl border border-slate-200 shadow-sm bg-slate-50"
+                      />
+                    )}
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCoverImageUpload}
+                        className="hidden"
+                        id="cover-photo-upload-input"
+                      />
+                      <label
+                        htmlFor="cover-photo-upload-input"
+                        className="px-4 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-[#0362C0] hover:text-white transition-all cursor-pointer inline-block border border-slate-700 shadow-sm"
+                      >
+                        Upload Foto Cover
+                      </label>
+                      <p className="text-[10px] text-slate-400 font-semibold mt-1.5">Mendukung file gambar JPG, PNG, atau WEBP.</p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Is Featured Checkbox */}
