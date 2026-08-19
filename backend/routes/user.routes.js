@@ -200,4 +200,45 @@ router.post('/blog-likes/:id', async (req, res) => {
   }
 });
 
+// Public: Get all alumni stories
+router.get('/alumni-stories', async (req, res) => {
+  try {
+    const stories = await query(`SELECT id, name, text, rating, created_at FROM alumni_stories ORDER BY id DESC`);
+    return res.json({ success: true, stories });
+  } catch (err) {
+    console.error('Fetch alumni stories error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to fetch alumni stories.' });
+  }
+});
+
+// Public: Submit a new alumni story
+router.post('/alumni-stories', async (req, res) => {
+  try {
+    const { name, text, rating } = req.body;
+    if (!name || !text) {
+      return res.status(400).json({ success: false, message: 'Nama dan cerita wajib diisi.' });
+    }
+
+    const storyRating = parseInt(rating) || 5;
+
+    const result = await query(
+      `INSERT INTO alumni_stories (name, text, rating) VALUES (?, ?, ?)`,
+      [name.trim(), text.trim(), storyRating]
+    );
+
+    const newStory = {
+      id: result.lastID,
+      name: name.trim(),
+      text: text.trim(),
+      rating: storyRating,
+      created_at: new Date()
+    };
+
+    return res.json({ success: true, message: 'Cerita berhasil dikirim!', story: newStory });
+  } catch (err) {
+    console.error('Submit alumni story error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to submit alumni story.' });
+  }
+});
+
 export default router;

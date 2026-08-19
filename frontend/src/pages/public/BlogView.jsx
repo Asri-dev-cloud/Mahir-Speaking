@@ -14,7 +14,7 @@ import {
   Trash2
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { blogService } from "../../services/api";
+import { blogService, alumniService } from "../../services/api";
 
 // Mock blog post data (fallback)
 const DEFAULT_BLOG_POSTS = [
@@ -27,7 +27,7 @@ const DEFAULT_BLOG_POSTS = [
     authorImage: "/alfa.png",
     date: "18 Agustus 2026",
     readTime: "5 Menit Baca",
-    image: "/g.jpeg", // Using existing gallery image
+    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800", // Using existing gallery image
     featured: true,
     likes: 42,
     commentsCount: 8,
@@ -75,7 +75,7 @@ const DEFAULT_BLOG_POSTS = [
     authorImage: "/deasy.png",
     date: "15 Agustus 2026",
     readTime: "4 Menit Baca",
-    image: "/h.jpeg",
+    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800",
     featured: false,
     likes: 28,
     commentsCount: 3,
@@ -111,7 +111,7 @@ const DEFAULT_BLOG_POSTS = [
     authorImage: "/garry.png",
     date: "12 Agustus 2026",
     readTime: "6 Menit Baca",
-    image: "/i.jpeg",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800",
     featured: false,
     likes: 56,
     commentsCount: 12,
@@ -146,7 +146,7 @@ const DEFAULT_BLOG_POSTS = [
     authorImage: "/MP.png",
     date: "10 Agustus 2026",
     readTime: "5 Menit Baca",
-    image: "/j.jpeg",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800",
     featured: false,
     likes: 31,
     commentsCount: 5,
@@ -181,19 +181,19 @@ const POPULAR_POSTS = [
     id: 2,
     title: "Mengenal Metode Shadowing: Cara Praktis Melatih Kelancaran Bicara",
     date: "15 Agustus 2026",
-    image: "/h.jpeg"
+    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800"
   },
   {
     id: 3,
     title: "10 Frasa Slang Bahasa Inggris Populer yang Sering Digunakan Sehari-hari",
     date: "12 Agustus 2026",
-    image: "/i.jpeg"
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800"
   },
   {
     id: 4,
     title: "Pentingnya Mengidentifikasi Gaya Belajar Unik (ST30) Sebelum Kelas",
     date: "10 Agustus 2026",
-    image: "/j.jpeg"
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800"
   }
 ];
 
@@ -214,11 +214,34 @@ export default function BlogView() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   
-  // Persisted state of blog posts
+  // Persisted state of blog posts with local image fallback update
   const [posts, setPosts] = useState(() => {
     const saved = localStorage.getItem("mahir_blog_posts");
-    return saved ? JSON.parse(saved) : DEFAULT_BLOG_POSTS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const updated = parsed.map(post => {
+          if (post.image === "/g.jpeg") post.image = "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800";
+          if (post.image === "/h.jpeg") post.image = "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800";
+          if (post.image === "/i.jpeg") post.image = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800";
+          if (post.image === "/j.jpeg") post.image = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800";
+          return post;
+        });
+        return updated;
+      } catch (e) {
+        return DEFAULT_BLOG_POSTS;
+      }
+    }
+    return DEFAULT_BLOG_POSTS;
   });
+
+  // Alumni stories states
+  const [stories, setStories] = useState([]);
+  const [newStoryName, setNewStoryName] = useState("");
+  const [newStoryText, setNewStoryText] = useState("");
+  const [newStoryRating, setNewStoryRating] = useState(5);
+  const [isSubmittingStory, setIsSubmittingStory] = useState(false);
+  const [storySuccessMessage, setStorySuccessMessage] = useState("");
 
   // Calculate Admin permission status
   const isAdmin = user && (user.role === 'admin' || user.email?.toLowerCase() === 'hartiniasri32@gmail.com' || user.admin_type);
@@ -250,7 +273,41 @@ export default function BlogView() {
         setLikedPosts(JSON.parse(savedLiked));
       } catch (e) {}
     }
+
+    // Load alumni stories from DB
+    alumniService.getStories().then((res) => {
+      if (res && res.success && Array.isArray(res.stories)) {
+        setStories(res.stories);
+      } else {
+        setStories(ALUMNI_TESTIMONIALS);
+      }
+    });
   }, []);
+
+  const handleStorySubmit = async (e) => {
+    e.preventDefault();
+    if (!newStoryName.trim() || !newStoryText.trim()) return;
+
+    setIsSubmittingStory(true);
+    const res = await alumniService.submitStory({
+      name: newStoryName,
+      text: newStoryText,
+      rating: newStoryRating
+    });
+
+    setIsSubmittingStory(false);
+    if (res && res.success) {
+      setStories((prev) => [res.story || { name: newStoryName, text: newStoryText, rating: newStoryRating, created_at: new Date() }, ...prev]);
+      setNewStoryName("");
+      setNewStoryText("");
+      setNewStoryRating(5);
+      setStorySuccessMessage("Cerita kamu berhasil terkirim!");
+      setTimeout(() => setStorySuccessMessage(""), 4000);
+    } else {
+      setStorySuccessMessage("Gagal mengirim cerita. Coba lagi.");
+      setTimeout(() => setStorySuccessMessage(""), 4000);
+    }
+  };
 
   // Add Article Form States
   const [newTitle, setNewTitle] = useState("");
@@ -691,21 +748,88 @@ export default function BlogView() {
                 Cerita Alumni
               </h3>
               
-              <div className="space-y-4">
-                {ALUMNI_TESTIMONIALS.map((testi, idx) => (
-                  <div key={idx} className="space-y-2 border-b border-slate-100 last:border-b-0 pb-3 last:pb-0">
-                    <div className="flex items-center gap-1">
-                      {[...Array(testi.rating)].map((_, rIdx) => (
-                        <Star key={rIdx} className="w-3 h-3 text-yellow-400 fill-current" />
-                      ))}
+              <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                {stories.length > 0 ? (
+                  stories.map((testi, idx) => (
+                    <div key={testi.id || idx} className="space-y-2 border-b border-slate-100 last:border-b-0 pb-3 last:pb-0">
+                      <div className="flex items-center gap-1">
+                        {[...Array(testi.rating || 5)].map((_, rIdx) => (
+                          <Star key={rIdx} className="w-3 h-3 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-slate-600 font-medium leading-relaxed italic">
+                        "{testi.text}"
+                      </p>
+                      <h5 className="text-[10px] font-black text-slate-900">- {testi.name}</h5>
                     </div>
-                    <p className="text-[11px] text-slate-600 font-medium leading-relaxed italic">
-                      "{testi.text}"
-                    </p>
-                    <h5 className="text-[10px] font-black text-slate-900">- {testi.name}</h5>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-400 italic">Belum ada cerita alumni.</p>
+                )}
               </div>
+
+              {/* Form Input Cerita Baru */}
+              <form onSubmit={handleStorySubmit} className="pt-3 border-t border-slate-100 space-y-2.5">
+                <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-wider">Kirim Cerita Kamu</h4>
+                
+                {storySuccessMessage && (
+                  <p className={`text-[10px] font-bold text-center p-2 rounded-xl border ${
+                    storySuccessMessage.includes("Gagal") 
+                      ? "text-red-600 bg-red-50 border-red-100" 
+                      : "text-emerald-600 bg-emerald-50 border-emerald-100"
+                  }`}>
+                    {storySuccessMessage}
+                  </p>
+                )}
+
+                <input
+                  type="text"
+                  placeholder="Nama kamu..."
+                  value={newStoryName}
+                  onChange={(e) => setNewStoryName(e.target.value)}
+                  required
+                  className="w-full text-[11px] px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0362C0] bg-slate-50 transition-colors"
+                />
+                
+                <textarea
+                  placeholder="Bagikan pengalaman belajarmu..."
+                  value={newStoryText}
+                  onChange={(e) => setNewStoryText(e.target.value)}
+                  required
+                  rows={2}
+                  className="w-full text-[11px] px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0362C0] bg-slate-50 resize-none transition-colors"
+                />
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-0.5">
+                    <span className="text-[10px] font-bold text-slate-500 mr-1">Rating:</span>
+                    {[1, 2, 3, 4, 5].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setNewStoryRating(val)}
+                        className="focus:outline-none"
+                      >
+                        <Star
+                          className={`w-3.5 h-3.5 ${
+                            val <= newStoryRating
+                              ? "text-yellow-400 fill-current"
+                              : "text-slate-300"
+                          } transition-all`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmittingStory}
+                    className="px-3.5 py-1.5 bg-[#0362C0] text-white text-[10px] font-black uppercase tracking-wider rounded-xl hover:bg-blue-800 transition-all disabled:opacity-50"
+                  >
+                    {isSubmittingStory ? "Mengirim..." : "Kirim"}
+                  </button>
+                </div>
+              </form>
             </div>
 
           </div>

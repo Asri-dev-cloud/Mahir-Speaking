@@ -675,6 +675,41 @@ export const blogService = {
   }
 };
 
+export const alumniService = {
+  getStories: async () => {
+    const res = await apiFetch('/users/alumni-stories');
+    if (!res.success) {
+      // Offline fallback: load stories from localStorage
+      const saved = localStorage.getItem('mahir_alumni_stories');
+      return { success: true, stories: saved ? JSON.parse(saved) : [] };
+    }
+    return res;
+  },
+
+  submitStory: async (storyData) => {
+    const res = await apiFetch('/users/alumni-stories', {
+      method: 'POST',
+      body: JSON.stringify(storyData)
+    });
+    if (!res.success) {
+      // Offline fallback: save to localStorage
+      const saved = localStorage.getItem('mahir_alumni_stories');
+      let stories = saved ? JSON.parse(saved) : [];
+      const newStory = {
+        id: Date.now(),
+        name: storyData.name,
+        text: storyData.text,
+        rating: storyData.rating || 5,
+        created_at: new Date().toISOString()
+      };
+      stories.unshift(newStory);
+      localStorage.setItem('mahir_alumni_stories', JSON.stringify(stories));
+      return { success: true, story: newStory };
+    }
+    return res;
+  }
+};
+
 // Pembantu Pengurai Video YouTube / Google Drive dan Gambar Mini (Thumbnail)
 export const parseVideoUrl = (url, customThumb = '') => {
   let embedUrl = url;

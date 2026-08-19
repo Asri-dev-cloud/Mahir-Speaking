@@ -51,6 +51,33 @@ export async function initSeedData() {
           console.error('❌ [Database] Gagal membuat tabel blog_likes:', createErr.message);
         }
       }
+
+      // Cek dan buat tabel alumni_stories di PostgreSQL jika belum ada
+      try {
+        await query(`SELECT id FROM public.alumni_stories LIMIT 1`);
+      } catch (err) {
+        console.log('⚠️ [Database] Tabel alumni_stories PostgreSQL belum siap, membuat ulang skema...');
+        try {
+          await query(`DROP TABLE IF EXISTS public.alumni_stories CASCADE`);
+          await query(`
+            CREATE TABLE public.alumni_stories (
+              id SERIAL PRIMARY KEY,
+              name VARCHAR(255) NOT NULL,
+              text TEXT NOT NULL,
+              rating INTEGER DEFAULT 5,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+          `);
+          console.log('✅ [Database] Tabel public.alumni_stories berhasil dibuat!');
+          // Seed default stories
+          await query(`INSERT INTO public.alumni_stories (name, text, rating) VALUES 
+            ('Rina Kusuma', 'Dulu mau ngomong ''hello'' aja mikir grammar 5 menit. Setelah ikut program intensif, sekarang pede banget ngomong sama klien luar negeri!', 5),
+            ('Andi Wijaya', 'Sesi private dengan mentor bener-bener ngebantu karena dapet feedback pelafalan yang detail banget.', 5)
+          `);
+        } catch (createErr) {
+          console.error('❌ [Database] Gagal membuat tabel alumni_stories:', createErr.message);
+        }
+      }
       
       // Run payment_transactions.sql if exists
       const payPath = path.join(__dirname, 'payment_transactions.sql');
@@ -306,6 +333,33 @@ export async function initSeedData() {
           console.log('✅ [Database] Tabel blog_likes SQLite berhasil dibuat!');
         } catch (createErr) {
           console.error('❌ [Database] Gagal membuat tabel blog_likes SQLite:', createErr.message);
+        }
+      }
+
+      // Cek dan buat tabel alumni_stories di SQLite
+      try {
+        await query(`SELECT id FROM alumni_stories LIMIT 1`);
+      } catch (err) {
+        console.log('⚠️ [Database] Tabel alumni_stories SQLite belum siap, membuat ulang skema...');
+        try {
+          await query(`DROP TABLE IF EXISTS alumni_stories`);
+          await query(`
+            CREATE TABLE alumni_stories (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL,
+              text TEXT NOT NULL,
+              rating INTEGER DEFAULT 5,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+          `);
+          console.log('✅ [Database] Tabel alumni_stories SQLite berhasil dibuat!');
+          // Seed default stories
+          await query(`INSERT INTO alumni_stories (name, text, rating) VALUES 
+            ('Rina Kusuma', 'Dulu mau ngomong ''hello'' aja mikir grammar 5 menit. Setelah ikut program intensif, sekarang pede banget ngomong sama klien luar negeri!', 5),
+            ('Andi Wijaya', 'Sesi private dengan mentor bener-bener ngebantu karena dapet feedback pelafalan yang detail banget.', 5)
+          `);
+        } catch (createErr) {
+          console.error('❌ [Database] Gagal membuat tabel alumni_stories SQLite:', createErr.message);
         }
       }
     }
