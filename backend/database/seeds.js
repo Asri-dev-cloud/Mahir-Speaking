@@ -614,6 +614,13 @@ export async function initSeedData() {
     }
 
     // 📝 Semai data blog_posts awal jika kosong
+    // Hapus data lama jika terdeteksi data lama/terpotong (panjang konten default kurang dari 800 karakter)
+    const checkTruncated = await query(`SELECT id FROM ${isPostgres ? 'public.' : ''}blog_posts WHERE author IN ('Mr. Alfada Naufal', 'Ms. Deasy Puspawati', 'Mr. Garry Wilson', 'Tim Akademik') AND LENGTH(content) < 800 LIMIT 1`);
+    if (checkTruncated.length > 0) {
+      console.log('🔄 Mendeteksi artikel default terpotong. Mengatur ulang tabel blog_posts...');
+      await query(`DELETE FROM ${isPostgres ? 'public.' : ''}blog_posts`);
+    }
+
     const postsCount = await query(`SELECT COUNT(*) as count FROM ${isPostgres ? 'public.' : ''}blog_posts`);
     if (Number(postsCount[0].count) === 0) {
       console.log('Nyiapin data blog posts awal...');
@@ -628,7 +635,38 @@ export async function initSeedData() {
           read_time: "5 Menit Baca",
           image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800",
           featured: 1,
-          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Apakah kamu sering merasa deg-degan, keringat dingin, atau mendadak 'blank' saat harus berbicara Bahasa Inggris di depan umum? Tenang, kamu tidak sendirian. Lebih dari 70% pembelajar bahasa asing mengalami apa yang disebut dengan foreign language anxiety.</p><p class="mb-4">Masalah utama biasanya bukan karena kamu tidak tahu kosakata (vocabulary) atau rumus tata bahasa (grammar), tetapi karena adanya mental block berupa rasa takut dinilai salah, ditertawakan, atau kurang sempurna. Di artikel ini, kita akan membahas 5 tips praktis untuk meruntuhkan tembok ketakutan tersebut.</p><h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">1. Sadari Bahwa Komunikasi Lebih Penting daripada Kesempurnaan</h3><p class="mb-4">Tujuan utama bahasa adalah untuk menyampaikan pesan (message delivery). Selama lawan bicara memahami maksudmu, komunikasi telah sukses dilakukan. Para penutur asli (native speakers) pun sangat memaklumi jika ada kesalahan tata bahasa kecil saat kamu berbicara. Mereka akan lebih menghargai usahamu dalam mengekspresikan diri.</p>`
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">
+        Apakah kamu sering merasa deg-degan, keringat dingin, atau mendadak 'blank' saat harus berbicara Bahasa Inggris di depan umum? Tenang, kamu tidak sendirian. Lebih dari 70% pembelajar bahasa asing mengalami apa yang disebut dengan <em>foreign language anxiety</em>.
+      </p>
+      
+      <p class="mb-4">
+        Masalah utama biasanya bukan karena kamu tidak tahu kosakata (vocabulary) atau rumus tata bahasa (grammar), tetapi karena adanya mental block berupa rasa takut dinilai salah, ditertawakan, atau kurang sempurna. Di artikel ini, kita akan membahas 5 tips praktis untuk meruntuhkan tembok ketakutan tersebut.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">1. Sadari Bahwa Komunikasi Lebih Penting daripada Kesempurnaan</h3>
+      <p class="mb-4">
+        Tujuan utama bahasa adalah untuk menyampaikan pesan (message delivery). Selama lawan bicara memahami maksudmu, komunikasi telah sukses dilakukan. Para penutur asli (native speakers) pun sangat memaklumi jika ada kesalahan tata bahasa kecil saat kamu berbicara. Mereka akan lebih menghargai usahamu dalam mengekspresikan diri.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">2. Mulai dari Berbicara dengan Diri Sendiri (Self-Talk)</h3>
+      <p class="mb-4">
+        Sebelum langsung terjun mengobrol dengan orang lain, biasakan mendeskripsikan aktivitas harianmu dalam Bahasa Inggris di dalam hati atau dengan suara pelan. Misalnya: "Now, I am making a cup of coffee. The weather is beautiful today." Teknik ini membantu membangun jembatan antara pikiran verbal dan otot motorik bicaramu.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">3. Lakukan Sesi Shadowing secara Konsisten</h3>
+      <p class="mb-4">
+        Shadowing adalah metode meniru ucapan pembicara asli (native speaker) sesegera mungkin saat mendengarnya. Ini melatih intonasi, ritme, dan pelafalan (pronunciation) secara tidak langsung tanpa membebani pikiranmu untuk menyusun kalimat baru. Cukup dengar, tiru, dan rasakan ritmenya.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">4. Temukan Partner yang Tepat dan Suportif</h3>
+      <p class="mb-4">
+        Belajar mandiri terkadang membosankan. Memiliki partner berlatih yang memiliki visi yang sama—atau didampingi oleh mentor profesional—akan mempercepat rasa percaya dirimu. Lingkungan yang bebas dari penghakiman (judgment-free zone) adalah kunci utama melatih kelancaran lidah.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">5. Jangan Takut untuk Bertanya atau Meminta Umpan Balik</h3>
+      <p class="mb-4">
+        Setiap kesalahan adalah langkah maju. Catat kata-kata yang sulit kamu ucapkan hari ini, lalu cari tahu pelafalan yang benar. Dengan melakukan evaluasi berkala, rasa canggung perlahan akan tergantikan oleh rasa percaya diri yang nyata.
+      </p>`
         },
         {
           title: "Mengenal Metode Shadowing: Cara Praktis Native Speaker Melatih Kelancaran",
@@ -640,7 +678,26 @@ export async function initSeedData() {
           read_time: "4 Menit Baca",
           image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800",
           featured: 0,
-          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Pernahkah kamu merasa lidahmu kaku saat melafalkan kata-kata Bahasa Inggris? Itu karena otot bicara kita belum terbiasa dengan artikulasi aksen asing. Salah satu metode terbaik untuk melatihnya adalah Shadowing.</p><h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">Apa itu Metode Shadowing?</h3><p class="mb-4">Shadowing dikembangkan oleh Profesor Alexander Arguelles. Cara kerjanya sangat sederhana: kamu memutar klip audio (pidato, podcast, film) berbahasa Inggris, lalu menirukan suara tersebut secara real-time dengan jeda sekian milidetik, layaknya bayangan yang selalu mengikuti objeknya.</p>`
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">
+        Pernahkah kamu merasa lidahmu kaku saat melafalkan kata-kata Bahasa Inggris? Itu karena otot bicara kita belum terbiasa dengan artikulasi aksen asing. Salah satu metode terbaik untuk melatihnya adalah Shadowing.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">Apa itu Metode Shadowing?</h3>
+      <p class="mb-4">
+        Shadowing dikembangkan oleh Profesor Alexander Arguelles. Cara kerjanya sangat sederhana: kamu memutar klip audio (pidato, podcast, film) berbahasa Inggris, lalu menirukan suara tersebut secara real-time dengan jeda sekian milidetik, layaknya bayangan yang selalu mengikuti objeknya.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">Langkah Melakukan Shadowing untuk Pemula:</h3>
+      <ul class="list-disc pl-6 mb-4 space-y-2">
+        <li><strong>Pilih audio yang sesuai:</strong> Mulailah dengan tempo lambat dan durasi pendek (1-3 menit). Podcast edukasi atau dongeng anak sangat direkomendasikan.</li>
+        <li><strong>Dengar tanpa teks pertama kali:</strong> Biasakan telinga menangkap bunyi, intonasi naik turun, serta penekanan suku kata.</li>
+        <li><strong>Ulangi bersama teks:</strong> Bacakan teks mengikuti audio secara simultan. Ini melatih koneksi visual antara ejaan kata dan bunyinya.</li>
+        <li><strong>Ulangi tanpa teks:</strong> Langkah terakhir ini adalah yang terpenting untuk melatih refleks motorik.</li>
+      </ul>
+
+      <p class="mb-4">
+        Lakukan latihan ini selama 10-15 menit setiap hari. Konsistensi harian jauh lebih efektif daripada belajar 2 jam penuh hanya sekali dalam seminggu. Selamat mencoba!
+      </p>`
         },
         {
           title: "10 Frasa Slang Bahasa Inggris Populer yang Bikin Kamu Terdengar Lebih Natural",
@@ -652,7 +709,25 @@ export async function initSeedData() {
           read_time: "6 Menit Baca",
           image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800",
           featured: 0,
-          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Pernahkah kamu mengobrol dengan penutur asli dan bingung ketika mereka menggunakan kata-kata yang tidak ada di kamus sekolah? Itulah yang disebut dengan slang atau bahasa gaul.</p>`
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">
+        Pernahkah kamu mengobrol dengan penutur asli dan bingung ketika mereka menggunakan kata-kata yang tidak ada di kamus sekolah? Itulah yang disebut dengan <em>slang</em> atau bahasa gaul.
+      </p>
+
+      <p class="mb-4">
+        Menggunakan bahasa slang dalam situasi kasual akan membuat komunikasimu terdengar lebih hidup, luwes, dan akrab. Berikut adalah 10 slang populer tahun 2026 yang wajib kamu ketahui:
+      </p>
+
+      <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3 mb-6">
+        <p><strong>1. Spill the tea:</strong> Mengungkapkan gosip atau rahasia menarik. <em>(Example: "Come on, spill the tea!")</em></p>
+        <p><strong>2. Slay:</strong> Melakukan sesuatu dengan sangat luar biasa sukses atau mengagumkan.</p>
+        <p><strong>3. Vibe check:</strong> Memeriksa atau menilai energi/suasana sekitar atau seseorang.</p>
+        <p><strong>4. For real:</strong> Menyatakan kesungguhan atau menyetujui sesuatu secara kuat.</p>
+        <p><strong>5. Rent-free:</strong> Sesuatu yang terus memenuhi pikiranmu dan tidak bisa dilupakan.</p>
+      </div>
+
+      <p class="mb-4">
+        Ingat, kunci dari penggunaan slang adalah menempatkannya pada konteks situasi yang tepat. Gunakan saat mengobrol dengan teman sebaya atau di komunitas santai, hindari menggunakannya pada sesi formal seperti wawancara kerja atau presentasi bisnis.
+      </p>`
         },
         {
           title: "Pentingnya Mengetahui Gaya Belajar Unik (ST30) Sebelum Belajar Speaking",
@@ -664,7 +739,27 @@ export async function initSeedData() {
           read_time: "5 Menit Baca",
           image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800",
           featured: 0,
-          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">Mengapa ada siswa yang sangat cepat lancar bicara dengan sering mendengarkan lagu, sementara yang lain baru bisa lancar setelah banyak menulis dan melakukan simulasi roleplay? Jawabannya terletak pada gaya belajar unik masing-masing individu.</p>`
+          content: `<p class="lead text-lg font-semibold text-slate-700 mb-4">
+        Mengapa ada siswa yang sangat cepat lancar bicara dengan sering mendengarkan lagu, sementara yang lain baru bisa lancar setelah banyak menulis dan melakukan simulasi roleplay? Jawabannya terletak pada gaya belajar unik masing-masing individu.
+      </p>
+
+      <p class="mb-4">
+        Di Mahir Speaking, kami mengintegrasikan pendekatan 8 Cluster bakat alami (ST30) untuk mendeteksi cara kerja otakmu saat menyerap bahasa. Dengan mengetahui tipe karaktermu, kamu bisa menghemat waktu belajarmu secara drastif.
+      </p>
+
+      <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">Mengapa Metode Klasik Satu Ukuran (One-Size-Fits-All) Kurang Efektif?</h3>
+      <p class="mb-4">
+        Banyak bimbingan belajar memaksakan kurikulum hafalan yang kaku kepada semua tipe siswa. Padahal:
+      </p>
+      <ul class="list-disc pl-6 mb-4 space-y-2">
+        <li><strong>Tipe Auditori:</strong> Lebih cepat menyerap melalui percakapan langsung, tanya-jawab spontan, dan diskusi kelompok.</li>
+        <li><strong>Tipe Visual:</strong> Butuh visualisasi grafis, mindmapping kata, atau slide pendukung agar frasa melekat di memori.</li>
+        <li><strong>Tipe Kinestetik:</strong> Perlu melakukan aksi fisik seperti bermain peran (roleplay), games interaktif, dan simulasi skenario nyata.</li>
+      </ul>
+
+      <p class="mb-4">
+        Dengan menganalisis gaya belajarmu sejak awal lewat tes diagnostik, mentor kami bisa meramu teknik koreksi dan latihan speaking yang secara khusus memicu kenyamanan komunikasimu.
+      </p>`
         }
       ];
 
