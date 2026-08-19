@@ -24,12 +24,12 @@ import {
 const activities = [
   {
     id: 1,
-    title: "Gathering & Komunitas Offline",
+    title: "Offline Community Gathering",
     category: "community",
     label: "Community Event",
     image: "/m.jpg",
     description:
-      "Pertemuan berkala seluruh alumni dan mentor secara langsung untuk mempererat kebersamaan.",
+      "Pertemuan anggota komunitas secara langsung untuk mempererat kebersamaan.",
     color: "#0362C0",
   },
   {
@@ -49,37 +49,37 @@ const activities = [
     label: "Flexible Study",
     image: "/o.jpg",
     description:
-      "Akses materi pembelajaran dan latihan kapan saja dari tempat terfavorit Anda.",
+      "Akses materi pelajaran dan latihan dapat di akses dengan mudah dari tempat favoritmu.",
     color: "#12B886",
   },
   {
     id: 4,
-    title: "Pendampingan intensif belajar berani bicara bahasa Inggris di Sekolah Binaan",
+    title: "Pendampingan intensif Bahasa Inggris di sekolah Binaan.",
     category: "class",
     label: "Live Class",
     image: "/p.JPG",
     description:
-      "Suasana diskusi kelompok kecil yang aktif bertukar opini dipandu oleh mentor secara intensif.",
+      "Suasana diskusi kelompok kecil yang aktif bertukar opini dipandu oleh tutor secara intensif.",
     color: "#7457E8",
   },
   {
     id: 5,
-    title: "Speaking Club Pelajar & Siswa",
+    title: "Pemetaan Bakat atau Potensi dengan ST30",
     category: "class",
     label: "School Program",
     image: "/q.jpeg",
     description:
-      "Pendampingan khusus bagi pelajar di lingkungan sekolah untuk mulai berani aktif berbicara.",
+      "Pendampingan khusus untuk menentukan gaya belajar dan aktivitas yang sesuai potensi siswa atau peserta",
     color: "#0362C0",
   },
   {
     id: 6,
-    title: "Motivation",
+    title: "Introduction",
     category: "class",
-    label: "Motivation",
+    label: "Introduction",
     image: "/k.jpeg",
     description:
-      "Motivasi yang membangun kepercayaan diri peserta untuk tidak mudah menyerah sebelum meraih keberhasilan.",
+      "Yuk kenali kami.",
     color: "#FFA715",
   },
 ];
@@ -87,103 +87,37 @@ const activities = [
 
 const galleryActivities = [
   {
-    id: 1,
-    title: "Sesi Pendampingan Individu",
     image: "/g.jpeg",
-    description: "Fokus melatih rasa percaya diri siswa secara personal.",
-    color: "#0362C0",
-    label: "Mentorship",
-    category: "mentorship"
   },
   {
-    id: 2,
-    title: "Diskusi Kelompok Interaktif",
-    image: "/h.jpeg",
-    description: "Kolaborasi aktif bertukar opini menggunakan bahasa Inggris sehari-hari.",
-    color: "#FFA715",
-    label: "Live Class",
-    category: "class"
+    image: "/95.jpeg",
   },
   {
-    id: 3,
-    title: "Speaking Club & Community",
     image: "/i.jpeg",
-    description: "Membangun rasa berani berdialog di lingkungan yang sangat suportif.",
-    color: "#12B886",
-    label: "Community",
-    category: "community"
   },
   {
-    id: 4,
-    title: "Workshop Komunikasi Profesional",
     image: "/j.jpeg",
-    description: "Mempersiapkan bekal interview kerja dan cara presentasi yang meyakinkan.",
-    color: "#7457E8",
-    label: "Workshop",
-    category: "workshop"
   },
   {
-    id: 5,
-    title: "Evaluasi Pelafalan & Aksen",
-    image: "/k.jpeg",
-    description: "Bedah intonasi dan pengucapan agar terdengar natural layaknya native speaker.",
-    color: "#0362C0",
-    label: "Speaking Drill",
-    category: "class"
+    image: "/96.jpeg",
   },
   {
-    id: 6,
-    title: "Perayaan Progres Kelulusan",
-    image: "/l.jpeg",
-    description: "Apresiasi atas konsistensi dan keberanian melangkah dari nol.",
-    color: "#FFA715",
-    label: "Student Moment",
-    category: "community"
+    image: "/12.jpeg",
   },
   {
-    id: 7,
-    title: "Sesi Praktik Berpasangan",
-    image: "/11.jpg",
-    description: "Praktik dialog langsung antar siswa untuk melatih refleks berbicara.",
-    color: "#12B886",
-    label: "Peer Practice",
-    category: "class"
+    image: "/97.jpeg",
   },
   {
-    id: 8,
-    title: "Mentoring Bersama Native Speaker",
-    image: "/12.jpg",
-    description: "Interaksi santai melatih kebiasaan mendengarkan aksen asli.",
-    color: "#7457E8",
-    label: "Native Session",
-    category: "mentorship"
+    image: "/99.jpeg",
   },
   {
-    id: 9,
-    title: "Kelas Review Mingguan",
-    image: "/13.jpg",
-    description: "Evaluasi bersama atas pencapaian kuis dan tantangan mingguan.",
-    color: "#0362C0",
-    label: "Review Class",
-    category: "class"
+    image: "/n.jpg",
   },
   {
-    id: 10,
-    title: "Gathering Komunitas Bulanan",
     image: "/14.jpeg",
-    description: "Aktivitas berkumpul bersama seluruh alumni dan mentor secara kekeluargaan.",
-    color: "#FFA715",
-    label: "Community Event",
-    category: "community"
   },
   {
-    id: 11,
-    title: "Simulasi Wawancara Kerja",
     image: "/15.jpeg",
-    description: "Latihan wawancara terarah menggunakan STAR method untuk persiapan karier.",
-    color: "#7457E8",
-    label: "Career Prep",
-    category: "workshop"
   }
 ];
 
@@ -317,7 +251,7 @@ export default function Branding() {
 
             {/* Judul Utama 1 Baris Presisi */}
             <h1 className="mt-5 w-full text-center text-3xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl sm:whitespace-nowrap">
-              Belajar, Berlatih, <span className="text-[#FFFF00]">Berani Bicara.</span>
+              Belajar, Berlatih, <span className="text-red-500">Berani</span> <span className="text-[#FFFF00]">Bicara.</span>
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-base font-semibold leading-relaxed text-[#083F78] sm:text-lg">
               Intip keseruan kelas, mentorship, workshop, dan perjalanan siswa membangun kepercayaan diri bersama <span className="font-black text-[#08203C]">Mahir Speaking</span>.
@@ -357,9 +291,6 @@ export default function Branding() {
                       {item.label}
                     </div>
                     <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
-                      <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#FFFF00]">
-                        Mahir Speaking Moments
-                      </p>
                       <h2 className="text-xl font-black leading-tight sm:text-2xl">
                         {item.title}
                       </h2>
@@ -620,7 +551,7 @@ export default function Branding() {
             <div>
 
               <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-4xl">
-                Keseruan Belajar & <span className="text-[#0362C0]">Aktivitas Komunitas</span>
+                <span className="text-[#0362C0]">Keseruan Belajar & Aktivitas Komunitas</span>
               </h2>
             </div>
           </div>
