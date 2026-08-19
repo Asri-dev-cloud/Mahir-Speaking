@@ -251,7 +251,7 @@ export default function Branding() {
 
             {/* Judul Utama 1 Baris Presisi */}
             <h1 className="mt-5 w-full text-center text-3xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl sm:whitespace-nowrap">
-              Belajar, Berlatih, <span className="text-red-500">Berani</span> <span className="text-[#FFFF00]">Bicara.</span>
+              <span className="text-red-500">Belajar, Berlatih, Berani</span> <span className="text-[#FFFF00]">Bicara.</span>
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-base font-semibold leading-relaxed text-[#083F78] sm:text-lg">
               Intip keseruan kelas, mentorship, workshop, dan perjalanan siswa membangun kepercayaan diri bersama <span className="font-black text-[#08203C]">Mahir Speaking</span>.
