@@ -11,6 +11,7 @@ import {
 
 export default function AuthPage() {
   const { login, register, googleLogin, setActiveTab } = useAuth();
+  const hasGoogleClientId = !!import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   // Modes: 'login', 'register'
   const [authMode, setAuthMode] = useState('login');
@@ -487,33 +488,58 @@ export default function AuthPage() {
 
 
             {authMode === 'login' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 w-full items-center">
-                {/* GOOGLE LOGIN (REAL GOOGLE SIGN-IN BUTTON) */}
-                <div className="flex items-center justify-center w-full min-h-[40px]">
-                  <GoogleSignInButton
-                    onSuccess={handleGoogleLoginSuccess}
-                    onFailure={(err) => setErrorMsg(err.message || 'Gagal masuk dengan Google.')}
-                    theme="outline"
-                    size="large"
-                  />
-                </div>
+              hasGoogleClientId ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 w-full items-center">
+                  {/* GOOGLE LOGIN (REAL GOOGLE SIGN-IN BUTTON) */}
+                  <div className="flex items-center justify-center w-full min-h-[40px]">
+                    <GoogleSignInButton
+                      onSuccess={handleGoogleLoginSuccess}
+                      onFailure={(err) => setErrorMsg(err.message || 'Gagal masuk dengan Google.')}
+                      theme="outline"
+                      size="large"
+                    />
+                  </div>
 
-                {/* MAIN SUBMIT BUTTON */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="h-[40px] rounded-2xl bg-brand text-lime font-black text-xs shadow-glow hover:bg-royal transition-all flex items-center justify-center gap-2 border border-brand/20 cursor-pointer w-full"
-                >
-                  {loading ? (
-                    <span>Memproses...</span>
-                  ) : (
-                    <>
-                      <span>Login</span>
-                      <ArrowRight className="w-4 h-4 stroke-[3]" />
-                    </>
-                  )}
-                </button>
-              </div>
+                  {/* MAIN SUBMIT BUTTON */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="h-[40px] rounded-2xl bg-brand text-lime font-black text-xs shadow-glow hover:bg-royal transition-all flex items-center justify-center gap-2 border border-brand/20 cursor-pointer w-full"
+                  >
+                    {loading ? (
+                      <span>Memproses...</span>
+                    ) : (
+                      <>
+                        <span>Login</span>
+                        <ArrowRight className="w-4 h-4 stroke-[3]" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3 pt-2 w-full">
+                  {/* MAIN SUBMIT BUTTON (Full Width) */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3.5 rounded-2xl bg-brand text-lime font-black text-xs shadow-glow hover:bg-royal transition-all flex items-center justify-center gap-2 border border-brand/20 cursor-pointer"
+                  >
+                    {loading ? (
+                      <span>Memproses...</span>
+                    ) : (
+                      <>
+                        <span>Login</span>
+                        <ArrowRight className="w-4 h-4 stroke-[3]" />
+                      </>
+                    )}
+                  </button>
+
+                  {/* INFO WARNING BOX (Full Width Below) */}
+                  <div className="w-full text-center p-3.5 bg-slate-50 border border-slate-200 text-slate-500 rounded-2xl text-[10px] font-bold leading-normal">
+                    ℹ️ Login Google belum aktif di deploy Vercel ini. Harap atur variabel <code className="bg-slate-100 px-1.5 py-0.5 rounded text-red-500 font-extrabold font-mono">VITE_GOOGLE_CLIENT_ID</code> di Dashboard Vercel Anda.
+                  </div>
+                </div>
+              )
             ) : (
               /* MAIN SUBMIT BUTTON (For Register mode) */
               <button
