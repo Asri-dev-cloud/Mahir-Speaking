@@ -37,13 +37,28 @@ router.get('/:id', async (req, res) => {
       [courseId]
     );
 
-    // Mengambil data kuis terkait untuk setiap unit pelajaran
+    // Mengambil data kuis terkait untuk semua unit pelajaran secara sekaligus (Optimasi N+1 Query)
+    const lessonIds = lessons.map(l => l.id);
+    const quizzesByLessonId = {};
+    
+    if (lessonIds.length > 0) {
+      const placeholders = lessonIds.map(() => '?').join(', ');
+      const quizzes = await query(`SELECT * FROM quizzes WHERE lesson_id IN (${placeholders})`, lessonIds);
+      
+      for (const q of quizzes) {
+        const lessonId = q.lesson_id;
+        if (!quizzesByLessonId[lessonId]) {
+          quizzesByLessonId[lessonId] = [];
+        }
+        quizzesByLessonId[lessonId].push({
+          ...q,
+          options: JSON.parse(q.options || '[]')
+        });
+      }
+    }
+
     for (let lesson of lessons) {
-      const quizzes = await query(`SELECT * FROM quizzes WHERE lesson_id = ?`, [lesson.id]);
-      lesson.quizzes = quizzes.map(q => ({
-        ...q,
-        options: JSON.parse(q.options || '[]')
-      }));
+      lesson.quizzes = quizzesByLessonId[lesson.id] || [];
     }
 
     return res.json({

@@ -178,6 +178,7 @@ create table if not exists public.ai_chats (
 
 create index if not exists idx_users_email on public.users (lower(email));
 create index if not exists idx_users_username on public.users (lower(username));
+create index if not exists idx_users_xp_points on public.users (xp desc, points desc);
 create index if not exists idx_lessons_course_order on public.lessons (course_id, order_index);
 create index if not exists idx_quizzes_lesson on public.quizzes (lesson_id);
 create index if not exists idx_progress_user_lesson on public.user_progress (user_id, lesson_id);

@@ -22,15 +22,16 @@ export async function initSeedData() {
         isInitialized = false;
       }
 
-      if (!isInitialized) {
-        console.log('🏗️ [Database] Database kosong. Menginisialisasi skema & Stored Procedures PostgreSQL...');
-        const schemaPath = path.join(__dirname, 'mahir_speaking_supabase.sql');
-        const schemaSql = fs.readFileSync(schemaPath, 'utf8');
-        await query(schemaSql);
-        console.log('✅ [Database] Skema PostgreSQL berhasil diinisialisasi!');
-      } else {
-        console.log('🟢 [Database] Database sudah diinisialisasi. Melewati pemuatan skema SQL utama.');
+      if (isInitialized) {
+        console.log('🟢 [Database] PostgreSQL sudah terinisialisasi. Melewati pemuatan skema & data seeding.');
+        return;
       }
+
+      console.log('🏗️ [Database] Database kosong. Menginisialisasi skema & Stored Procedures PostgreSQL...');
+      const schemaPath = path.join(__dirname, 'mahir_speaking_supabase.sql');
+      const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+      await query(schemaSql);
+      console.log('✅ [Database] Skema PostgreSQL berhasil diinisialisasi!');
 
       // Cek dan buat tabel blog_likes di PostgreSQL jika belum ada/belum valid
       try {
@@ -135,6 +136,22 @@ export async function initSeedData() {
       // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari cloud Neon Postgres agar leaderboard bersih
       await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'tutor@mahirspeaking.com', 'admin@mahirspeaking.com')`);
     } else {
+      // Cek apakah database SQLite sudah terinisialisasi
+      let isInitialized = false;
+      try {
+        const usersCount = await query(`SELECT COUNT(*) as count FROM users`);
+        if (Number(usersCount[0]?.count || 0) > 0) {
+          isInitialized = true;
+        }
+      } catch (err) {
+        isInitialized = false;
+      }
+
+      if (isInitialized) {
+        console.log('🟢 [Database] SQLite sudah terinisialisasi. Melewati pemuatan skema & data seeding.');
+        return;
+      }
+
       // Membuat tabel users jika belum terdaftar pada database.
       await query(`
         CREATE TABLE IF NOT EXISTS users (
