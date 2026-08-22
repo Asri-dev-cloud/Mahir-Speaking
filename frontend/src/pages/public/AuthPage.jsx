@@ -1,7 +1,8 @@
 // Halaman AuthPage: Mengelola proses otentikasi pengguna termasuk masuk (login), daftar akun baru (register), dan tautan lupa kata sandi.
 import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
+import { authService } from '../../services/api';
+import GoogleSignInButton from '../../components/GoogleSignInButton';
 import {
   ArrowRight, CheckCircle2, AlertCircle, User, Lock, Mail, Phone,
   Eye, EyeOff, ShieldCheck, KeyRound, Sparkles, ChevronLeft, ChevronRight,
@@ -9,9 +10,9 @@ import {
 } from 'lucide-react';
 
 export default function AuthPage() {
-  const { login, register, resetPassword, googleLogin, setActiveTab } = useAuth();
+  const { login, register, googleLogin, setActiveTab } = useAuth();
 
-  // Modes: 'login', 'register', 'forgot'
+  // Modes: 'login', 'register'
   const [authMode, setAuthMode] = useState('login');
 
   const [formData, setFormData] = useState({
@@ -19,9 +20,7 @@ export default function AuthPage() {
     email: '',
     whatsapp: '',
     password: '',
-    confirmPassword: '',
-    newPassword: '',
-    confirmNewPassword: ''
+    confirmPassword: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -67,92 +66,34 @@ export default function AuthPage() {
     setSuccessMsg('');
   };
 
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
-
-  const googleAccountsList = [
-    {
-      full_name: 'Hartini Asri',
-      email: 'hartiniasri32@gmail.com',
-      role: 'admin',
-      admin_type: 'Senior Admin',
-      avatar: null
-    },
-    {
-      full_name: 'Pipit Sely',
-      email: 'pipit@gmail.com',
-      role: 'student',
-      admin_type: null,
-      avatar: null
-    },
-    {
-      full_name: 'Asri Hartini',
-      email: 'hartiniasri32@gmai.com',
-      role: 'admin',
-      admin_type: 'Admin Asisten',
-      avatar: null
-    },
-    {
-      full_name: 'Google Student Active',
-      email: 'student.google@gmail.com',
-      role: 'student',
-      admin_type: null,
-      avatar: null
-    }
-  ];
-
-  const handleGoogleAccountSelect = async (acc) => {
-    setIsGoogleModalOpen(false);
+  const handleGoogleLoginSuccess = async (data) => {
+    // data is { success: true, token, user, message } returned by backend
     setLoading(true);
     setErrorMsg('');
     try {
-      const gUser = {
-        id: Date.now(),
-        full_name: acc.full_name,
-        email: acc.email,
-        whatsapp: '6281572120190',
-        role: acc.role || 'student',
-        admin_type: acc.admin_type || null,
-        avatar: acc.avatar || null,
-        xp: 2450,
-        streak: 12,
-        points: 620
-      };
-
-      const mockToken = 'mock-user-' + btoa(JSON.stringify({
-        id: gUser.id,
-        email: gUser.email,
-        role: gUser.role || 'student',
-        username: gUser.username || gUser.email.split('@')[0],
-        full_name: gUser.full_name
-      }));
-
-      const targetTab = gUser.role === 'admin' ? 'admin-portal' : gUser.role === 'tutor' ? 'tutor-dashboard' : 'lms';
-      localStorage.setItem('mahir_token', mockToken);
-      localStorage.setItem('mahir_user', JSON.stringify(gUser));
+      const { token: jwtToken, user: loggedInUser } = data;
+      const targetTab = loggedInUser.role === 'admin' ? 'admin-portal' : loggedInUser.role === 'tutor' ? 'tutor-dashboard' : 'lms';
+      
+      localStorage.setItem('mahir_token', jwtToken);
+      localStorage.setItem('mahir_user', JSON.stringify(loggedInUser));
       localStorage.setItem('mahir_active_tab', targetTab);
 
-      // Add to registered users list if missing
+      // Daftarkan ke registered_users agar fallback local tetap punya user ini
       const savedReg = JSON.parse(localStorage.getItem('mahir_registered_users') || '[]');
-      if (!savedReg.some(u => u.email.toLowerCase() === gUser.email.toLowerCase())) {
-        savedReg.push(gUser);
+      if (!savedReg.some(u => u.email.toLowerCase() === loggedInUser.email.toLowerCase())) {
+        savedReg.push(loggedInUser);
         localStorage.setItem('mahir_registered_users', JSON.stringify(savedReg));
       }
 
-      await googleLogin(gUser);
-      setLoggedInUserName(gUser.full_name || 'Teman Mahir');
+      await googleLogin(loggedInUser, jwtToken);
+      setLoggedInUserName(loggedInUser.full_name || 'Teman Mahir');
       setPendingTargetTab(targetTab);
       setSuccessModal(true);
     } catch (e) {
-      setErrorMsg('Gagal terhubung dengan Akun Google.');
+      setErrorMsg('Gagal menyinkronkan sesi masuk Google.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogleLogin = () => {
-    setErrorMsg('');
-    setIsGoogleModalOpen(true);
   };
 
   const handleSubmit = async (e) => {
@@ -228,38 +169,6 @@ export default function AuthPage() {
         }
       } catch (err) {
         setErrorMsg(err.message || 'Terjadi kesalahan jaringan saat melakukan pendaftaran.');
-      } finally {
-        setLoading(false);
-      }
-    } else if (authMode === 'forgot') {
-      if (!formData.email || !formData.newPassword || !formData.confirmNewPassword) {
-        setErrorMsg('Email dan kata sandi baru wajib diisi!');
-        return;
-      }
-
-      if (formData.newPassword !== formData.confirmNewPassword) {
-        setErrorMsg('Konfirmasi kata sandi baru tidak cocok!');
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const res = await resetPassword({
-          email: formData.email,
-          newPassword: formData.newPassword
-        });
-
-        if (res.success) {
-          setSuccessMsg(res.message || 'Kata sandi berhasil diperbarui!');
-          setTimeout(() => {
-            setAuthMode('login');
-            setSuccessMsg('Silakan masuk menggunakan kata sandi baru Anda.');
-          }, 1500);
-        } else {
-          setErrorMsg(res.error || 'Email tidak terdaftar!');
-        }
-      } catch (err) {
-        setErrorMsg('Gagal mereset kata sandi.');
       } finally {
         setLoading(false);
       }
@@ -508,13 +417,6 @@ export default function AuthPage() {
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">Kata Sandi *</label>
-                  <button
-                    type="button"
-                    onClick={() => { setAuthMode('forgot'); setErrorMsg(''); setSuccessMsg(''); }}
-                    className="text-[11px] font-bold text-red-500 hover:text-red-600 hover:underline cursor-pointer"
-                  >
-                    Forgot password?
-                  </button>
                 </div>
                 <div className="relative">
                   <input
@@ -582,96 +484,53 @@ export default function AuthPage() {
               </>
             )}
 
-            {/* 5. FORGOT PASSWORD FIELDS */}
-            {authMode === 'forgot' && (
-              <>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">Kata Sandi Baru *</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="newPassword"
-                      required
-                      placeholder="Masukkan kata sandi baru"
-                      value={formData.newPassword}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:outline-none focus:border-brand"
-                    />
-                    <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
+
+
+            {authMode === 'login' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 w-full items-center">
+                {/* GOOGLE LOGIN (REAL GOOGLE SIGN-IN BUTTON) */}
+                <div className="flex items-center justify-center w-full min-h-[40px]">
+                  <GoogleSignInButton
+                    onSuccess={handleGoogleLoginSuccess}
+                    onFailure={(err) => setErrorMsg(err.message || 'Gagal masuk dengan Google.')}
+                    theme="outline"
+                    size="large"
+                  />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">Konfirmasi Kata Sandi Baru *</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="confirmNewPassword"
-                      required
-                      placeholder="Ketik ulang kata sandi baru"
-                      value={formData.confirmNewPassword}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold focus:outline-none focus:border-brand"
-                    />
-                    <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* OR DIVIDER (MOCKUP STYLE) */}
-            {authMode === 'login' && (
-              <div className="relative py-2 flex items-center justify-center">
-                <div className="border-t border-slate-200 w-full" />
-                <span className="bg-white px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest absolute">
-                  or
-                </span>
+                {/* MAIN SUBMIT BUTTON */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="h-[40px] rounded-2xl bg-brand text-lime font-black text-xs shadow-glow hover:bg-royal transition-all flex items-center justify-center gap-2 border border-brand/20 cursor-pointer w-full"
+                >
+                  {loading ? (
+                    <span>Memproses...</span>
+                  ) : (
+                    <>
+                      <span>Login</span>
+                      <ArrowRight className="w-4 h-4 stroke-[3]" />
+                    </>
+                  )}
+                </button>
               </div>
-            )}
-
-            {/* GOOGLE LOGIN (LIVE DIRECT FLOW) */}
-            {authMode === 'login' && (
+            ) : (
+              /* MAIN SUBMIT BUTTON (For Register mode) */
               <button
-                type="button"
-                onClick={handleGoogleLogin}
-                className="w-full py-2.5 rounded-2xl bg-white border-2 border-slate-200 text-slate-700 font-extrabold text-xs flex items-center justify-center gap-2 hover:bg-slate-50 transition-all cursor-pointer shadow-sm"
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 rounded-2xl bg-brand text-lime font-black text-xs shadow-glow hover:bg-royal transition-all flex items-center justify-center gap-2 border border-brand/20 cursor-pointer"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                </svg>
-                <span>Login with Google</span>
+                {loading ? (
+                  <span>Memproses...</span>
+                ) : (
+                  <>
+                    <span>Daftar Akun Baru</span>
+                    <ArrowRight className="w-4 h-4 stroke-[3]" />
+                  </>
+                )}
               </button>
             )}
-
-            {/* MAIN SUBMIT BUTTON */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 rounded-2xl bg-brand text-lime font-black text-xs shadow-glow hover:bg-royal transition-all flex items-center justify-center gap-2 border border-brand/20 cursor-pointer"
-            >
-              {loading ? (
-                <span>Memproses...</span>
-              ) : (
-                <>
-                  <span>
-                    {authMode === 'login' && 'Login'}
-                    {authMode === 'register' && 'Daftar Akun Baru'}
-                    {authMode === 'forgot' && 'Riset & Simpan Kata Sandi'}
-                  </span>
-                  <ArrowRight className="w-4 h-4 stroke-[3]" />
-                </>
-              )}
-            </button>
           </form>
 
           {/* BOTTOM TOGGLE MODES */}
@@ -702,113 +561,12 @@ export default function AuthPage() {
               </p>
             )}
 
-            {authMode === 'forgot' && (
-              <button
-                type="button"
-                onClick={() => { setAuthMode('login'); setErrorMsg(''); setSuccessMsg(''); }}
-                className="font-extrabold text-slate-600 hover:text-slate-900 hover:underline cursor-pointer flex items-center justify-center gap-1 mx-auto"
-              >
-                <span>← Kembali ke Halaman Login</span>
-              </button>
-            )}
+
           </div>
 
         </div>
 
       </div>
-
-      {/* 🔴 GOOGLE ACCOUNT SELECTOR MODAL */}
-      {isGoogleModalOpen && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-6 relative">
-
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-3">
-                <svg className="w-6 h-6" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                </svg>
-                <div>
-                  <h3 className="font-extrabold text-slate-900 text-sm">Pilih Akun Google</h3>
-                  <p className="text-[11px] text-slate-500">untuk melanjutkan ke Mahir Speaking</p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsGoogleModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center text-sm cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* List of Accounts */}
-            <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-              {googleAccountsList.map((acc, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleGoogleAccountSelect(acc)}
-                  className="w-full p-3 rounded-2xl border border-slate-200 hover:border-brand hover:bg-brand/5 flex items-center justify-between transition-all group text-left cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-brand text-lime font-black text-xs flex items-center justify-center border border-brand/20 uppercase flex-shrink-0">
-                      {acc.full_name.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="font-extrabold text-slate-900 text-xs group-hover:text-brand flex items-center gap-1.5">
-                        <span>{acc.full_name}</span>
-                        {acc.role === 'admin' && (
-                          <span className="text-[9px] font-black bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full border border-amber-300">
-                            {acc.admin_type || 'Admin'}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-[11px] text-slate-500 font-medium">{acc.email}</div>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-brand group-hover:translate-x-0.5 transition-all" />
-                </button>
-              ))}
-            </div>
-
-            {/* Custom Google Email Input */}
-            <div className="pt-2 border-t border-slate-100 space-y-2">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Atau Gunakan Email Google Lain</span>
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="contoh@gmail.com"
-                  value={customGoogleEmail}
-                  onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:border-brand"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (customGoogleEmail && customGoogleEmail.includes('@')) {
-                      handleGoogleAccountSelect({
-                        full_name: customGoogleEmail.split('@')[0],
-                        email: customGoogleEmail,
-                        role: customGoogleEmail.toLowerCase().includes('admin') ? 'admin' : 'student'
-                      });
-                    }
-                  }}
-                  className="px-4 py-2 rounded-xl bg-brand text-lime font-black text-xs hover:bg-royal transition-all cursor-pointer"
-                >
-                  Masuk
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   );
 }

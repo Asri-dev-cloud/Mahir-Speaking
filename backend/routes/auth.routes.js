@@ -129,4 +129,126 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
+// Google Login Verification Route: Memvalidasi access token atau ID token dari Google, mencari/mendaftarkan pengguna ke database, dan mengembalikan token JWT resmi.
+router.post('/google', async (req, res) => {
+  try {
+    const { accessToken, idToken } = req.body;
+
+    if (!accessToken && !idToken) {
+      return res.status(400).json({ success: false, message: 'Google access token or ID token is required.' });
+    }
+
+    let email, name, picture;
+    const googleClientId = process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
+
+    if (idToken) {
+      // Panggil API Google TokenInfo untuk memverifikasi ID Token JWT (mengecek tanda tangan digital & kedaluwarsa)
+      const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+      if (!googleRes.ok) {
+        return res.status(400).json({ success: false, message: 'Invalid or expired Google ID token.' });
+      }
+      const googleUser = await googleRes.json();
+      
+      // Verifikasi Audience untuk mencegah peminjaman token (token hijacking) dari aplikasi lain
+      if (googleClientId && googleUser.aud !== googleClientId) {
+        return res.status(400).json({ success: false, message: 'Security verification failed: Google Client ID mismatch.' });
+      }
+
+      email = googleUser.email;
+      name = googleUser.name;
+      picture = googleUser.picture;
+    } else {
+      // Panggil API Google UserInfo menggunakan Access Token
+      const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      if (!googleRes.ok) {
+        return res.status(400).json({ success: false, message: 'Invalid or expired Google access token.' });
+      }
+      const googleUser = await googleRes.json();
+
+      // Verifikasi Client ID / Issued To dari Access Token demi keamanan
+      if (googleClientId) {
+        try {
+          const tokenInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`);
+          if (tokenInfoRes.ok) {
+            const tokenInfo = await tokenInfoRes.json();
+            const audToVerify = tokenInfo.aud || tokenInfo.issued_to;
+            if (audToVerify !== googleClientId) {
+              return res.status(400).json({ success: false, message: 'Security verification failed: Google Access Token client mismatch.' });
+            }
+          }
+        } catch (e) {
+          console.error('Error verifying access token audience:', e);
+        }
+      }
+
+      email = googleUser.email;
+      name = googleUser.name;
+      picture = googleUser.picture;
+    }
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Google account does not provide an email address.' });
+    }
+
+    // Cari user di database
+    let users = await query('SELECT * FROM users WHERE LOWER(email) = ?', [email.toLowerCase().trim()]);
+    let user;
+
+    if (users.length === 0) {
+      // Jika pengguna belum terdaftar, daftarkan secara otomatis
+      const username = email.split('@')[0].toLowerCase() + Math.floor(100 + Math.random() * 900);
+      const dummyPassword = await bcrypt.hash(Math.random().toString(36).substring(2, 15), 10);
+      const avatar = picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
+
+      const regResult = await dbRegisterUser(
+        name,
+        username,
+        email,
+        '', // whatsapp
+        dummyPassword,
+        'student', // role
+        avatar
+      );
+
+      if (regResult.status_code !== 'SUCCESS') {
+        return res.status(500).json({ success: false, message: 'Failed to create user from Google account.' });
+      }
+
+      const freshUsers = await query('SELECT * FROM users WHERE id = ?', [regResult.user_id]);
+      user = freshUsers[0];
+    } else {
+      user = users[0];
+      // Perbarui avatar jika ada yang baru dari Google
+      if (picture && user.avatar !== picture) {
+        await query('UPDATE users SET avatar = ? WHERE id = ?', [picture, user.id]);
+        user.avatar = picture;
+      }
+    }
+
+    // Generate JWT token untuk sesi Mahir Speaking
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, username: user.username },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Hapus password hash dari respon demi keamanan
+    delete user.password;
+
+    return res.json({
+      success: true,
+      message: 'Google login successful!',
+      token,
+      user
+    });
+  } catch (err) {
+    console.error('Google login error:', err);
+    return res.status(500).json({ success: false, message: 'Server error during Google authentication.' });
+  }
+});
+
 export default router;

@@ -222,7 +222,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Otorisasi masuk menggunakan modul integrasi Google OAuth.
-  const googleLogin = async (customUser) => {
+  const googleLogin = async (customUser, customToken) => {
     const googleUser = customUser || {
       id: 999,
       full_name: 'Siswa Google Active',
@@ -239,17 +239,17 @@ export const AuthProvider = ({ children }) => {
 
     const targetTab = googleUser.role === 'admin' ? 'admin-portal' : googleUser.role === 'tutor' ? 'tutor-dashboard' : 'lms';
 
-    const mockToken = 'mock-user-' + btoa(JSON.stringify({
+    const tokenToUse = customToken || ('mock-user-' + btoa(JSON.stringify({
       id: googleUser.id,
       email: googleUser.email,
       role: googleUser.role || 'student',
       username: googleUser.username || googleUser.email.split('@')[0],
       full_name: googleUser.full_name
-    }));
+    })));
 
-    setToken(mockToken);
+    setToken(tokenToUse);
     setUser(googleUser);
-    localStorage.setItem('mahir_token', mockToken);
+    localStorage.setItem('mahir_token', tokenToUse);
     localStorage.setItem('mahir_user', JSON.stringify(googleUser));
     localStorage.setItem('mahir_active_tab', targetTab);
     setActiveTabState(targetTab);

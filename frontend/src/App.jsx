@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AIChatProvider } from './context/AIChatContext';
 
@@ -9,30 +9,30 @@ import FloatingWhatsApp from './components/common/FloatingWhatsApp';
 import { FloatingAssistant } from './components/FloatingAssistant';
 import { MashiraAssistant } from './components/MashiraAssistant';
 
-// Halaman Publik yang menyediakan informasi umum bagi pengunjung.
-import Home from './pages/public/Home';
-import LMSView from './pages/public/LMSView';
-import Portfolio from './pages/public/Portfolio';
-import PricingPage from './pages/public/PricingPage';
-import Branding from './pages/public/Branding';
-import AuthPage from './pages/public/AuthPage';
-import ForgotPassword from './pages/public/ForgotPassword';
-import BlogView from './pages/public/BlogView';
+// Lazy loading halaman publik untuk meminimalkan ukuran initial bundle
+const Home = lazy(() => import('./pages/public/Home'));
+const LMSView = lazy(() => import('./pages/public/LMSView'));
+const Portfolio = lazy(() => import('./pages/public/Portfolio'));
+const PricingPage = lazy(() => import('./pages/public/PricingPage'));
+const Branding = lazy(() => import('./pages/public/Branding'));
+const AuthPage = lazy(() => import('./pages/public/AuthPage'));
+const ForgotPassword = lazy(() => import('./pages/public/ForgotPassword'));
+const BlogView = lazy(() => import('./pages/public/BlogView'));
 
-// Halaman Siswa (Student) untuk mengakses materi pelajaran, kuis, latihan percakapan, dan status keanggotaan.
-import LessonView from './pages/student/LessonView';
-import QuizView from './pages/student/QuizView';
-import AIChatView from './pages/student/AIChatView';
-import LeaderboardView from './pages/student/LeaderboardView';
-import MyPackage from './pages/student/MyPackage';
-import Profile from './pages/student/Profile';
+// Lazy loading halaman siswa (Student)
+const LessonView = lazy(() => import('./pages/student/LessonView'));
+const QuizView = lazy(() => import('./pages/student/QuizView'));
+const AIChatView = lazy(() => import('./pages/student/AIChatView'));
+const LeaderboardView = lazy(() => import('./pages/student/LeaderboardView'));
+const MyPackage = lazy(() => import('./pages/student/MyPackage'));
+const Profile = lazy(() => import('./pages/student/Profile'));
 
-// Halaman Tutor untuk guru atau pengajar mengunggah pelajaran baru dan mengelola materi.
-import TutorDashboard from './pages/tutor/TutorDashboard';
-import UploadLesson from './pages/tutor/UploadLesson';
+// Lazy loading halaman tutor
+const TutorDashboard = lazy(() => import('./pages/tutor/TutorDashboard'));
+const UploadLesson = lazy(() => import('./pages/tutor/UploadLesson'));
 
-// Portal khusus administrator sistem.
-import AdminPortal from './pages/admin/AdminPortal';
+// Lazy loading portal admin
+const AdminPortal = lazy(() => import('./pages/admin/AdminPortal'));
 
 import WelcomeModal from './components/common/WelcomeModal';
 
@@ -121,7 +121,14 @@ function MainContent() {
       <div id="top-of-page" className="absolute top-0 left-0 w-0 h-0 pointer-events-none" />
       <Navbar />
       <main key={activeTab} className="flex-1 overflow-x-hidden w-full">
-        {renderCurrentPage()}
+        <Suspense fallback={
+          <div className="w-full min-h-[60vh] flex items-center justify-center flex-col gap-3">
+            <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-brand animate-spin" />
+            <span className="text-xs text-slate-500 font-semibold animate-pulse">Memuat halaman...</span>
+          </div>
+        }>
+          {renderCurrentPage()}
+        </Suspense>
       </main>
       <Footer />
       {isPublicPage && <FloatingWhatsApp />}

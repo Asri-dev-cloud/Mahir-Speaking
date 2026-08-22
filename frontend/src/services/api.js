@@ -232,6 +232,12 @@ export const authService = {
   },
 
   forgotPassword: (email) => apiFetch('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+  googleLogin: async (accessToken) => {
+    return apiFetch('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ accessToken })
+    });
+  },
 };
 
 export const userService = {
