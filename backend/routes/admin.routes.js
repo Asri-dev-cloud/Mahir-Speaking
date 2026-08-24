@@ -83,6 +83,20 @@ router.put('/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
 
+    // Validasi domain email jika role diubah menjadi tutor atau admin
+    if (req.body.role && ['tutor', 'admin'].includes(req.body.role)) {
+      const userRows = await query('SELECT email FROM users WHERE id = ?', [userId]);
+      if (userRows.length > 0) {
+        const email = userRows[0].email || '';
+        if (!email.toLowerCase().endsWith('@mahirspeaking.com')) {
+          return res.status(400).json({
+            success: false,
+            message: 'Peran Tutor/Admin hanya dapat diberikan kepada pengguna dengan domain email @mahirspeaking.com.'
+          });
+        }
+      }
+    }
+
     const allowedFields = [
       'role',
       'package_id',
@@ -118,6 +132,15 @@ router.put('/users/:id', async (req, res) => {
 router.post('/assistants', async (req, res) => {
   const { email } = req.body;
   const emailLower = (email || '').trim().toLowerCase();
+
+  // Validasi domain email untuk admin asisten
+  if (!emailLower.endsWith('@mahirspeaking.com')) {
+    return res.status(400).json({
+      success: false,
+      message: 'Peran Admin Asisten hanya dapat diberikan kepada pengguna dengan domain email @mahirspeaking.com.'
+    });
+  }
+
   try {
     // Memeriksa apakah akun pengguna terdaftar
     const existing = await query('SELECT id, full_name, role FROM users WHERE LOWER(email) = ?', [emailLower]);

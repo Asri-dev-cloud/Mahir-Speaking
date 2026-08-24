@@ -7,6 +7,86 @@ import { query } from './db.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+async function runLiveUpdates(query, isPostgres) {
+  try {
+    const hashedPassword = await bcrypt.hash('password123', 10);
+    const hashedAdminPassword = await bcrypt.hash('20424014', 10);
+
+    // 1. Mempersiapkan data paket langganan default pada database.
+    console.log('Sinkronisasi paket langganan...');
+    await query(`DELETE FROM packages`);
+    await query(`
+      INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
+      VALUES 
+      (1, 'Kelas Reguler', 350000, 'monthly', 30, 2, 'Reguler', '["Akses Kelas Reguler", "30 Percakapan AI / hari", "Leaderboard Komunitas", "Umpan Balik AI Coach"]'),
+      (2, 'Intermediate', 500000, 'monthly', 100, 4, 'Intermediate', '["Akses Kelas Intermediate", "100 Percakapan AI / hari", "4 Kelas Tatap Muka / bulan", "Analisis Pengucapan Detail"]'),
+      (3, 'Advanced', 750000, 'monthly', -1, 8, 'Advanced', '["Akses Kelas Advanced", "AI Chat & Suara Tanpa Batas", "8 Kelas Tatap Muka / bulan", "Simulasi Ujian IELTS/TOEFL"]'),
+      (4, 'Cash Promo (3 Bulan)', 750000, '3 months', -1, 12, 'Best Deal', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "12 Kelas Tatap Muka / 3 bulan", "Sertifikat Kelulusan", "Badge Spesial Best Deal"]'),
+      (5, 'Harga Normal (3 Bulan)', 1500000, '3 months', -1, 24, 'Premium Pro', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "24 Kelas Tatap Muka / 3 bulan", "Bimbingan Intensif IELTS/TOEFL"]')
+    `);
+
+    // 2. Mempersiapkan data akun pengguna awal jika belum ada.
+    console.log('Sinkronisasi data user awal...');
+    // Admin Senior (Hartini Asri)
+    const adminExists = await query("SELECT id FROM users WHERE email = 'hartiniasri32@gmail.com'");
+    if (adminExists.length === 0) {
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6281572120190', '${hashedAdminPassword}', 'admin', 5, 0, 0, 0, '/ma.png')
+      `);
+      console.log('✅ Default admin account seeded.');
+    }
+
+    // Student: Fauzi
+    const fauziExists = await query("SELECT id FROM users WHERE email = 'fauzi@mahirspeaking.com'");
+    if (fauziExists.length === 0) {
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Fauzi', 'fauzi', 'fauzi@mahirspeaking.com', '081234567894', '${hashedPassword}', 'student', 1, 0, 0, 0, '/ma.png')
+      `);
+      console.log('✅ Default student Fauzi account seeded.');
+    }
+
+    // Student: Cintiani Ajah
+    const cintianiExists = await query("SELECT id FROM users WHERE email = 'cintiani@mahirspeaking.com'");
+    if (cintianiExists.length === 0) {
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Cintiani Ajah', 'cintiani', 'cintiani@mahirspeaking.com', '081234567895', '${hashedPassword}', 'student', 1, 0, 0, 0, '/mi.png')
+      `);
+      console.log('✅ Default student Cintiani account seeded.');
+    }
+
+    // Tutor: Tutor Mahir Speaking
+    const tutorExists = await query("SELECT id FROM users WHERE email = 'tutor@mahirspeaking.com'");
+    if (tutorExists.length === 0) {
+      await query(`
+        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
+        VALUES ('Tutor Mahir Speaking', 'tutor_mahir', 'tutor@mahirspeaking.com', '6281234567890', '${hashedPassword}', 'tutor', 1, 0, 0, 0, '/ma.png')
+      `);
+      console.log('✅ Default tutor account seeded.');
+    }
+
+    // Hapus data user lama agar leaderboard bersih
+    await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'admin@mahirspeaking.com')`);
+
+    // 3. Mempersiapkan data video pembelajaran.
+    console.log('Sinkronisasi data video...');
+    await query(`DELETE FROM recorded_videos`);
+    await query(`
+      INSERT INTO recorded_videos (title, tutor, duration, level, video_url)
+      VALUES 
+      ('Sesi 1: Self Introduction & Confidence Drill', 'Mr.Alfada Naufal', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/henIVlCPVIY'),
+      ('Sesi 2: Vocabulary Mastery', 'Ms. Deasy Puspawati', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/9bdrVG297J4'),
+      ('Sesi 3: Public Speaking Masterclass', 'Ms. Ade Ihdinayah', '90 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/WioL50vGE04'),
+      ('Sesi 4: Native Speaker Meeting Session', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/ag3RnEaB3zM')
+    `);
+    console.log('✅ Data video synced successfully.');
+  } catch (err) {
+    console.error('Error during live updates execution:', err.message);
+  }
+}
+
 // Fungsi inisialisasi data awal database (seeding) untuk menyiapkan tabel dan data pengguna awal.
 export async function initSeedData() {
   try {
@@ -23,7 +103,8 @@ export async function initSeedData() {
       }
 
       if (isInitialized) {
-        console.log('🟢 [Database] PostgreSQL sudah terinisialisasi. Melewati pemuatan skema & data seeding.');
+        console.log('🟢 [Database] PostgreSQL sudah terinisialisasi. Melakukan penyelarasan data live (paket, user, video)...');
+        await runLiveUpdates(query, true);
         return;
       }
 
@@ -134,7 +215,7 @@ export async function initSeedData() {
       console.log('✅ [Database] Skema & Stored Procedures PostgreSQL berhasil diinisialisasi!');
 
       // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari cloud Neon Postgres agar leaderboard bersih
-      await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'tutor@mahirspeaking.com', 'admin@mahirspeaking.com')`);
+      await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'admin@mahirspeaking.com')`);
     } else {
       // Cek apakah database SQLite sudah terinisialisasi
       let isInitialized = false;
@@ -148,7 +229,8 @@ export async function initSeedData() {
       }
 
       if (isInitialized) {
-        console.log('🟢 [Database] SQLite sudah terinisialisasi. Melewati pemuatan skema & data seeding.');
+        console.log('🟢 [Database] SQLite sudah terinisialisasi. Melakukan penyelarasan data live (paket, user, video)...');
+        await runLiveUpdates(query, false);
         return;
       }
 
@@ -455,47 +537,8 @@ export async function initSeedData() {
       }
     }
 
-    // Mempersiapkan data paket langganan default pada database.
-    console.log('Nyiapin paket-paket langganan dlu...');
-    await query(`DELETE FROM packages`);
-    await query(`
-      INSERT INTO packages (id, name, price, period, ai_daily_limit, tutor_sessions, badge, features)
-      VALUES 
-      (1, 'Kelas Reguler', 350000, 'monthly', 30, 2, 'Reguler', '["Akses Kelas Reguler", "30 Percakapan AI / hari", "Leaderboard Komunitas", "Umpan Balik AI Coach"]'),
-      (2, 'Intermediate', 500000, 'monthly', 100, 4, 'Intermediate', '["Akses Kelas Intermediate", "100 Percakapan AI / hari", "4 Kelas Tatap Muka / bulan", "Analisis Pengucapan Detail"]'),
-      (3, 'Advanced', 750000, 'monthly', -1, 8, 'Advanced', '["Akses Kelas Advanced", "AI Chat & Suara Tanpa Batas", "8 Kelas Tatap Muka / bulan", "Simulasi Ujian IELTS/TOEFL"]'),
-      (4, 'Cash Promo (3 Bulan)', 750000, '3 months', -1, 12, 'Best Deal', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "12 Kelas Tatap Muka / 3 bulan", "Sertifikat Kelulusan", "Badge Spesial Best Deal"]'),
-      (5, 'Harga Normal (3 Bulan)', 1500000, '3 months', -1, 24, 'Premium Pro', '["Akses Penuh 3 Bulan", "AI Chat & Suara Tanpa Batas", "24 Kelas Tatap Muka / 3 bulan", "Bimbingan Intensif IELTS/TOEFL"]')
-    `);
-
-    // Mempersiapkan data akun pengguna awal (Admin Senior, Fauzi, dan Cintiani).
-    const usersCount = await query(`SELECT COUNT(*) as count FROM users`);
-    if (Number(usersCount[0].count) === 0) {
-      console.log('Nyiapin data user awal...');
-      const hashedPassword = await bcrypt.hash('password123', 10);
-
-      const hashedAdminPassword = await bcrypt.hash('20424014', 10);
-      // Admin Senior (Hartini Asri)
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Hartini Asri (Admin Senior)', 'hartini_senior', 'hartiniasri32@gmail.com', '6281572120190', '${hashedAdminPassword}', 'admin', 5, 0, 0, 0, '/ma.png')
-      `);
-
-      // Student 5: Fauzi
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Fauzi', 'fauzi', 'fauzi@mahirspeaking.com', '081234567894', '${hashedPassword}', 'student', 1, 0, 0, 0, '/ma.png')
-      `);
-
-      // Student 6: Cintiani Ajah
-      await query(`
-        INSERT INTO users (full_name, username, email, whatsapp, password, role, package_id, xp, points, streak, avatar)
-        VALUES ('Cintiani Ajah', 'cintiani', 'cintiani@mahirspeaking.com', '081234567895', '${hashedPassword}', 'student', 1, 0, 0, 0, '/mi.png')
-      `);
-    } else {
-      // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari local SQLite agar leaderboard bersih
-      await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'tutor@mahirspeaking.com', 'admin@mahirspeaking.com')`);
-    }
+    // Jalankan sinkronisasi data live awal (paket, user, video)
+    await runLiveUpdates(query, isPostgres);
 
     // 📚 Cek Kursus & Materi Pembelajaran
     const coursesCount = await query(`SELECT COUNT(*) as count FROM courses`);
@@ -576,7 +619,7 @@ export async function initSeedData() {
       `);
     }
 
-    // 📚 Semai data modul awal
+    // 📚 Cek & Semai data modul awal
     const modulesCount = await query(`SELECT COUNT(*) as count FROM modules`);
     if (Number(modulesCount[0].count) === 0) {
       console.log('Nyiapin data modul awal...');
@@ -595,37 +638,6 @@ export async function initSeedData() {
           ('E-Book Speaking - Basic Level (A1/A2)', 'PDF E-Book', '12.4 MB', 'Basic Level', 'Modul pembelajaran level Basic untuk melatih kelancaran perkenalan diri dan aktivitas harian.', 'https://drive.google.com/file/d/1bNcTgCgcyMju80MEamH9EhNx115vI2YM/view?usp=drive_link'),
           ('E-Book Speaking - Intermediate Level (B1)', 'PDF E-Book', '15.1 MB', 'Intermediate Level', 'Modul pembelajaran level Intermediate untuk menguasai percakapan profesional dan opini terstruktur.', 'https://drive.google.com/file/d/1atDc0w5W1TJ8AvHu7S_WaxP87lIs3-qA/view?usp=drive_link'),
           ('E-Book Speaking - Advance Level (B2/C1)', 'PDF E-Book', '18.7 MB', 'Advance Level', 'Modul pembelajaran level Advance untuk persiapan wawancara kerja, negosiasi, dan presentasi bisnis.', 'https://drive.google.com/file/d/157eH9drAwb6N2teVOJWxKCPiTRuf7it4/view?usp=sharing')
-        `);
-      }
-    }
-
-    // 📹 Semai data video awal
-    const videosCount = await query(`SELECT COUNT(*) as count FROM recorded_videos`);
-    if (Number(videosCount[0].count) === 0) {
-      console.log('Nyiapin data video awal...');
-      if (isPostgres) {
-        await query(`
-          INSERT INTO recorded_videos (title, tutor, duration, level, video_url)
-          VALUES 
-          ('Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)', 'Mr.Alfada Naufal', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/dvgZkm1xWPE'),
-          ('Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)', 'Ms. Deasy Puspawati', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/09R8_2nJtjg'),
-          ('Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)', 'Ms. Ade Ihdinayah', '90 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/JGwWNGJdvx8'),
-          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg'),
-          ('Belajar English via Lagu: \"Count On Me\" - Bruno Mars', 'Mr. James', '45 Menit', 'Basic Level', 'https://www.youtube.com/embed/6k8cpUkKK4c'),
-          ('Belajar English via Lagu: \"Love Yourself\" - Justin Bieber', 'Ms. Deasy Puspawati', '50 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/OYhXJaE4WcI'),
-          ('Belajar English via Lagu: \"Someone Like You\" - Adele', 'Ms. Ade Ihdinayah', '60 Menit', 'Advance Level', 'https://www.youtube.com/embed/hLQl3WQQoQ0')
-        `);
-      } else {
-        await query(`
-          INSERT INTO recorded_videos (title, tutor, duration, level, video_url)
-          VALUES 
-          ('Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)', 'Mr.Alfada Naufal', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/dvgZkm1xWPE'),
-          ('Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)', 'Ms. Deasy Puspawati', '90 Menit', 'Basic Level', 'https://www.youtube.com/embed/09R8_2nJtjg'),
-          ('Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)', 'Ms. Ade Ihdinayah', '90 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/JGwWNGJdvx8'),
-          ('Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)', 'Native Speaker (Mr. James)', '90 Menit', 'All Levels', 'https://www.youtube.com/embed/hT_nvWreIhg'),
-          ('Belajar English via Lagu: \"Count On Me\" - Bruno Mars', 'Mr. James', '45 Menit', 'Basic Level', 'https://www.youtube.com/embed/6k8cpUkKK4c'),
-          ('Belajar English via Lagu: \"Love Yourself\" - Justin Bieber', 'Ms. Deasy Puspawati', '50 Menit', 'Intermediate Level', 'https://www.youtube.com/embed/OYhXJaE4WcI'),
-          ('Belajar English via Lagu: \"Someone Like You\" - Adele', 'Ms. Ade Ihdinayah', '60 Menit', 'Advance Level', 'https://www.youtube.com/embed/hLQl3WQQoQ0')
         `);
       }
     }

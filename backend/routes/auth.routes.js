@@ -20,6 +20,15 @@ router.post('/register', async (req, res) => {
     const userUsername = username || email.split('@')[0];
     const hashedPassword = await bcrypt.hash(password, 10);
     const userRole = role && ['student', 'tutor', 'admin'].includes(role) ? role : 'student';
+
+    // Validasi domain email untuk tutor dan admin
+    if ((userRole === 'tutor' || userRole === 'admin') && !email.toLowerCase().endsWith('@mahirspeaking.com')) {
+      return res.status(400).json({
+        success: false,
+        message: 'Registrasi ditolak. Akun Tutor/Admin wajib menggunakan domain email @mahirspeaking.com.'
+      });
+    }
+
     const avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${userUsername}`;
 
     // Jalankan Stored Procedure / Transaksi Aman pendaftaran user

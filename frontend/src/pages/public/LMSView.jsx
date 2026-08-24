@@ -503,73 +503,43 @@ const fallbackDownloads = [
 const fallbackVideos = [
   {
     id: 1,
-    title: "Sesi 1: Self Introduction & Confidence Drill (Coldplay - Viva La Vida MV)",
+    title: "Sesi 1: Self Introduction & Confidence Drill",
     level: "Basic Level",
     date: "10 Agt 2026",
     tutor: "Mr.Alfada Naufal",
     duration: "90 Menit",
-    videoUrl: "https://www.youtube.com/embed/dvgZkm1xWPE",
-    thumbnail: "https://img.youtube.com/vi/dvgZkm1xWPE/mqdefault.jpg"
+    videoUrl: "https://www.youtube.com/embed/henIVlCPVIY",
+    thumbnail: "https://img.youtube.com/vi/henIVlCPVIY/mqdefault.jpg"
   },
   {
     id: 2,
-    title: "Sesi 2: Vocabulary Mastery (Coldplay - Fix You MV)",
+    title: "Sesi 2: Vocabulary Mastery",
     level: "Basic Level",
     date: "08 Agt 2026",
     tutor: "Ms. Deasy Puspawati",
     duration: "90 Menit",
-    videoUrl: "https://www.youtube.com/embed/09R8_2nJtjg",
-    thumbnail: "https://img.youtube.com/vi/09R8_2nJtjg/mqdefault.jpg"
+    videoUrl: "https://www.youtube.com/embed/9bdrVG297J4",
+    thumbnail: "https://img.youtube.com/vi/9bdrVG297J4/mqdefault.jpg"
   },
   {
     id: 3,
-    title: "Sesi 3: Public Speaking Masterclass (Ed Sheeran - Shape of You MV)",
+    title: "Sesi 3: Public Speaking Masterclass",
     level: "Intermediate Level",
     date: "06 Agt 2026",
     tutor: "Ms. Ade Ihdinayah",
     duration: "90 Menit",
-    videoUrl: "https://www.youtube.com/embed/JGwWNGJdvx8",
-    thumbnail: "https://img.youtube.com/vi/JGwWNGJdvx8/mqdefault.jpg"
+    videoUrl: "https://www.youtube.com/embed/WioL50vGE04",
+    thumbnail: "https://img.youtube.com/vi/WioL50vGE04/mqdefault.jpg"
   },
   {
     id: 4,
-    title: "Sesi 4: Native Speaker Meeting Session (OneRepublic - Counting Stars MV)",
+    title: "Sesi 4: Native Speaker Meeting Session",
     level: "All Levels",
     date: "04 Agt 2026",
     tutor: "Native Speaker (Mr. James)",
     duration: "90 Menit",
-    videoUrl: "https://www.youtube.com/embed/hT_nvWreIhg",
-    thumbnail: "https://img.youtube.com/vi/hT_nvWreIhg/mqdefault.jpg"
-  },
-  {
-    id: 5,
-    title: 'Belajar English via Lagu: "Count On Me" - Bruno Mars',
-    level: "Basic Level",
-    date: "02 Agt 2026",
-    tutor: "Mr. James",
-    duration: "45 Menit",
-    videoUrl: "https://www.youtube.com/embed/6k8cpUkKK4c",
-    thumbnail: "https://img.youtube.com/vi/6k8cpUkKK4c/mqdefault.jpg"
-  },
-  {
-    id: 6,
-    title: 'Belajar English via Lagu: "Love Yourself" - Justin Bieber',
-    level: "Intermediate Level",
-    date: "30 Jul 2026",
-    tutor: "Ms. Deasy Puspawati",
-    duration: "50 Menit",
-    videoUrl: "https://www.youtube.com/embed/OYhXJaE4WcI",
-    thumbnail: "https://img.youtube.com/vi/OYhXJaE4WcI/mqdefault.jpg"
-  },
-  {
-    id: 7,
-    title: 'Belajar English via Lagu: "Someone Like You" - Adele',
-    level: "Advance Level",
-    date: "28 Jul 2026",
-    tutor: "Ms. Ade Ihdinayah",
-    duration: "60 Menit",
-    videoUrl: "https://www.youtube.com/embed/hLQl3WQQoQ0",
-    thumbnail: "https://img.youtube.com/vi/hLQl3WQQoQ0/mqdefault.jpg"
+    videoUrl: "https://www.youtube.com/embed/ag3RnEaB3zM",
+    thumbnail: "https://img.youtube.com/vi/ag3RnEaB3zM/mqdefault.jpg"
   }
 ];
 
