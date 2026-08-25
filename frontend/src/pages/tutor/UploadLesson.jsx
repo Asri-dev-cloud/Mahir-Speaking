@@ -8,7 +8,7 @@ export default function UploadLesson() {
   const { setActiveTab } = useAuth();
   const [courseId, setCourseId] = useState(1);
   const [title, setTitle] = useState('');
-  const [videoUrl, setVideoUrl] = useState('https://www.youtube.com/embed/dQw4w9WgXcQ');
+  const [videoUrl, setVideoUrl] = useState('https://www.youtube.com/embed/henIVlCPVIY?rel=0');
   const [readingContent, setReadingContent] = useState('');
   const [targetVocab, setTargetVocab] = useState('["Fluency", "Articulation", "Intonation"]');
   const [speakingPrompt, setSpeakingPrompt] = useState('');

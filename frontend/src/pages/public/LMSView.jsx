@@ -60,12 +60,24 @@ const getYoutubeThumbnail = (url) => {
 
 const getYoutubeEmbedUrl = (url) => {
   if (!url) return '';
-  if (url.includes('/embed/')) return url;
-  let match = url.match(/[?&]v=([^&#]+)/);
-  if (match) return `https://www.youtube.com/embed/${match[1]}`;
-  match = url.match(/youtu\.be\/([^/?#]+)/);
-  if (match) return `https://www.youtube.com/embed/${match[1]}`;
-  return url;
+  let embedUrl = url;
+  if (!url.includes('/embed/')) {
+    let match = url.match(/[?&]v=([^&#]+)/);
+    if (match) {
+      embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+    } else {
+      match = url.match(/youtu\.be\/([^/?#]+)/);
+      if (match) {
+        embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+      }
+    }
+  }
+  
+  if (embedUrl.includes('?')) {
+    return `${embedUrl}&rel=0`;
+  } else {
+    return `${embedUrl}?rel=0`;
+  }
 };
 
 const getProvider = (url) => {

@@ -270,7 +270,7 @@ export default function LessonView() {
             <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-md bg-slate-900">
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0"
+                src="https://www.youtube.com/embed/henIVlCPVIY?autoplay=0&rel=0"
                 title="Lesson Video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

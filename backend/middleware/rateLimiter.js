@@ -56,16 +56,16 @@ export const rateLimiter = (options = {}) => {
   };
 };
 
-// Limiter Global (Semua route API): 150 request / 15 menit
+// Limiter Global (Semua route API): 1500 request / 15 menit
 export const globalLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000,
-  max: 150,
+  max: 1500,
   message: 'Permintaan akses terlalu padat. Mohon tunggu beberapa menit sebelum mencoba kembali.'
 });
 
-// Limiter Khusus Auth (Register, Login, Lupa Password): 15 request / 15 menit (Anti Brute Force & Spam Bot!)
+// Limiter Khusus Auth (Register, Login, Lupa Password): 45 request / 15 menit (Anti Brute Force & Spam Bot!)
 export const authLimiter = rateLimiter({
   windowMs: 15 * 60 * 1000,
-  max: 15,
+  max: 45,
   message: 'Terlalu banyak percobaan autentikasi dari perangkat ini. Silakan coba kembali dalam 15 menit untuk menjaga keamanan akun Anda.'
 });

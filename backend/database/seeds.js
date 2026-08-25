@@ -68,7 +68,7 @@ async function runLiveUpdates(query, isPostgres) {
     }
 
     // Hapus data user lama agar leaderboard bersih
-    await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'admin@mahirspeaking.com')`);
+    await query(`DELETE FROM users WHERE email NOT IN ('hartiniasri32@gmail.com', 'fauzi@mahirspeaking.com', 'cintiani@mahirspeaking.com', 'tutor@mahirspeaking.com')`);
 
     // 3. Mempersiapkan data video pembelajaran.
     console.log('Sinkronisasi data video...');
@@ -84,6 +84,24 @@ async function runLiveUpdates(query, isPostgres) {
     console.log('✅ Data video synced successfully.');
   } catch (err) {
     console.error('Error during live updates execution:', err.message);
+  }
+}
+
+// Menyelaraskan indeks database agar performa pencarian, penyaringan, gabungan (joins), dan pengurutan (sorting) optimal di bawah beban tinggi.
+export async function createIndexes(query) {
+  try {
+    console.log('⚡ [Database] Menyelaraskan indeks database...');
+    await query(`CREATE INDEX IF NOT EXISTS idx_users_xp_points ON users(xp DESC, points DESC)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_user_progress_user_lesson ON user_progress(user_id, lesson_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_lessons_course_id ON lessons(course_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_quizzes_lesson_id ON quizzes(lesson_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_purchases_user_id ON purchases(user_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_ai_chats_user_id ON ai_chats(user_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_payment_transactions_user ON payment_transactions(user_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_payment_transactions_order ON payment_transactions(order_id)`);
+    console.log('✅ [Database] Indeks database berhasil diselaraskan.');
+  } catch (err) {
+    console.error('⚠️ [Database] Gagal menyelaraskan indeks database:', err.message);
   }
 }
 
@@ -103,8 +121,8 @@ export async function initSeedData() {
       }
 
       if (isInitialized) {
-        console.log('🟢 [Database] PostgreSQL sudah terinisialisasi. Melakukan penyelarasan data live (paket, user, video)...');
-        await runLiveUpdates(query, true);
+        console.log('🟢 [Database] PostgreSQL sudah terinisialisasi. Menyelaraskan indeks...');
+        await createIndexes(query);
         return;
       }
 
@@ -214,8 +232,11 @@ export async function initSeedData() {
 
       console.log('✅ [Database] Skema & Stored Procedures PostgreSQL berhasil diinisialisasi!');
 
-      // 🌟 Hapus data user lama (Aci, Fariha, Ira, Pipit, David Miller, Mahir Admin) dari cloud Neon Postgres agar leaderboard bersih
-      await query(`DELETE FROM users WHERE email IN ('aci@mahirspeaking.com', 'fariha@mahirspeaking.com', 'ira@mahirspeaking.com', 'pipit@mahirspeaking.com', 'admin@mahirspeaking.com')`);
+      // 🌟 Hapus data user lama dari cloud Neon Postgres agar leaderboard bersih
+      await query(`DELETE FROM users WHERE email NOT IN ('hartiniasri32@gmail.com', 'fauzi@mahirspeaking.com', 'cintiani@mahirspeaking.com', 'tutor@mahirspeaking.com')`);
+      
+      // Inisialisasi indeks untuk PostgreSQL
+      await createIndexes(query);
     } else {
       // Cek apakah database SQLite sudah terinisialisasi
       let isInitialized = false;
@@ -229,8 +250,8 @@ export async function initSeedData() {
       }
 
       if (isInitialized) {
-        console.log('🟢 [Database] SQLite sudah terinisialisasi. Melakukan penyelarasan data live (paket, user, video)...');
-        await runLiveUpdates(query, false);
+        console.log('🟢 [Database] SQLite sudah terinisialisasi. Menyelaraskan indeks...');
+        await createIndexes(query);
         return;
       }
 
@@ -802,6 +823,9 @@ export async function initSeedData() {
       }
       console.log('✅ Default blog posts seeded successfully!');
     }
+
+    // Pastikan indeks database dibuat setelah semua data awal selesai disemai
+    await createIndexes(query);
 
     console.log('Seed data database beres dengan sempurna, slay abis! ✨');
   } catch (err) {

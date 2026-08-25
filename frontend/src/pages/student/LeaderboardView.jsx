@@ -14,40 +14,6 @@ import {
   Zap,
 } from "lucide-react";
 
-const fallbackLearners = [
-  {
-    rank: 1,
-    full_name: 'Fariha Salsabila',
-    username: 'fariha_salsa',
-    xp: 3450,
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
-    package_badge: 'Pro Member'
-  },
-  {
-    rank: 2,
-    full_name: 'Ira Kusuma',
-    username: 'ira_kusuma',
-    xp: 2890,
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150',
-    package_badge: 'Active Member'
-  },
-  {
-    rank: 3,
-    full_name: 'Pipit Andriani',
-    username: 'pipit_andri',
-    xp: 2450,
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150',
-    package_badge: 'Active Member'
-  },
-  {
-    rank: 4,
-    full_name: 'Aci Student',
-    username: 'aci_student',
-    xp: 1980,
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=150',
-    package_badge: 'Free Trial'
-  }
-];
 
 const podiumStyles = {
   1: {
